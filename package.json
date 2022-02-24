@@ -1,7 +1,7 @@
 {
   "name": "portal_ppe_flem",
   "private": true,
-  "version": "0.0.4-220224dx",
+  "version": "0.0.5-220224dx",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
