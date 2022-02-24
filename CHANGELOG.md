@@ -14,6 +14,10 @@
 
 <br>
 
+## v0.0.10-220224fr (release > main)
+- [v0.0.9-220224fr](https://github.com/frtechdev/flem-ppe-frontend/commit/9294a3656c55783b1890affeb6c9b0d2daa89a3b)
+
+<br>
 
 ## v0.0.9-220224fr (feature > release)
 
