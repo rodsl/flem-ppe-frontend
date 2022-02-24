@@ -51,7 +51,7 @@
 
 
     <title>
-      Home
+      ldapService.js
     </title>
 
     <!--[if lt IE 9]>
@@ -107,7 +107,7 @@
   <body>
 
     <nav class="navbar" id="navbar">
-      <div class="navbar-heading" id="navbar-heading"><a href="index.html"><h2 class="navbar-heading-text">FLEM PPE Frontend Docs</h2></a></div><div class="search-box" id="search-box"><div class="search-box-input-container"><input class="search-box-input" type="text" placeholder="Search..." id="search-box-input" /><svg class="search-icon" alt="search-icon"><use xlink:href="#search-icon"></use></svg></div><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-main-content" id="sidebar-main-content"><ul><li class="menu-li"><a href='https://frtechnologies.com.br' class='some-class menu-link' id='some-id' target='_blank'>Website</a></li><li class="menu-li"><a href='https://github.com/frtechdev/flem-ppe-frontend/' class='some-class menu-link' id='some-id' target='_blank'>Github</a></li></ul><div class="accordion collapsed" id="124694" > <h3 class="accordion-heading">Modules<svg><use xlink:href="#down-icon"></use></svg></h3><ul class="accordion-content"><li class="accordion collapsed child" id=3079861><div class="accordion-heading child"><a href="module-LDAPService.html">LDAPService</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="module-LDAPService.html#.authUser">authUser</a></li></ul></li></ul> </div>
+      <div class="navbar-heading" id="navbar-heading"><a href="index.html"><h2 class="navbar-heading-text">FLEM PPE Frontend - Documentação</h2></a></div><div class="search-box" id="search-box"><div class="search-box-input-container"><input class="search-box-input" type="text" placeholder="Search..." id="search-box-input" /><svg class="search-icon" alt="search-icon"><use xlink:href="#search-icon"></use></svg></div><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-main-content" id="sidebar-main-content"><ul><li class="menu-li"><a href='https://frtechnologies.com.br' class='some-class menu-link' id='some-id' target='_blank'>Website</a></li><li class="menu-li"><a href='https://github.com/frtechdev/flem-ppe-frontend/' class='some-class menu-link' id='some-id' target='_blank'>Github</a></li></ul><div class="accordion collapsed" id="8360462" > <h3 class="accordion-heading">Modules<svg><use xlink:href="#down-icon"></use></svg></h3><ul class="accordion-content"><li class="accordion collapsed child" id=256539><div class="accordion-heading child"><a href="module-LDAPService.html">LDAPService</a><svg><use xlink:href="#down-icon"></use></svg></div><ul class='methods accordion-content'><li data-type='method'><a href="module-LDAPService.html#.authUser">authUser</a></li></ul></li></ul> </div>
       
         <div class="navbar-resize" id="navbar-resize">
           <div class="resize-dots-container">
@@ -129,39 +129,96 @@
 
     <div id="main" class="main-content">
       
+      <h1 id='page-title' class="page-title">
+        ldapService.js
+      </h1>
+      
 
       
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * LDAP Authentication module.
+ * @module LDAPService
+ * @see module:LDAPService
+ */
 
+import ActiveDirectory from "activedirectory";
 
+const config = {
+  url: process.env.LDAP_URI,
+  baseDN: process.env.LDAP_BASE_DN,
+  username: process.env.LDAP_USERNAME,
+  password: process.env.LDAP_PASSWORD,
+};
 
+const ad = new ActiveDirectory(config);
 
+/**
+ * Função utilizada para realizar a autenticação do usuário via LDAP
+ * @method authUser
+ * @memberof module:LDAPService
+ * @param {string} username Nome de usuário do Active Directory
+ * @param {string} password Senha do usuário do Active directory
+ * @returns {Promise} Retorna uma Promise que será resolvida caso o usuário e senha estejam corretos, ou rejeitada caso estejam incorretos.
+ */
+export const authUser = (username, password) =>
+  new Promise((resolve, reject) => {
+    ad.authenticate(username, password, (err, auth) => {
+      if (err) {
+        console.log("ERROR: " + JSON.stringify(err));
+        return reject(err);
+      }
+      if (auth) {
+        console.log("Authenticated!");
+        return resolve(auth);
+      } else {
+        console.log("Authentication failed!");
+        return reject("Authentication failed!");
+      }
+    });
+  });
 
+export const getUserInfo = (username) =>
+  new Promise((resolve, reject) => {
+    ad.findUser(username, (err, user) => {
+      if (err) {
+        console.log("ERROR: " + JSON.stringify(err));
+        return reject(err);
+      }
+      if (user) {
+        console.log("User Finded!");
+        return resolve(user);
+      } else {
+        console.log("Find User failed!");
+        return reject();
+      }
+    });
+  });
 
-
-
-
-    
-
-
-    <section class="readme">
-        <article><h1>flem-ppe-frontend</h1>
-<p>Aplicação FrontEnd para o Portal Programa Primeiro Emprego, do cliente FLEM</p>
-<h2>Variáveis de Ambiente</h2>
-<pre class="prettyprint source lang-bash"><code>LDAP_URI=
-LDAP_BASE_DN=
-LDAP_USERNAME=
-LDAP_PASSWORD=
-NEXTAUTH_SECRET=
-JWT_SECRET=
-NEXTAUTH_URL=
-</code></pre></article>
+export const getUserGroups = (username) =>
+  new Promise((resolve, reject) => {
+    ad.getGroupMembershipForUser(username, (err, groups) => {
+      if (err) {
+        console.log("ERROR: " + JSON.stringify(err));
+        return reject(err);
+      }
+      if (groups) {
+        console.log("Groups Finded!");
+        return resolve(groups);
+      } else {
+        console.log("Find Groups failed!");
+        return reject();
+      }
+    });
+  });
+</code></pre>
+        </article>
     </section>
-
-
 
 
 
