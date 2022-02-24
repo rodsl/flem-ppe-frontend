@@ -14,6 +14,39 @@
 
 <br>
 
+## v0.0.10-220224fr (release > main)
+- [v0.0.9-220224fr](https://github.com/frtechdev/flem-ppe-frontend/commit/9294a3656c55783b1890affeb6c9b0d2daa89a3b)
+
+<br>
+
+## v0.0.9-220224fr (feature > release)
+
+- [v0.0.8-220224dx](https://github.com/frtechdev/flem-ppe-frontend/commit/957dbb15ff99206b1cd34d8e99e8d7111b37a159)
+- Remoção do redirect de documentação e tentativa de acesso direto ao html do jsdoc
+
+<br>
+
+## v0.0.8-220224dx
+
+ - Teste de commit do branch
+ - Atualização do changelog
+
+<br>
+
+## v0.0.7-220224fr
+
+- [v0.0.4-220224dx](https://github.com/frtechdev/flem-ppe-frontend/commit/2223559f696adf22a5076b5444255d6e9013f29f)
+
+<br>
+
+## v0.0.4-220224dx (feature > release)
+
+- Início da implementação do redirect de documentação
+- Atualização do README.md
+- Criação do CHANGELOG.md
+
+<br>
+
 ## v0.0.3-220221fr (release > main)
 
 - [v0.0.2-220221rl](https://github.com/frtechdev/flem-ppe-frontend/commit/628a87708fdd62b6b22c4cb93a35819ee99997da)
