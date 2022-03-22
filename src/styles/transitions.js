@@ -1,4 +1,4 @@
-const variants = {
+export const variants = {
   pageInitial: {
     opacity: 0,
   },
@@ -11,4 +11,3 @@ const variants = {
   },
 };
 
-export { variants };
