@@ -5,6 +5,7 @@ import {
   Flex,
   GridItem,
   Heading,
+  Icon,
   IconButton,
   Menu,
   MenuButton,
@@ -13,15 +14,19 @@ import {
   MenuItem,
   MenuList,
   SimpleGrid,
+  Spinner,
   Text,
   useControllableState,
 } from "@chakra-ui/react";
 
-import { FiChevronDown, FiMenu } from "react-icons/fi";
+import { FiChevronDown, FiLogOut, FiMenu } from "react-icons/fi";
 import { EntitiesChange } from "components/Navbar/EntitiesChange";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Logo } from "components/Logo";
+import { EditIcon } from "@chakra-ui/icons";
+import { IconBox } from "components/Icons/IconBox";
+import { getSession, signOut } from "next-auth/react";
 
 export function Navbar({
   appName = "[App Name]",
@@ -41,6 +46,12 @@ export function Navbar({
         entities.find((entity) => entity.value === defaultPath)?.value) ||
       "",
   });
+
+  const [icon, setIcon] = useControllableState({ defaultValue: <FiLogOut /> });
+  const signOutSession = () => {
+    setIcon(<Icon as={Spinner} color="black" mt={1} />);
+    signOut()
+  };
 
   useEffect(() => {
     if (defaultPath !== value) {
@@ -120,7 +131,13 @@ export function Navbar({
               <MenuList>
                 <MenuGroup title="Profile">
                   <MenuItem>My Account</MenuItem>
-                  <MenuItem>Payments </MenuItem>
+                  <MenuItem
+                    icon={icon}
+                    closeOnSelect={false}
+                    onClick={signOutSession}
+                  >
+                    Sair{" "}
+                  </MenuItem>
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Help">

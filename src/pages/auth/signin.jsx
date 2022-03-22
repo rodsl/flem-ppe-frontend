@@ -8,19 +8,30 @@ import {
   Heading,
   HStack,
   Input,
+  Text,
+  Icon,
   Stack,
   useBreakpointValue,
   useColorModeValue as mode,
+  useToast,
 } from "@chakra-ui/react";
-import { getCsrfToken } from "next-auth/react";
+import { getCsrfToken, signIn, useSession } from "next-auth/react";
 import { InputBox } from "components/Inputs/InputBox";
 import { PasswordInputBox } from "components/Inputs/PasswordInputBox";
 import { Logo } from "components/Logo";
 import { BrandBg } from "components/Logo/BrandBG";
 import { useForm } from "react-hook-form";
 import { apiService } from "services/apiService";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Toast } from "components/Toast";
+import { toastData } from "messages/toasts/signInPage";
+import { FiInfo } from "react-icons/fi";
 
 export default function Signin({ csrfToken, ...props }) {
+  const { error } = useRouter().query;
+  const toastPosition = useBreakpointValue({ base: "top", sm: "top-right" });
+  const toast = useToast();
   const {
     control,
     handleSubmit,
@@ -30,22 +41,43 @@ export default function Signin({ csrfToken, ...props }) {
     reset,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
-    apiService("auth/callback/credentials", options)
-      .then((res) => res.json())
-      .then((data) => console.log(data))
-      .catch((err) => {
-        console.log(err)
-      });
+  const onSubmit = async (data) => {
+    // console.log(data);
+    // data.csrfToken = csrfToken;
+    // console.log(data);
+    // const options = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(data),
+    // };
+    // try {
+    //   const res = apiService("auth/callback/credentials", options);
+    //   console.log(res);
+    //   if (res.status === 200 && res.redirected === true) {
+    //     const { status } = useSession();
+    //     router.push("/");
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    data.callbackUrl = `${window.location.origin}/`;
+    await signIn("ldap", data);
   };
+
+  useEffect(() => {
+    if (error && error !== "SessionRequired" && toastPosition) {
+      toast({
+        title: toastData[error].title,
+        description: toastData[error].description,
+        status: toastData[error].status,
+        duration: 5000,
+        isClosable: false,
+        position: toastPosition,
+      });
+    }
+  }, [toastPosition]);
 
   return (
     <Box
@@ -171,18 +203,6 @@ export default function Signin({ csrfToken, ...props }) {
           </Stack>
         </Box>
       </Container>
-      <form method="post" action="/api/auth/callback/credentials">
-        <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-        <label>
-          Username
-          <input name="username" type="text" />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" />
-        </label>
-        <button type="submit">Sign in</button>
-      </form>
     </Box>
   );
 }

@@ -1,5 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
+import { Button, Drawer, FormLabel, Input, Select, Textarea } from "./ComponentsTheme";
+
 const theme = extendTheme({
   initialColorMode: "light",
   // fonts: {
@@ -30,13 +32,13 @@ const theme = extendTheme({
     global: (props) => ({
       "*": {
         "&::-webkit-scrollbar": {
-          width: "10px",
+          width: "0px",
           backgroundColor: "rgb(255,255,255,0.0)",
         },
         "&::-webkit-scrollbar-thumb": {
           backgroundColor: "#A0AEC0",
           borderRadius: "10px",
-          border: "2px solid #F7FAFC",
+          border: "px solid #F7FAFC",
         },
       },
       body: {
@@ -47,6 +49,9 @@ const theme = extendTheme({
         fontFamily: 'Helvetica, sans-serif'
       }
     }),
+  },
+  components: {
+    Button, Drawer, FormLabel, Input, Select, Textarea
   },
 });
 

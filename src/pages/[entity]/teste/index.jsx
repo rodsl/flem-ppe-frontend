@@ -1,29 +1,16 @@
+import { Heading, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Box,
-  Button,
-  Flex,
-  SimpleGrid,
-  Spacer,
-  useDisclosure,
-} from "@chakra-ui/react";
 import { signIn, signOut, getSession, useSession } from "next-auth/react";
-import { DashboardLayout } from "components/Layout/DashboardLayout";
-import { variants } from "styles/transitions";
-import { Card } from "components/Cards";
-import { LineChart } from "components/Charts/LineChart";
-import { IoWallet } from "react-icons/io5";
-import { FiCalendar } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 
-export default function Dashboard({ entity, ...props }) {
+export default function Cadastro({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
 
   const session = useSession();
+  console.log(session);
 
   useEffect(() => {
     if (entity === null) {
@@ -35,18 +22,7 @@ export default function Dashboard({ entity, ...props }) {
 
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
-      <SimpleGrid columns={[1, 2, 2, 4]} spacing={6} pb={0} mb={8}>
-        <Card icon={IoWallet} />
-        <Card icon={FiCalendar} />
-        <Card icon={FiCalendar} />
-        <Card icon={FiCalendar} />
-      </SimpleGrid>
-      <Spacer />
-      <SimpleGrid columns={1} spacing={6} pb={0}>
-        <Flex h={["", "", "400px"]}>
-          <LineChart />
-        </Flex>
-      </SimpleGrid>
+      <Heading>TESTE</Heading>
     </AnimatePresenceWrapper>
   );
 }
@@ -73,5 +49,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Dashboard.auth = false;
-Dashboard.dashboard = true;
+Cadastro.auth = false;
+Cadastro.dashboard = true;
