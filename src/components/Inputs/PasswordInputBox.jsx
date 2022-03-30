@@ -2,6 +2,7 @@ import {
   background,
   Box,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   IconButton,
   Input,
@@ -66,6 +67,7 @@ export const PasswordInputBox = forwardRef(
               {...props}
             />
           </InputGroup>
+          <FormErrorMessage>{errors[id]?.message}</FormErrorMessage>
         </FormControl>
       </Box>
     );

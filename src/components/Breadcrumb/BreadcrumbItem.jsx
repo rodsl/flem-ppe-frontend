@@ -8,7 +8,6 @@ export const BreadcrumbItem = ({
   isCurrentPage,
   ...props
 }) => {
-  console.log(props)
   return (
     <NextLink href={href} passHref>
       <Link

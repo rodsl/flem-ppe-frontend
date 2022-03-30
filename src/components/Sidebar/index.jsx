@@ -1,16 +1,27 @@
-import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Heading, useBreakpointValue } from "@chakra-ui/react";
-
+import {
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Heading,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import NoSSR from "react-no-ssr";
 
 export function Sidebar({
-    isOpen,
-    onClose,
-    children,
-    appName = "[App Name]",
-    ...props
-  }) {
-    const size = useBreakpointValue({ base: "full", sm: "xs" });
-    return (
-      <>
+  isOpen,
+  onClose,
+  children,
+  appName = "[App Name]",
+  ...props
+}) {
+  const size = useBreakpointValue({ base: "full", sm: "xs" });
+
+  return (
+    <>
+      <NoSSR>
         <Drawer placement="left" onClose={onClose} isOpen={isOpen} size={size}>
           <DrawerOverlay
             sx={{ backdropFilter: "blur(10px)" }}
@@ -29,6 +40,7 @@ export function Sidebar({
             <DrawerBody mb={[28, 0]}>{children}</DrawerBody>
           </DrawerContent>
         </Drawer>
-      </>
-    );
-  }
+      </NoSSR>
+    </>
+  );
+}

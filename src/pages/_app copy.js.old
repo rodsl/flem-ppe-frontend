@@ -47,20 +47,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
       <GlobalStyle />
       <StateMachineProvider>
         <SessionProvider session={session}>
-          {Component.auth && (
-            <Auth>
-              {Component.dashboard ? (
-                <DashboardLayout appName="Portal PPE">
-                  <Component {...pageProps} />
-                </DashboardLayout>
-              ) : (
-                <Component {...pageProps} />
-              )}
-            </Auth>
-          )}
-
           {Component.dashboard ? (
-            <DashboardLayout appName="Portal PPE">
+            <DashboardLayout appName="ppe">
               <Component {...pageProps} />
             </DashboardLayout>
           ) : (
