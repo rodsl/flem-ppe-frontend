@@ -7,6 +7,21 @@ import {
   } from "@chakra-ui/react";
   import { Controller } from "react-hook-form";
   
+
+   /**
+   * Cria uma Inpux Box com máscara definida.
+   * @method MaskedInputBox
+   * @memberof module:Inputs
+   * @param {String} id id do formulário
+   * @param {Object} control controle de fortmulário
+   * @param {Object} errors manipula as mensagens de erro
+   * @param {String} label label do formulário
+   * @param {Object} validate validação
+   * @param {Object} setValueAs define o valor do formulário
+   * @param {Boolean} setMask define se deseja utilizar máscara sobre
+   * o valor inserido no campo (true) ou não (false)
+   * @returns {Component} componente estilizado com máscara
+   */
   export function MaskedInputBox({
     id,
     control,

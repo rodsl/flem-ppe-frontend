@@ -1,3 +1,9 @@
+/**
+ * Componente da composição da Navbar.
+ *  @module Navbar
+ */
+
+
 import {
   Avatar,
   Box,
@@ -20,9 +26,20 @@ import {
 import { FiChevronDown, FiMenu } from "react-icons/fi";
 import { EntitiesChange } from "components/Navbar/EntitiesChange";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { Component, useEffect } from "react";
 import { Logo } from "components/Logo";
 
+
+/**
+   * Monta a Navbar.
+   * @memberof module:Navbar
+   * @param {Object} appName nome de exibição na Navbar
+   * @param {Object} entities valor da "entity", que define a
+   * localização do projeto (BA ou TO)
+   * @param {Object} onclick definição de ação após o clique
+   * @param {Component} children estruturas filho da composição
+   * 
+   */
 export function Navbar({
   appName = "[App Name]",
   entities,

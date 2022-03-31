@@ -14,20 +14,59 @@
 
 <br>
 
-## v0.0.8-220224dx
+## [v0.0.12-220330fr](https://github.com/frtechdev/flem-ppe-frontend/commit/de4e3a9ecfb461b4d9a17051b0f81d495a89a970)
+
+--- v0.0.9-220224fr
+- Teste de commit do branch
+- Atualização do changelog
+
+<br>
+
+## [v0.0.10-220224fr](https://github.com/frtechdev/flem-ppe-frontend/commit/23d45c99a90f0aabcb460d941eb7e798195134f4)
+
+--- v0.0.9-220224fr
+- Teste de commit do branch
+- Atualização do changelog
+
+<br>
+
+## [v0.0.9-220224fr](https://github.com/frtechdev/flem-ppe-frontend/commit/9294a3656c55783b1890affeb6c9b0d2daa89a3b)
 
  - Teste de commit do branch
  - Atualização do changelog
 
 <br>
 
-## v0.0.7-220224fr
+## [v0.0.8-220224dx](https://github.com/frtechdev/flem-ppe-frontend/commit/957dbb15ff99206b1cd34d8e99e8d7111b37a159)
 
-- [v0.0.4-220224dx](https://github.com/frtechdev/flem-ppe-frontend/commit/2223559f696adf22a5076b5444255d6e9013f29f)
+ - Teste de commit do branch
+ - Atualização do changelog
 
 <br>
 
-## v0.0.4-220224dx (feature > release)
+## [v0.0.7-220224fr](https://github.com/frtechdev/flem-ppe-frontend/commit/aa723e49a9de928e40c7f7dae5a8248ee8306f17)
+
+--- v0.0.4-220224dx
+- Início da implementação do redirect de documentação
+- Atualização do README.md
+- Criação do CHANGELOG.md
+
+<br>
+
+## [v0.0.6-220224fr](https://github.com/frtechdev/flem-ppe-frontend/commit/c7e7e68a4d460fa86f2f743499e7f66df49f8208)
+
+--- v0.0.5-220224dx
+- Alteração no diretório de destino do jsdoc
+
+<br>
+
+## [v0.0.5-220224dx](https://github.com/frtechdev/flem-ppe-frontend/commit/1c99915d8e1d79f6eaf8b3e2f9d51fa6bf45183b)
+
+ - Alteração no diretório de destino do jsdoc
+
+<br>
+
+## [v0.0.4-220224dx](https://github.com/frtechdev/flem-ppe-frontend/commit/2223559f696adf22a5076b5444255d6e9013f29f)
 
 - Início da implementação do redirect de documentação
 - Atualização do README.md
@@ -37,18 +76,28 @@
 
 ## v0.0.3-220221fr (release > main)
 
-- [v0.0.2-220221rl](https://github.com/frtechdev/flem-ppe-frontend/commit/628a87708fdd62b6b22c4cb93a35819ee99997da)
+- v0.0.220221fr
 
 <br>
 
-## v0.0.2-220221fr (feature > release)
+## [v0.0.2-220221fr](https://github.com/frtechdev/flem-ppe-frontend/commit/628a87708fdd62b6b22c4cb93a35819ee99997da)
 
-- [v0.0.1-220221rl](https://github.com/frtechdev/flem-ppe-frontend/commit/55361c77be90401e4ca46d49ea6489cf6cc0041a)
+--- v0.0.1-220221rl
+- Criação do layout inicial do Frontend;
+- Configuração inicial e layout da documentação;
+- Criação dos componentes da Sidebar, Navbar, Breadcrumb e Inputs;
+- Criação do layout do dashboard;
+- Criação do componente de seletor de entidades;
+- Criação da página de login;
+- Implantação do LDAP Service para autenticação;
+- Configuração inicial do Next Auth para autenticação via LDAP;
+- Redirecionamento de rotas para a página principal;
+- Desenvolvimento inicial do tema de cores baseada na cor base do logo do cliente;
 
 
 <br>
 
-## v0.0.1-220221rl
+## [v0.0.1-220221rl](https://github.com/frtechdev/flem-ppe-frontend/commit/55361c77be90401e4ca46d49ea6489cf6cc0041a)
 
 - Criação do layout inicial do Frontend;
 - Configuração inicial e layout da documentação;

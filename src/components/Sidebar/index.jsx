@@ -1,6 +1,20 @@
+/**
+ * Componente da composição da barra lateral.
+ *  @module Sidebar
+ */
+
 import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Heading, useBreakpointValue } from "@chakra-ui/react";
 
-
+/**
+   * Monta a Sidebar.
+   * @memberof module:Sidebar
+   * @param {Object} isOpen função de ação ao abrir
+   * @param {Object} onClose função de ação ao fechar
+   * @param {Object} appName nome da aplicação ou sistema para exibir
+   * como rótulo
+   * @param {Component} children estruturas filho da composição
+   * 
+   */
 export function Sidebar({
     isOpen,
     onClose,

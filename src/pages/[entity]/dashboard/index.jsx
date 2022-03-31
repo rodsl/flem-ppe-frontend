@@ -29,7 +29,7 @@ export default function Dashboard({ entity, ...props }) {
   return (
     <>
       {!isLoaded ? (
-        <>Loading...</>
+        <>Carregando, aguarde...</>
       ) : (
         <>
           <AnimatePresence>
@@ -83,4 +83,4 @@ export async function getServerSideProps(context) {
   };
 }
 
-Dashboard.auth = true;
+Dashboard.auth = false;

@@ -12,8 +12,13 @@ import {
 import IconBox from "components/Icons/IconBox";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
-
-export function NavItem({ icon, title, active, description, subMenu, subActive }) {
+/**
+   * Monta uma label de Sidebar, que separa e define as categorias de layout.
+   * @memberof module:Sidebar
+   * @param {Object} icon ícone da label
+   * 
+   */
+export function SidebarLabel({ icon, title, active, description, subMenu, subActive }) {
     const { isOpen, onToggle, onClose } = useDisclosure();
     return (
       <Flex
