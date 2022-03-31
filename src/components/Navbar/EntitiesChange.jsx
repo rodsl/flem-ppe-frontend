@@ -8,6 +8,18 @@ import {
   Button,
 } from "@chakra-ui/react";
 
+
+/**
+   * Realiza a mudança de entity (localidade) e transfere o valor como propriedade
+   * em um objeto componentizado.
+   * @memberof module:Navbar
+   * @param {Object} options lista de entidades
+   * @param {Object} value valor da "entity", que define a
+   * localização do projeto (BA ou TO)
+   * @param {Function} setValue função para definir o valor
+   * @param {Object} title título da entidade (definido "localidade" como padrão)
+   * 
+   */
 export function EntitiesChange({
   options = null,
   value = null,
