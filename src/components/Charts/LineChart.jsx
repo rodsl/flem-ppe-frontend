@@ -1,10 +1,24 @@
+/**
+ * Componente de Gráficos do Dashboard
+ * @module Charts
+ */
+
 import { Box, Flex, Heading } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 
+// Chama o import do gráfico sem Server-Side Render
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
     ssr: false,
   });
 
+
+/*************** WIP ******************/
+/**
+ * Cria componente de gráfico.
+ * @method LineChart
+ * @memberof module:Charts
+ * @returns componente de card.
+ */
 export function LineChart() {
     const chartData = {
       chart: {

@@ -1,5 +1,12 @@
 import { chakra, Flex, useColorModeValue } from "@chakra-ui/react";
 
+
+/**
+   * Monta um logotipo que pode ser usado como camada de background.
+   * @method BrandBg
+   * @memberof module:Logo
+   * @param {Object} props propriedades do arquivo que compõe o logo.
+   */
 export const BrandBg = (props) => (
   // <Flex justifyContent="center">
   <chakra.svg

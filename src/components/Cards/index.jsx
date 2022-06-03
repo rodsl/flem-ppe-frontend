@@ -1,6 +1,23 @@
+/**
+ * Componente de Cards do Dashboard
+ * @module Cards
+ */
+
 import { Flex, Heading } from "@chakra-ui/react";
 import IconBox from "components/Icons/IconBox";
+import { Component } from "react";
 
+
+/*************** WIP ******************/
+/**
+ * Cria um card do Dashboard.
+ * @method Card
+ * @memberof module:Cards
+ * @param {Object} icon Ícone decorativo
+ * @param {Component} children componente-filho do card
+ * @returns componente de card.
+ *
+ */
 export function Card({ icon, children, ...props }) {
   return (
     <Flex
@@ -21,7 +38,7 @@ export function Card({ icon, children, ...props }) {
         flex="1 1 0%"
       >
         <Heading as="h3" color="gray.400" size="sm" pb={1}>
-          Today's Money
+          Todays Money
         </Heading>
         <Flex alignItems="center">
           <Heading as="h3" color="gray.700" size="md">

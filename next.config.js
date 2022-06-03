@@ -8,12 +8,12 @@ module.exports = (phase) => {
         {
           source: "/:entity",
           destination: "/:entity/dashboard",
-          permanent: true,
+          permanent: false,
         },
         {
           source: "/",
           destination: "/dashboard",
-          permanent: true,
+          permanent: false,
         },
       ];
     },

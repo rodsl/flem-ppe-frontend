@@ -1,7 +1,16 @@
+/**
+ * Provedor de Autenticação.
+ * @module api
+ */
+
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { authUser, getUserGroups, getUserInfo } from "services/ldapService";
 
+
+/**
+ * Classe de Autenticação.
+ */
 export default NextAuth({
   providers: [
     CredentialsProvider({

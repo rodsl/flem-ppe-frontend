@@ -12,6 +12,18 @@ import { useRouter } from "next/router";
 import { SidebarSubItem } from "./SidebarSubItem";
 import { useEffect } from "react";
 
+/**
+   * Item de Sidebar.
+   * @method SidebarItem
+   * @memberof module:Sidebar
+   * @param {Object} icon ícone do SidebarItem
+   * @param {Object} title texto do SidebarItem
+   * @param {Object} subItems sub ítens do SidebarItem
+   * @param {Object} href caminho referente ao item
+   * @param {Object} sidebarClose função ao fechar o SidebarItem
+   * @returns {Component} Sidebar Item estilizado
+   * 
+   */
 export function NavItem({
   icon,
   title,

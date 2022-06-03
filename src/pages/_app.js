@@ -1,3 +1,7 @@
+/**
+ * Inicialização da aplicação.
+ */
+
 import { ChakraProvider, extendTheme, CSSReset } from "@chakra-ui/react";
 import { SessionProvider, useSession } from "next-auth/react";
 import { StateMachineProvider, createStore } from "little-state-machine";
@@ -8,6 +12,11 @@ import { DashboardLayout } from "components/Layout/DashboardLayout";
 
 const myTheme = extendTheme(theme);
 
+/**
+ * Aplica estilo global sobre as páginas.
+ * @param {Component} 
+ * @returns 
+ */
 const GlobalStyle = ({ children }) => (
   <>
     <Head>
@@ -31,7 +40,14 @@ const GlobalStyle = ({ children }) => (
 );
 
 createStore({});
+const appName = "Portal PPE";
 
+/**
+ * Função de Caller da aplicação.
+ * @method MyApp
+ * @param {Object} session componente de sessão de login
+ * @returns Renderização da página e da aplicação
+ */
 function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
   console.log(Component.dashboard);
   return (
@@ -45,12 +61,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
           variants={variants}
         > */}
       <GlobalStyle />
-      <StateMachineProvider>
-        <SessionProvider session={session}>
+      <SessionProvider session={session}>
+        <StateMachineProvider>
           {Component.auth && (
             <Auth>
               {Component.dashboard ? (
-                <DashboardLayout appName="Portal PPE">
+                <DashboardLayout appName={appName} {...pageProps}>
                   <Component {...pageProps} />
                 </DashboardLayout>
               ) : (
@@ -58,16 +74,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
               )}
             </Auth>
           )}
-
-          {Component.dashboard ? (
-            <DashboardLayout appName="Portal PPE">
+          {!Component.auth && Component.dashboard ? (
+            <DashboardLayout appName={appName} {...pageProps}>
               <Component {...pageProps} />
             </DashboardLayout>
           ) : (
             <Component {...pageProps} />
           )}
-        </SessionProvider>
-      </StateMachineProvider>
+        </StateMachineProvider>
+      </SessionProvider>
       {/* </motion.div>
       </AnimatePresence> */}
     </ChakraProvider>

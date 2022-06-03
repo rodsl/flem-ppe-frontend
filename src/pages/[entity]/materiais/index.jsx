@@ -1,3 +1,8 @@
+/**
+ * Página de Materiais
+ * @module materiais
+ */
+
 import {
   Box,
   Button,
@@ -13,7 +18,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { signIn, signOut, getSession, useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { FiCheck, FiMoreHorizontal, FiPlus, FiX } from "react-icons/fi";
@@ -24,12 +29,19 @@ import { SelectInputBox } from "components/Inputs/SelectInputBox";
 import { useForm } from "react-hook-form";
 import { InputTextBox } from "components/Inputs/InputTextBox";
 
+/**
+ * Renderiza o cadastro de materiais
+ * @method Cadastro
+ * @memberof module:materiais
+ * @param {Object} entity a "entidade" ou "localização" do Projeto Primeiro Emprego
+ * @returns página renderizada
+ */
 export default function Cadastro({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
   const session = useSession();
-
+  const [selectedRow, setSelectedRow] = useState();
   const {
     isOpen: addMaterialIsOpen,
     onOpen: addMaterialOnOpen,
@@ -41,25 +53,25 @@ export default function Cadastro({ entity, ...props }) {
       {
         Header: "Material",
         accessor: "nome_material",
-        // Cell: ({ value }) => <Box minW={200}>{value}</Box>,
+        Cell: ({ value }) => <Box minW={200}>{value}</Box>,
         Footer: false,
       },
       {
         Header: "descrição",
         accessor: "descricao",
-        // Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
+        Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
         Footer: false,
       },
       {
         Header: "Ações",
-        // Cell: (props) => (
-        //   <IconButton
-        //     icon={<FiMoreHorizontal />}
-        //     onClick={() => console.log(props?.row?.original)}
-        //     variant="outline"
-        //     colorScheme="brand1"
-        //   />
-        // ),
+        Cell: (props) => (
+          <IconButton
+            icon={<FiMoreHorizontal />}
+            onClick={() => setSelectedRow(props?.row?.original)}
+            variant="outline"
+            colorScheme="brand1"
+          />
+        ),
         Footer: false,
       },
     ],
@@ -115,8 +127,8 @@ export default function Cadastro({ entity, ...props }) {
   } = useForm();
 
   const onSubmit = (formData) => {
-    console.log(formData)
-  }
+    console.log(formData);
+  };
 
   useEffect(() => {
     if (entity === null) {
@@ -125,7 +137,6 @@ export default function Cadastro({ entity, ...props }) {
       setTimeout(onLoad, 1000);
     }
   }, [asPath]);
-
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
       <Flex justifyContent="space-between" alignItems="center" pb={5}>
@@ -144,7 +155,7 @@ export default function Cadastro({ entity, ...props }) {
         onClose={addMaterialOnClose}
         // isOpen={true}
         isOpen={addMaterialIsOpen}
-        header="Adicionar Material "
+        header="Adicionar Material"
         closeButton
       >
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -166,9 +177,9 @@ export default function Cadastro({ entity, ...props }) {
             />
           </Stack>
           <HStack py={6} justifyContent="flex-end">
-            <Button colorScheme="brand1"
-            type="submit"
-            >Cadastrar</Button>
+            <Button colorScheme="brand1" type="submit">
+              Cadastrar
+            </Button>
           </HStack>
         </form>
       </Overlay>
@@ -176,6 +187,11 @@ export default function Cadastro({ entity, ...props }) {
   );
 }
 
+/**
+ * @method getServerSideProps
+ * @param {*} context 
+ * @returns 
+ */
 export async function getServerSideProps(context) {
   const {
     params: { entity },

@@ -1,7 +1,6 @@
 /**
- * LDAP Authentication module.
+ * Módulo de Autenticação LDAP.
  * @module LDAPService
- * @see module:LDAPService
  */
 
 import ActiveDirectory from "activedirectory";
