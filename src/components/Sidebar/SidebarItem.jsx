@@ -12,13 +12,7 @@ import { useRouter } from "next/router";
 import { SidebarSubItem } from "./SidebarSubItem";
 import { useEffect } from "react";
 
-export function NavItem({
-  icon,
-  title,
-  subItems,
-  href,
-  sidebarClose,
-}) {
+export function SidebarItem({ icon, title, subItems, href, sidebarClose }) {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
   const linkPath = router.asPath.split("/");

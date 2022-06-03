@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Flex,
   Table as ChakraTable,
@@ -13,14 +13,14 @@ import {
 import { useTable, useFilters } from "react-table";
 import { FilterInput } from "components/Table/FilterInput";
 
-export function Table({ columns, data }) {
+export function Table({ columns, data, updateMyData }) {
   const defaultColumn = useMemo(
     () => ({
       Filter: DefaultColumnFilter,
     }),
     []
   );
-
+ 
   function DefaultColumnFilter({
     column: { filterValue, Header, preFilteredRows, setFilter, ...rest },
   }) {
@@ -71,6 +71,7 @@ export function Table({ columns, data }) {
       data,
       defaultColumn,
       filterTypes,
+      updateMyData,
     },
     useFilters
   );
@@ -93,30 +94,32 @@ export function Table({ columns, data }) {
       >
         <Thead>
           {headerGroups.map((headerGroup) => {
-            const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps()
-  
-            return(
-            <Tr key={key} {...restHeaderGroupProps}>
-              {headerGroup.headers.map((column) => {
-                const { key, ...restColumn } = column.getHeaderProps()
-                return(
-                <Th
-                  key={key}
-                  {...restColumn}
-                  isNumeric={key.includes("Ações")}
-                >
-                  {column.canFilter
-                    ? column.render("Filter")
-                    : column.render("Header")}
-                </Th>
-              )})}
-            </Tr>
-          )})}
+            const { key, ...restHeaderGroupProps } =
+              headerGroup.getHeaderGroupProps();
+
+            return (
+              <Tr key={key} {...restHeaderGroupProps}>
+                {headerGroup.headers.map((column) => {
+                  const { key, ...restColumn } = column.getHeaderProps();
+                  return (
+                    <Th
+                      key={key}
+                      {...restColumn}
+                      isNumeric={key.includes("Ações")}
+                    >
+                      {column.canFilter
+                        ? column.render("Filter")
+                        : column.render("Header")}
+                    </Th>
+                  );
+                })}
+              </Tr>
+            );
+          })}
         </Thead>
         <Tbody {...getTableBodyProps()}>
           {rows.map((row, i) => {
             prepareRow(row);
-            console.log(row.cells)
             return (
               <Tr key={row.id} {...row.getRowProps()}>
                 {row.cells.map((cell) => (
@@ -132,21 +135,26 @@ export function Table({ columns, data }) {
             );
           })}
         </Tbody>
-     {/*    <Tfoot>
-          {footerGroups.map((group) => (
-            <Tr key={group.id} {...group.getFooterGroupProps()}>
-              {group.headers.map((column) => (
-                <>
-                  {column.render("Footer") && (
-                    <Td key={column.id} {...column.getFooterProps()}>
-                      {column.render("Footer")}
-                    </Td>
-                  )}
-                </>
-              ))}
-            </Tr>
-          ))}
-        </Tfoot> */}
+        <Tfoot>
+          {footerGroups.map((footerGroup) => {
+            const { key, ...restFooterGroupProps } =
+              footerGroup.getFooterGroupProps();
+            return (
+              <Tr key={key} {...restFooterGroupProps}>
+                {footerGroup.headers.map((column) => {
+                  const { key, ...restColumn } = column.getFooterProps();
+                  return (
+                    column.render("Footer") && (
+                      <Td key={key} {...restColumn}>
+                        {column.render("Footer")}
+                      </Td>
+                    )
+                  );
+                })}
+              </Tr>
+            );
+          })}
+        </Tfoot>
       </ChakraTable>
     </Flex>
   );

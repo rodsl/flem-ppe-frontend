@@ -1,35 +1,38 @@
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Box,
   Button,
+  Collapse,
   Flex,
   Heading,
   IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
   Spacer,
   useDisclosure,
 } from "@chakra-ui/react";
-import { signIn, signOut, getSession, useSession } from "next-auth/react";
-import { DashboardLayout } from "components/Layout/DashboardLayout";
-import { variants } from "styles/transitions";
-import { Card } from "components/Cards";
 import { Table } from "components/Table";
 import { LineChart } from "components/Charts/LineChart";
 import { IoWallet } from "react-icons/io5";
-import { FiCalendar, FiEdit, FiMoreHorizontal } from "react-icons/fi";
+import { FiCalendar, FiEdit, FiMoreHorizontal, FiPlus } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { Table2 } from "components/Table/Table2";
+import axios from "axios";
+import { Dropzone } from "components/Dropzone";
 
 export default function Beneficiarios({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
-
-  const session = useSession();
-  console.log(session);
-
   useEffect(() => {
     if (entity === null) {
       router.push("/ba/dashboard");
@@ -38,64 +41,100 @@ export default function Beneficiarios({ entity, ...props }) {
     }
   }, [asPath]);
 
+  const [uploadProgress, setUploadProgress] = useState(null);
+  const [controller, setController] = useState(null);
+
+  useEffect(() => {
+    setController(new AbortController());
+  }, []);
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    Object.keys(data).map((key, idx) => formData.append(`files`, data[key]));
+    // formData.append("file", data[0]);
+
+    const config = {
+      headers: { "Content-Type": "multipart/form-data" },
+      signal: controller.signal,
+      onUploadProgress: (event) => {
+        console.log(
+          `Current progress:`,
+          Math.round((event.loaded * 100) / event.total)
+        );
+        setUploadProgress(Math.round((event.loaded * 100) / event.total));
+      },
+    };
+    axios
+      .post("/api/upload", formData, config)
+      .then(({ status, data }) => {
+        if (status === 200) {
+          router.push(
+            `${router.asPath}/importar?file=${data.file}`,
+            router.asPath + "/importar"
+          );
+        }
+      })
+      .catch((err) => {
+        if (err.message === "canceled") {
+          setController(new AbortController());
+          return onToggle();
+        }
+        return console.log(err.message);
+      });
+  };
+  console.log(router.asPath);
   const columns = useMemo(
     () => [
       {
-        Header: "Tabela de beneficiários",
+        Header: "Nome Beneficiário",
+        accessor: "nome_beneficiario",
         Footer: false,
-        columns: [
-          {
-            Header: "Nome Beneficiário",
-            accessor: "nome_beneficiario",
-            Footer: false,
-          },
-          {
-            Header: "CPF",
-            accessor: "cpf_beneficiario",
-            Footer: false,
-          },
-          {
-            Header: "Matrícula FLEM",
-            accessor: "matricula_flem_beneficiario",
-            Footer: false,
-          },
-          {
-            Header: "Demandante",
-            accessor: "demandante_vaga",
-            Footer: false,
-          },
-          {
-            Header: "Município Vaga",
-            accessor: "municipio_vaga",
-            Footer: false,
-          },
-          {
-            Header: "Escritório Regional",
-            accessor: "escritorio_regional",
-            Footer: false,
-          },
-          {
-            Header: "Status Beneficiário",
-            accessor: "status_beneficiario",
-            Footer: false,
-          },
-          {
-            Header: "Ações",
-            props: { teste: "true" },
-            Cell: (props) => (
-              <IconButton
-                icon={<FiMoreHorizontal />}
-                onClick={() => console.log(props?.row?.original)}
-                variant="outline"
-                colorScheme="brand1"
-                _focus={{
-                  boxShadow: "0 0 0 3px var(--chakra-colors-brand1-300)",
-                }}
-              />
-            ),
-            Footer: false,
-          },
-        ],
+      },
+      {
+        Header: "CPF",
+        accessor: "cpf_beneficiario",
+        Footer: false,
+      },
+      {
+        Header: "Matrícula FLEM",
+        accessor: "matricula_flem_beneficiario",
+        Footer: false,
+      },
+      {
+        Header: "Demandante",
+        accessor: "demandante_vaga",
+        Footer: false,
+      },
+      {
+        Header: "Município Vaga",
+        accessor: "municipio_vaga",
+        Footer: false,
+      },
+      {
+        Header: "Escritório Regional",
+        accessor: "escritorio_regional",
+        Footer: false,
+      },
+      {
+        Header: "Status Beneficiário",
+        accessor: "status_beneficiario",
+        Footer: false,
+      },
+      {
+        Header: "Ações",
+        props: { teste: "true" },
+        Cell: (props) => (
+          <IconButton
+            icon={<FiMoreHorizontal />}
+            onClick={() => console.log(props?.row?.original)}
+            variant="outline"
+            colorScheme="brand1"
+            _focus={{
+              boxShadow: "0 0 0 3px var(--chakra-colors-brand1-300)",
+            }}
+          />
+        ),
+        Footer: false,
       },
     ],
     []
@@ -145,9 +184,43 @@ export default function Beneficiarios({ entity, ...props }) {
 
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
+      <Flex justifyContent="space-between" alignItems="center" pb={5}>
+        <Heading size="md">Beneficiários</Heading>
+        <Button
+          colorScheme="brand1"
+          shadow="md"
+          leftIcon={<FiPlus />}
+          onClick={onToggle}
+        >
+          Importar
+        </Button>
+      </Flex>
+
       <SimpleGrid>
         <Table columns={columns} data={data} />
       </SimpleGrid>
+
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={onToggle}
+        isCentered
+        size="lg"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Importar Beneficiários</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <Dropzone
+              onSubmit={onSubmit}
+              onUploadProgress={uploadProgress}
+              setUploadProgress={setUploadProgress}
+              uploadController={controller}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </AnimatePresenceWrapper>
   );
 }
