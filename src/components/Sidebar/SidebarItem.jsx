@@ -37,6 +37,7 @@ export function NavItem({
   linkPath.shift();
   const [activeEntity, menu] = linkPath;
   const active = router.asPath === `/${activeEntity}${href}`;
+
   const handleClick = (e) => {
     e.preventDefault();
     if (!subItems) {
@@ -45,6 +46,7 @@ export function NavItem({
     }
     return subItems && onToggle();
   };
+
   useEffect(() => {
     if (!isOpen && `/${menu}` === href) {
       onToggle();

@@ -83,3 +83,18 @@ export const Select = {
   },
 };
 
+export const Modal = {
+  parts: ["overlay", "item"],
+  baseStyle: (props) => {
+    return {
+      overlay: {
+        backdropFilter: "blur(10px)",
+        bg: "rgba(255,255,255,0.1)",
+      },
+      closeButton: {
+        _focus: { backgroundColor: "none" },
+      },
+    };
+  },
+  sizes: {},
+};

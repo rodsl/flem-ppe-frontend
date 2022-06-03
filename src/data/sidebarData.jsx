@@ -1,8 +1,5 @@
-/**
- * Contém a lista completa dos itens e subitens da Sidebar.
- */
+import { FiArchive, FiFileText, FiHome, FiPackage, FiUsers } from "react-icons/fi";
 
-import { FiArchive, FiHome, FiPackage, FiUsers } from "react-icons/fi";
 export const sidebarData = [
   {
     items: [
@@ -37,6 +34,11 @@ export const sidebarData = [
         title: "Materiais",
         icon: FiPackage,
         href: "/materiais",
+      },
+      {
+        title: "Ofícios",
+        icon: FiFileText,
+        href: "/oficios",
       },
     ],
   },

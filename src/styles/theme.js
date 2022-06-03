@@ -4,7 +4,7 @@
 
 import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
-import { Button, Drawer, FormLabel, Input, Select, Textarea } from "./ComponentsTheme";
+import { Button, Drawer, FormLabel, Input, Select, Modal } from "./ComponentsTheme";
 
 const theme = extendTheme({
   initialColorMode: "light",
@@ -55,7 +55,7 @@ const theme = extendTheme({
     }),
   },
   components: {
-    Button, Drawer, FormLabel, Input, Select, Textarea
+    Button, Drawer, FormLabel, Input, Select, Modal
   },
 });
 

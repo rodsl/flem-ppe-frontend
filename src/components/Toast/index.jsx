@@ -1,5 +1,4 @@
-import { Box, Flex, Heading, Icon, Text } from "@chakra-ui/react";
-
+import { Flex } from "@chakra-ui/react";
 
 export const Toast = () => {
   return (
@@ -18,8 +17,7 @@ export const Toast = () => {
           {" "}
           Falha na autenticação{" "}
         </Heading>
-        <Text
-        size="sm" flex="1 1 0%">
+        <Text size="sm" flex="1 1 0%">
           {" "}
           Usuário e/ou senha inválidos{" "}
         </Text>

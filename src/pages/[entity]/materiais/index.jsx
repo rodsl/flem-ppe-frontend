@@ -18,7 +18,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { signIn, signOut, getSession, useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { FiCheck, FiMoreHorizontal, FiPlus, FiX } from "react-icons/fi";
@@ -41,7 +41,7 @@ export default function Cadastro({ entity, ...props }) {
   const router = useRouter();
   const { asPath } = router;
   const session = useSession();
-
+  const [selectedRow, setSelectedRow] = useState();
   const {
     isOpen: addMaterialIsOpen,
     onOpen: addMaterialOnOpen,
@@ -53,25 +53,25 @@ export default function Cadastro({ entity, ...props }) {
       {
         Header: "Material",
         accessor: "nome_material",
-        // Cell: ({ value }) => <Box minW={200}>{value}</Box>,
+        Cell: ({ value }) => <Box minW={200}>{value}</Box>,
         Footer: false,
       },
       {
         Header: "descrição",
         accessor: "descricao",
-        // Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
+        Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
         Footer: false,
       },
       {
         Header: "Ações",
-        // Cell: (props) => (
-        //   <IconButton
-        //     icon={<FiMoreHorizontal />}
-        //     onClick={() => console.log(props?.row?.original)}
-        //     variant="outline"
-        //     colorScheme="brand1"
-        //   />
-        // ),
+        Cell: (props) => (
+          <IconButton
+            icon={<FiMoreHorizontal />}
+            onClick={() => setSelectedRow(props?.row?.original)}
+            variant="outline"
+            colorScheme="brand1"
+          />
+        ),
         Footer: false,
       },
     ],
@@ -127,8 +127,8 @@ export default function Cadastro({ entity, ...props }) {
   } = useForm();
 
   const onSubmit = (formData) => {
-    console.log(formData)
-  }
+    console.log(formData);
+  };
 
   useEffect(() => {
     if (entity === null) {
@@ -155,7 +155,7 @@ export default function Cadastro({ entity, ...props }) {
         onClose={addMaterialOnClose}
         // isOpen={true}
         isOpen={addMaterialIsOpen}
-        header="Adicionar Material "
+        header="Adicionar Material"
         closeButton
       >
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -177,9 +177,9 @@ export default function Cadastro({ entity, ...props }) {
             />
           </Stack>
           <HStack py={6} justifyContent="flex-end">
-            <Button colorScheme="brand1"
-            type="submit"
-            >Cadastrar</Button>
+            <Button colorScheme="brand1" type="submit">
+              Cadastrar
+            </Button>
           </HStack>
         </form>
       </Overlay>

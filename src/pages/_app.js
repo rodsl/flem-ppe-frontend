@@ -10,7 +10,6 @@ import Head from "next/head";
 import theme from "styles/theme";
 import { DashboardLayout } from "components/Layout/DashboardLayout";
 
-// Tema customizado
 const myTheme = extendTheme(theme);
 
 /**
@@ -41,6 +40,7 @@ const GlobalStyle = ({ children }) => (
 );
 
 createStore({});
+const appName = "Portal PPE";
 
 /**
  * Função de Caller da aplicação.
@@ -61,12 +61,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
           variants={variants}
         > */}
       <GlobalStyle />
-      <StateMachineProvider>
-        <SessionProvider session={session}>
+      <SessionProvider session={session}>
+        <StateMachineProvider>
           {Component.auth && (
             <Auth>
               {Component.dashboard ? (
-                <DashboardLayout appName="Portal PPE">
+                <DashboardLayout appName={appName} {...pageProps}>
                   <Component {...pageProps} />
                 </DashboardLayout>
               ) : (
@@ -74,16 +74,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
               )}
             </Auth>
           )}
-
-          {Component.dashboard ? (
-            <DashboardLayout appName="Portal PPE">
+          {!Component.auth && Component.dashboard ? (
+            <DashboardLayout appName={appName} {...pageProps}>
               <Component {...pageProps} />
             </DashboardLayout>
           ) : (
             <Component {...pageProps} />
           )}
-        </SessionProvider>
-      </StateMachineProvider>
+        </StateMachineProvider>
+      </SessionProvider>
       {/* </motion.div>
       </AnimatePresence> */}
     </ChakraProvider>
