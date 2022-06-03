@@ -9,6 +9,22 @@ import {
 import IconBox from "components/Icons/IconBox";
 import { useRouter } from "next/router";
 
+/**
+   * Monta o subitem de um Sidebar Item.
+   * @method SidebarSubItem
+   * @memberof module:Siebar
+   * @param {Object} icon ícone do subitem
+   * @param {Object} title texto do subitem
+   * @param {Object} href caminho referente ao subitem
+   * @param {Object} sidebarClose função ao fechar o subitem
+   * @param {Object} children componentes filho do objeto
+   * @param {Object} isOpen função ao executar quando o subitem
+   * estiver em exibição
+   * @param {Object} onToggle função ao executar quando é feito
+   * "toggle"
+   * @returns {Component} componente estilizado.
+   * 
+   */
 export function SidebarSubItem({
   icon,
   title,

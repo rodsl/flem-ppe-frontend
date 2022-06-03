@@ -1,3 +1,8 @@
+/**
+ *  Componentes de tabela.
+ *  @module Table
+ */
+
 import { useMemo } from "react";
 import {
   Flex,
@@ -13,6 +18,15 @@ import {
 import { useTable, useFilters } from "react-table";
 import { FilterInput } from "components/Table/FilterInput";
 
+/**
+   * Monta uma exibição de tabela.
+   * @method Table
+   * @memberof module:Table
+   * @param {Object} columns colunas da tabela
+   * @param {Object} data células e seus valores
+   * @returns {Component} componente estilizado.
+   * 
+   */
 export function Table({ columns, data }) {
   const defaultColumn = useMemo(
     () => ({
@@ -20,7 +34,18 @@ export function Table({ columns, data }) {
     }),
     []
   );
-
+  /**
+   * Monta o filtro da tabela. Um filtro que pode ser
+   * usado em cada coluna para classificar ou buscar
+   * informações
+   * @see FilterInput
+   * @param {Object} filterValue valor de pesquisa do filtro
+   * @param {Object} header nome do filtro
+   * @param {Object} preFilteredRows define a quantidade de linhas
+   * para exibir a quantidade de registros encontrados
+   * @param {Object} setFilter define dinamicamente a busca
+   * @returns {Component} componente de filtro
+   */
   function DefaultColumnFilter({
     column: { filterValue, Header, preFilteredRows, setFilter, ...rest },
   }) {
@@ -41,7 +66,9 @@ export function Table({ columns, data }) {
       </>
     );
   }
-
+  /**
+   * Monta a exibição atualizada depdendendo do valor filtrado.
+   */
   const filterTypes = useMemo(
     () => ({
       text: (rows, id, filterValue) => {
@@ -57,7 +84,6 @@ export function Table({ columns, data }) {
     }),
     []
   );
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -74,8 +100,6 @@ export function Table({ columns, data }) {
     },
     useFilters
   );
-
-  // Render the UI for your table
   return (
     <Flex
       bg="white"

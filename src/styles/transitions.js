@@ -1,3 +1,7 @@
+/**
+ * Especificações das transições.
+ */
+
 export const variants = {
   pageInitial: {
     opacity: 0,
@@ -10,4 +14,3 @@ export const variants = {
     opacity: 0,
   },
 };
-

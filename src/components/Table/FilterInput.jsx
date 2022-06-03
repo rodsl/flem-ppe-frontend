@@ -17,6 +17,17 @@ import {
 } from "@chakra-ui/react";
 import { FiFilter } from "react-icons/fi";
 
+/**
+   * Monta um componente de filtro para a tabela.
+   * @param {Object} children propriedades filho do componente
+   * @param {Function} cleanFilter função para executar a limpeza do filtro
+   * @param {Object} filterTitle cria o título do filtro dependendo do objeto
+   * de pesquisa
+   * @param {Object} onChange função ou objeto pela mudança realizada no filtro
+   * @param {Object} placeholder placeholder do filtro
+   * @param {Object} value  valor de pesquisa do filtro
+   * @returns {Component} componente de filtro
+   */
 export function FilterInput({
   children,
   cleanFilter,

@@ -1,3 +1,7 @@
+/**
+ * Inicialização da aplicação.
+ */
+
 import { ChakraProvider, extendTheme, CSSReset } from "@chakra-ui/react";
 import { SessionProvider, useSession } from "next-auth/react";
 import { StateMachineProvider, createStore } from "little-state-machine";
@@ -6,8 +10,14 @@ import Head from "next/head";
 import theme from "styles/theme";
 import { DashboardLayout } from "components/Layout/DashboardLayout";
 
+// Tema customizado
 const myTheme = extendTheme(theme);
 
+/**
+ * Aplica estilo global sobre as páginas.
+ * @param {Component} 
+ * @returns 
+ */
 const GlobalStyle = ({ children }) => (
   <>
     <Head>
@@ -32,6 +42,12 @@ const GlobalStyle = ({ children }) => (
 
 createStore({});
 
+/**
+ * Função de Caller da aplicação.
+ * @method MyApp
+ * @param {Object} session componente de sessão de login
+ * @returns Renderização da página e da aplicação
+ */
 function MyApp({ Component, pageProps: { session, ...pageProps }, router }) {
   console.log(Component.dashboard);
   return (

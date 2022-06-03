@@ -51,7 +51,7 @@
 
 
     <title>
-      components/Icons/IconBox.jsx
+      Navbar
     </title>
 
     <!--[if lt IE 9]>
@@ -130,7 +130,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        components/Icons/IconBox.jsx
+        Navbar
       </h1>
       
 
@@ -138,48 +138,557 @@
 
 
 
+
+<section>
+
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Componente de Icon Box. Alinha e parametriza
- * o ícone da Sidebar para que tenha alinhamento
- * e orientação padronizados.
- *  @module Icons
- */
+        
+            
+        
+    
+</header>
 
-import { Flex, Icon } from "@chakra-ui/react";
 
-/**
- * Flex contendo parâmetros para alinhamento, bem
- * como uso de ícone com ajustes próprios de fonte.
- * @method IconBox
- * @memberof module:Icons
- * @param {Object} props parâmetros do componente
- * @param {Object} children definições de ícone
- * @param {Object} fontSize tamanho da fonte da label
- * do ícone
- * @returns {Container} contendo as propriedades do ícone
- * e de sua respectivas label, passadas como props
- *
- */
-export default function IconBox(props) {
-  const { children, fontSize, ...rest } = props;
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Componente da composição da Navbar.</p></div>
+        
 
-  return (
-    &lt;Flex
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"12px"}
-      {...rest}
-    >
-      &lt;Icon as={children} fontSize={fontSize}>&lt;/Icon>
-    &lt;/Flex>
-  );
-}
-</code></pre>
-        </article>
-    </section>
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class="details-item-container">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source"><ul class="dummy"><li>
+                <a href="components_Navbar_index.jsx.html">components/Navbar/index.jsx</a>, <a href="components_Navbar_index.jsx.html#line1">line 1</a>
+            </li></ul></dd>
+        </div>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".exports.EntitiesChange">
+        <a href="#.exports.EntitiesChange">#</a>
+        <span class="type-signature">(static) </span>exports.EntitiesChange<span class="signature">(options, value, setValue, title)</span><span class="type-signature"></span>
+    </h4>
+
+    
+
+
+
+    <div class="description">
+        <p>Realiza a mudança de entity (localidade) e transfere o valor como propriedade
+em um objeto componentizado.</p>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>lista de entidades</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>valor da &quot;entity&quot;, que define a
+localização do projeto (BA ou TO)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>função para definir o valor</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>title</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>título da entidade (definido &quot;localidade&quot; como padrão)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class="details-item-container">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source"><ul class="dummy"><li>
+                <a href="components_Navbar_EntitiesChange.jsx.html">components/Navbar/EntitiesChange.jsx</a>, <a href="components_Navbar_EntitiesChange.jsx.html#line23">line 23</a>
+            </li></ul></dd>
+        </div>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".exports.Navbar">
+        <a href="#.exports.Navbar">#</a>
+        <span class="type-signature">(static) </span>exports.Navbar<span class="signature">(appName, entities, onclick, children)</span><span class="type-signature"></span>
+    </h4>
+
+    
+
+
+
+    <div class="description">
+        <p>Monta a Navbar.</p>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>appName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>nome de exibição na Navbar</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>entities</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>valor da &quot;entity&quot;, que define a
+localização do projeto (BA ou TO)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onclick</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>definição de ação após o clique</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>children</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Component</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>estruturas filho da composição</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class="details-item-container">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source"><ul class="dummy"><li>
+                <a href="components_Navbar_index.jsx.html">components/Navbar/index.jsx</a>, <a href="components_Navbar_index.jsx.html#line48">line 48</a>
+            </li></ul></dd>
+        </div>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

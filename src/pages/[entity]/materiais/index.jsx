@@ -1,3 +1,8 @@
+/**
+ * Página de Materiais
+ * @module materiais
+ */
+
 import {
   Box,
   Button,
@@ -24,6 +29,13 @@ import { SelectInputBox } from "components/Inputs/SelectInputBox";
 import { useForm } from "react-hook-form";
 import { InputTextBox } from "components/Inputs/InputTextBox";
 
+/**
+ * Renderiza o cadastro de materiais
+ * @method Cadastro
+ * @memberof module:materiais
+ * @param {Object} entity a "entidade" ou "localização" do Projeto Primeiro Emprego
+ * @returns página renderizada
+ */
 export default function Cadastro({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
@@ -125,7 +137,6 @@ export default function Cadastro({ entity, ...props }) {
       setTimeout(onLoad, 1000);
     }
   }, [asPath]);
-
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
       <Flex justifyContent="space-between" alignItems="center" pb={5}>
@@ -176,6 +187,11 @@ export default function Cadastro({ entity, ...props }) {
   );
 }
 
+/**
+ * @method getServerSideProps
+ * @param {*} context 
+ * @returns 
+ */
 export async function getServerSideProps(context) {
   const {
     params: { entity },

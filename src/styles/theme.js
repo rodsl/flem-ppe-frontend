@@ -1,3 +1,7 @@
+/**
+ * Tema customizado.
+ */
+
 import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 import { Button, Drawer, FormLabel, Input, Select, Textarea } from "./ComponentsTheme";

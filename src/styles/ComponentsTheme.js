@@ -1,3 +1,8 @@
+/**
+ * Especificação dos temas dos componentes.
+ */
+
+
 export const Button = {
   variants: {
     solid: ({ colorScheme }) => ({
