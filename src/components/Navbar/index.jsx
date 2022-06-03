@@ -37,12 +37,14 @@ import { getSession, signOut } from "next-auth/react";
 
 /**
    * Monta a Navbar.
+   * @method Navbar
    * @memberof module:Navbar
    * @param {Object} appName nome de exibição na Navbar
    * @param {Object} entities valor da "entity", que define a
    * localização do projeto (BA ou TO)
    * @param {Object} onclick definição de ação após o clique
    * @param {Component} children estruturas filho da composição
+   * @returns {Component} componente estilizado.
    * 
    */
 export function Navbar({
@@ -75,7 +77,6 @@ export function Navbar({
       router.push(`/${value}`);
     }
   }, [value]);
-
   return (
     <Box
       position="sticky"

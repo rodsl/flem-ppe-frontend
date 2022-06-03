@@ -51,7 +51,7 @@
 
 
     <title>
-      components/Icons/IconBox.jsx
+      components/AnimatePresenceWrapper/index.jsx
     </title>
 
     <!--[if lt IE 9]>
@@ -130,7 +130,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        components/Icons/IconBox.jsx
+        components/AnimatePresenceWrapper/index.jsx
       </h1>
       
 
@@ -142,39 +142,44 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Componente de Icon Box. Alinha e parametriza
- * o ícone da Sidebar para que tenha alinhamento
- * e orientação padronizados.
- *  @module Icons
+ * Animação de transição entre componentes
+ * @module AnimatePresenceWrapper
  */
 
-import { Flex, Icon } from "@chakra-ui/react";
+
+import { Box } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Component } from "react";
+import { variants } from "styles/transitions";
+
 
 /**
- * Flex contendo parâmetros para alinhamento, bem
- * como uso de ícone com ajustes próprios de fonte.
- * @method IconBox
- * @memberof module:Icons
- * @param {Object} props parâmetros do componente
- * @param {Object} children definições de ícone
- * @param {Object} fontSize tamanho da fonte da label
- * do ícone
- * @returns {Container} contendo as propriedades do ícone
- * e de sua respectivas label, passadas como props
+ * Animação de transição de componente.
+ * @method AnimatePresenceWrapper
+ * @memberof module:AnimatePresenceWrapper
+ * @param {Component} children componente-filho da animação
+ * @param {Object} isLoaded define estado de transição da animação. Se o
+ * componente já estiver renderizado, ele encerra a animação
+ * @returns componente com animação dependendo do estado do componente-alvo
  *
  */
-export default function IconBox(props) {
-  const { children, fontSize, ...rest } = props;
-
+export function AnimatePresenceWrapper({ children, isLoaded, router }) {
   return (
-    &lt;Flex
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"12px"}
-      {...rest}
-    >
-      &lt;Icon as={children} fontSize={fontSize}>&lt;/Icon>
-    &lt;/Flex>
+    &lt;>
+    {!isLoaded? (&lt;>Carregando...&lt;/>): 
+      &lt;AnimatePresence>
+      &lt;motion.div
+      key={router.route}
+      initial="pageInitial"
+      animate="pageAnimate"
+      exit="pageExit"
+      variants={variants}
+      >
+      &lt;Box p={5}>{children}&lt;/Box>
+      &lt;/motion.div>
+      &lt;/AnimatePresence>
+    }
+    &lt;/>
   );
 }
 </code></pre>

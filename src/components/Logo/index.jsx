@@ -3,12 +3,11 @@
  *  @module Logo
  */
 
-
-
 import { chakra, Flex, useColorModeValue } from "@chakra-ui/react";
 
 /**
    * Monta o Componente de Logo.
+   * @method Logo
    * @memberof module:Logo
    * @param {Object} props propriedades do arquivo que compõe o logo.
    */

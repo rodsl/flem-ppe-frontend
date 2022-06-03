@@ -51,7 +51,7 @@
 
 
     <title>
-      components/Icons/IconBox.jsx
+      AnimatePresenceWrapper
     </title>
 
     <!--[if lt IE 9]>
@@ -130,7 +130,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        components/Icons/IconBox.jsx
+        AnimatePresenceWrapper
       </h1>
       
 
@@ -138,48 +138,311 @@
 
 
 
+
+<section>
+
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Componente de Icon Box. Alinha e parametriza
- * o ícone da Sidebar para que tenha alinhamento
- * e orientação padronizados.
- *  @module Icons
- */
+        
+            
+        
+    
+</header>
 
-import { Flex, Icon } from "@chakra-ui/react";
 
-/**
- * Flex contendo parâmetros para alinhamento, bem
- * como uso de ícone com ajustes próprios de fonte.
- * @method IconBox
- * @memberof module:Icons
- * @param {Object} props parâmetros do componente
- * @param {Object} children definições de ícone
- * @param {Object} fontSize tamanho da fonte da label
- * do ícone
- * @returns {Container} contendo as propriedades do ícone
- * e de sua respectivas label, passadas como props
- *
- */
-export default function IconBox(props) {
-  const { children, fontSize, ...rest } = props;
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Animação de transição entre componentes</p></div>
+        
 
-  return (
-    &lt;Flex
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"12px"}
-      {...rest}
-    >
-      &lt;Icon as={children} fontSize={fontSize}>&lt;/Icon>
-    &lt;/Flex>
-  );
-}
-</code></pre>
-        </article>
-    </section>
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class="details-item-container">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source"><ul class="dummy"><li>
+                <a href="components_AnimatePresenceWrapper_index.jsx.html">components/AnimatePresenceWrapper/index.jsx</a>, <a href="components_AnimatePresenceWrapper_index.jsx.html#line1">line 1</a>
+            </li></ul></dd>
+        </div>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".AnimatePresenceWrapper">
+        <a href="#.AnimatePresenceWrapper">#</a>
+        <span class="type-signature">(static) </span>AnimatePresenceWrapper<span class="signature">(children, isLoaded)</span><span class="type-signature"></span>
+    </h4>
+
+    
+
+
+
+    <div class="description">
+        <p>Animação de transição de componente.</p>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>children</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Component</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>componente-filho da animação</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isLoaded</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>define estado de transição da animação. Se o
+componente já estiver renderizado, ele encerra a animação</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class="details-item-container">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source"><ul class="dummy"><li>
+                <a href="components_AnimatePresenceWrapper_index.jsx.html">components/AnimatePresenceWrapper/index.jsx</a>, <a href="components_AnimatePresenceWrapper_index.jsx.html#line13">line 13</a>
+            </li></ul></dd>
+        </div>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>componente com animação dependendo do estado do componente-alvo</p>
+</div>
+
+
+
+            
+    </div>
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

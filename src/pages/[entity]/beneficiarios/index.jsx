@@ -1,5 +1,10 @@
+/**
+ * Página de Beneficiários.
+ *  @module beneficiarios
+ */
+
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { Component, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Box,
@@ -22,6 +27,13 @@ import { FiCalendar, FiEdit, FiMoreHorizontal } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { Table2 } from "components/Table/Table2";
 
+/**
+ * Componente de renderização da Página de Beneficiários
+ * @method Beneficiarios
+ * @memberof module:beneficiarios
+ * @param {Object} entity a "entidade" ou "localização" do Projeto Primeiro Emprego
+ * @returns {Component} página renderizada
+ */
 export default function Beneficiarios({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();

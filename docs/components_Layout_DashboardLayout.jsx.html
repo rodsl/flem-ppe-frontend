@@ -51,7 +51,7 @@
 
 
     <title>
-      components/Icons/IconBox.jsx
+      components/Layout/DashboardLayout.jsx
     </title>
 
     <!--[if lt IE 9]>
@@ -130,7 +130,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        components/Icons/IconBox.jsx
+        components/Layout/DashboardLayout.jsx
       </h1>
       
 
@@ -142,39 +142,67 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Componente de Icon Box. Alinha e parametriza
- * o ícone da Sidebar para que tenha alinhamento
- * e orientação padronizados.
- *  @module Icons
+ * Componentes de Layout.
+ *  @module Layout
  */
 
-import { Flex, Icon } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
+import { BreadcrumbBar } from "components/Breadcrumb";
+import { Navbar } from "components/Navbar";
+import { Sidebar } from "components/Sidebar";
+import { NavItem } from "components/Sidebar/SidebarItem";
+import { NavLabel } from "components/Sidebar/SidebarLabel";
+import { sidebarData } from "data/sidebarData";
+import { useRouter } from "next/router";
+import { Fragment } from "react";
 
-/**
- * Flex contendo parâmetros para alinhamento, bem
- * como uso de ícone com ajustes próprios de fonte.
- * @method IconBox
- * @memberof module:Icons
- * @param {Object} props parâmetros do componente
- * @param {Object} children definições de ícone
- * @param {Object} fontSize tamanho da fonte da label
- * do ícone
- * @returns {Container} contendo as propriedades do ícone
- * e de sua respectivas label, passadas como props
- *
- */
-export default function IconBox(props) {
-  const { children, fontSize, ...rest } = props;
+
+
+ /**
+   * Cria um layout padrão de dashboard para a plataforma
+   * @method DashboardLayout
+   * @memberof module:Layout
+   * @param appName nome do portal
+   * @param children componentes-filho do layout
+   * @returns {Component} componente que monta o layout.
+   */
+export function DashboardLayout({ appName, children, ...props }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const entities = [
+    { value: "ba", label: "Bahia", defaultValue: true },
+    { value: "to", label: "Tocantins", defaultValue: false },
+  ];
+  const router = useRouter();
+  const linkPath = router.asPath.split("/");
+  linkPath.shift();
 
   return (
-    &lt;Flex
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"12px"}
-      {...rest}
-    >
-      &lt;Icon as={children} fontSize={fontSize}>&lt;/Icon>
-    &lt;/Flex>
+    &lt;>
+      &lt;Navbar onClick={onOpen} entities={entities} appName={appName}>
+        &lt;BreadcrumbBar entities={entities} />
+      &lt;/Navbar>
+      &lt;Sidebar isOpen={isOpen} onClose={onClose} appName={appName}>
+        {sidebarData &amp;&amp;
+          sidebarData.map((obj, idx) => (
+            &lt;Fragment key={`frag_${obj.label}${idx}`}>
+              &lt;NavLabel key={`navlabel_${obj.label}${idx}`}>
+                {obj.label}
+              &lt;/NavLabel>
+              {obj.items.map((item, idx) => (
+                &lt;NavItem
+                  key={`navitem_${item.title}_${idx}`}
+                  icon={item.icon}
+                  title={item.title}
+                  href={`${item.href}`}
+                  sidebarClose={onClose}
+                  subItems={item.subItems}
+                />
+              ))}
+            &lt;/Fragment>
+          ))}
+      &lt;/Sidebar>
+        {children}
+    &lt;/>
   );
 }
 </code></pre>

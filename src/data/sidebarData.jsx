@@ -1,5 +1,8 @@
-import { FiArchive, FiHome, FiPackage, FiUsers } from "react-icons/fi";
+/**
+ * Contém a lista completa dos itens e subitens da Sidebar.
+ */
 
+import { FiArchive, FiHome, FiPackage, FiUsers } from "react-icons/fi";
 export const sidebarData = [
   {
     items: [

@@ -51,7 +51,7 @@
 
 
     <title>
-      components/Icons/IconBox.jsx
+      components/Navbar/EntitiesChange.jsx
     </title>
 
     <!--[if lt IE 9]>
@@ -130,7 +130,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        components/Icons/IconBox.jsx
+        components/Navbar/EntitiesChange.jsx
       </h1>
       
 
@@ -141,40 +141,62 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * Componente de Icon Box. Alinha e parametriza
- * o ícone da Sidebar para que tenha alinhamento
- * e orientação padronizados.
- *  @module Icons
- */
+            <pre class="prettyprint source linenums"><code>import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuOptionGroup,
+  MenuItemOption,
+  useBreakpointValue,
+  Button,
+} from "@chakra-ui/react";
 
-import { Flex, Icon } from "@chakra-ui/react";
 
 /**
- * Flex contendo parâmetros para alinhamento, bem
- * como uso de ícone com ajustes próprios de fonte.
- * @method IconBox
- * @memberof module:Icons
- * @param {Object} props parâmetros do componente
- * @param {Object} children definições de ícone
- * @param {Object} fontSize tamanho da fonte da label
- * do ícone
- * @returns {Container} contendo as propriedades do ícone
- * e de sua respectivas label, passadas como props
- *
- */
-export default function IconBox(props) {
-  const { children, fontSize, ...rest } = props;
-
+   * Realiza a mudança de entity (localidade) e transfere o valor como propriedade
+   * em um objeto componentizado.
+   * @memberof module:Navbar
+   * @param {Object} options lista de entidades
+   * @param {Object} value valor da "entity", que define a
+   * localização do projeto (BA ou TO)
+   * @param {Function} setValue função para definir o valor
+   * @param {Object} title título da entidade (definido "localidade" como padrão)
+   * 
+   */
+export function EntitiesChange({
+  options = null,
+  value = null,
+  setValue = null,
+  title = null,
+  ...props
+}) {
+  const size = useBreakpointValue({ base: "xs", sm: "xs", md: "md" });
   return (
-    &lt;Flex
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"12px"}
-      {...rest}
-    >
-      &lt;Icon as={children} fontSize={fontSize}>&lt;/Icon>
-    &lt;/Flex>
+    &lt;>
+      {Array.isArray(options) &amp;&amp; (
+        &lt;Menu closeOnSelect={true}>
+          &lt;MenuButton as={Button} colorScheme="brand1" size={size} {...props}>
+            {(Array.isArray(options) &amp;&amp;
+              options.find((option) => option.value === value)?.label) ||
+              "Selecione..."}
+          &lt;/MenuButton>
+          &lt;MenuList minWidth="240px">
+            &lt;MenuOptionGroup defaultValue={value} title={title} type="radio">
+              {Array.isArray(options) &amp;&amp;
+                options.map((option) => (
+                  &lt;MenuItemOption
+                    value={option.value}
+                    onClick={(e) => setValue(e.currentTarget.value)}
+                    key={`entity[${option.value}]`}
+                  >
+                    {option.label}
+                  &lt;/MenuItemOption>
+                ))}
+            &lt;/MenuOptionGroup>
+          &lt;/MenuList>
+        &lt;/Menu>
+      )}
+    &lt;/>
   );
 }
 </code></pre>

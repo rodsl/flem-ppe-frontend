@@ -25,11 +25,9 @@ export const BreadcrumbBar = ({ divider = ChevronRightIcon, entities }) => {
   const router = useRouter();
   const linkPath = router.asPath.split("/");
   linkPath.shift();
-
   const pathArray = linkPath.map((path, i) => {
     return { breadcrumb: path.replace("-"," "), href: "/" + linkPath.slice(0, i + 1).join("/") };
   });
-  
   return (
     <HStack
       spacing={2}

@@ -1,3 +1,6 @@
+/**
+ * Notificações de toast padrão.
+ */
 export const toastData = {
     Signin: "Try signing with a different account.",
     OAuthSignin: "Try signing with a different account.",

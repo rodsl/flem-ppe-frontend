@@ -1,3 +1,8 @@
+/**
+ * Página de Dashboard
+ * @module dashboard
+ */
+
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +23,13 @@ import { IoWallet } from "react-icons/io5";
 import { FiCalendar } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 
+/**
+ * Renderiza a Página de Dashboard.
+ * @method Dashboard
+ * @memberof module:dashboard
+ * @param {Object} entity a "entidade" ou "localização" do Projeto Primeiro Emprego
+ * @returns {Component} página renderizada
+ */
 export default function Dashboard({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
@@ -32,7 +44,6 @@ export default function Dashboard({ entity, ...props }) {
       setTimeout(onLoad, 1000);
     }
   }, [asPath]);
-
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
       <SimpleGrid columns={[1, 2, 2, 4]} spacing={6} pb={0} mb={8}>
@@ -50,7 +61,6 @@ export default function Dashboard({ entity, ...props }) {
     </AnimatePresenceWrapper>
   );
 }
-
 export async function getServerSideProps(context) {
   const {
     params: { entity },

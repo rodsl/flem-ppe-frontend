@@ -51,7 +51,7 @@
 
 
     <title>
-      components/Icons/IconBox.jsx
+      components/Cards/index.jsx
     </title>
 
     <!--[if lt IE 9]>
@@ -130,7 +130,7 @@
     <div id="main" class="main-content">
       
       <h1 id='page-title' class="page-title">
-        components/Icons/IconBox.jsx
+        components/Cards/index.jsx
       </h1>
       
 
@@ -142,38 +142,70 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Componente de Icon Box. Alinha e parametriza
- * o ícone da Sidebar para que tenha alinhamento
- * e orientação padronizados.
- *  @module Icons
+ * Componente de Cards do Dashboard
+ * @module Cards
  */
 
-import { Flex, Icon } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
+import IconBox from "components/Icons/IconBox";
+import { Component } from "react";
 
+
+/*************** WIP ******************/
 /**
- * Flex contendo parâmetros para alinhamento, bem
- * como uso de ícone com ajustes próprios de fonte.
- * @method IconBox
- * @memberof module:Icons
- * @param {Object} props parâmetros do componente
- * @param {Object} children definições de ícone
- * @param {Object} fontSize tamanho da fonte da label
- * do ícone
- * @returns {Container} contendo as propriedades do ícone
- * e de sua respectivas label, passadas como props
+ * Cria um card do Dashboard.
+ * @method Card
+ * @memberof module:Cards
+ * @param {Object} icon Ícone decorativo
+ * @param {Component} children componente-filho do card
+ * @returns componente de card.
  *
  */
-export default function IconBox(props) {
-  const { children, fontSize, ...rest } = props;
-
+export function Card({ icon, children, ...props }) {
   return (
     &lt;Flex
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"12px"}
-      {...rest}
+      {...props}
+      p={5}
+      bg="white"
+      w="100%"
+      alignItems="center"
+      rounded="lg"
+      shadow="sm"
+      justifyContent="space-between"
     >
-      &lt;Icon as={children} fontSize={fontSize}>&lt;/Icon>
+      &lt;Flex
+        w="100%"
+        flexDir="column"
+        alignItems="flex-start"
+        justifyContent="center"
+        flex="1 1 0%"
+      >
+        &lt;Heading as="h3" color="gray.400" size="sm" pb={1}>
+          Today's Money
+        &lt;/Heading>
+        &lt;Flex alignItems="center">
+          &lt;Heading as="h3" color="gray.700" size="md">
+            $53,000
+          &lt;/Heading>
+          &lt;Heading as="h3" color="green.400" size="sm">
+            +55%
+          &lt;/Heading>
+        &lt;/Flex>
+        {children &amp;&amp; (
+          &lt;Flex pt={2} pe={2} maxW="80%">
+            {children}
+          &lt;/Flex>
+        )}
+      &lt;/Flex>
+      &lt;IconBox
+        h={children ? "100%" : "45px"}
+        w={children ? "70%" : "45px"}
+        fontSize="2xl"
+        bg="brand1.400"
+        color="white"
+      >
+        {icon}
+      &lt;/IconBox>
     &lt;/Flex>
   );
 }
