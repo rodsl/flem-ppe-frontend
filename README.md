@@ -31,7 +31,7 @@ Essa aplicação tem como função servir de Frontend para o Portal Primeiro Emp
 - [Documentação](#documentação)
 - [Notas de versão](#notas-de-versão)
 - [Como usar este repositório](#como-usar-este-repositório)
- 	- [Variáveis de Ambiente](#variáveis-de-ambiente)
+  - [Variáveis de Ambiente](#variáveis-de-ambiente)
 - [Autores](#autores)
 - [Contato](#contato)
 - [Licença](#licença)
@@ -45,7 +45,6 @@ Essa aplicação tem como função servir de Frontend para o Portal Primeiro Emp
 - Promover documentação clara e densa o suficiente para discriminar processos e permitir que o Software seja facilmente mantido por qualquer profissional da área de Desenvolvimento
 
 <br>
-
 
 ## Características
 
@@ -71,26 +70,26 @@ Essa aplicação tem como função servir de Frontend para o Portal Primeiro Emp
 
 ## Stack
 
- - **Linguagem Principal:** [Javascript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
- - **Linguagens de Marcação e Estilo:** [HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML), [CSS](https://developer.mozilla.org/pt-BR/docs/Web/CSS), [SASS](https://sass-lang.com/documentation)
- - **Framework Principal:** [Node.js](https://nodejs.org/en/docs/)
- - **Framework estrutural:** [Next.js](https://nextjs.org/docs/getting-started)
- - **Framework de design:** [Chakra UI](https://chakra-ui.com/docs/getting-started)
- - **Gerenciador de Bibliotecas:** [Yarn](https://yarnpkg.com/getting-started)
- - **Bibliotecas:** Para uma lista completa de bibliotecas e dependências nos mais variados escopos, conferir o arquivo [package.json](https://github.com/frtechdev/flem-ppe-frontend/blob/master/package.json).
+- **Linguagem Principal:** [Javascript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
+- **Linguagens de Marcação e Estilo:** [HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML), [CSS](https://developer.mozilla.org/pt-BR/docs/Web/CSS), [SASS](https://sass-lang.com/documentation)
+- **Framework Principal:** [Node.js](https://nodejs.org/en/docs/)
+- **Framework estrutural:** [Next.js](https://nextjs.org/docs/getting-started)
+- **Framework de design:** [Chakra UI](https://chakra-ui.com/docs/getting-started)
+- **Gerenciador de Bibliotecas:** [Yarn](https://yarnpkg.com/getting-started)
+- **Bibliotecas:** Para uma lista completa de bibliotecas e dependências nos mais variados escopos, conferir o arquivo [package.json](https://github.com/frtechdev/flem-ppe-frontend/blob/master/package.json).
 
 <br>
 
- ## Documentação
+## Documentação
 
 - [Quadros Kanban da Metodologia Ágil](https://frtechnologies.notion.site/Quadro-Kanban-c6994bfdb6ba4ab98434b805635d3fe7)
 - [Roadmap](https://miro.com/app/board/uXjVOMzAe7s=/?invite_link_id=872842801580)
 - [Documentação das Regras de Negócio](https://frtechnologies.notion.site/Documenta-o-de-Refer-ncia-das-Regras-de-Neg-cio-a66eae4edf5045e4b17e414647500c31)
 - Diagramas
-	- [Modelo Conceitual de Fluxo de Cadastramento de Beneficiários](https://miro.com/app/board/uXjVONgTB50=/?invite_link_id=986301656145)
-	- [Diagrama de Macroprocessos](https://miro.com/app/board/uXjVOOJxdWc=/?invite_link_id=184583999527)
-	- [Mapa de Macroprocessos](https://miro.com/app/board/uXjVOOroXvA=/?invite_link_id=576187018086)
-	- Diagrama de Banco de Dados
+  - [Modelo Conceitual de Fluxo de Cadastramento de Beneficiários](https://miro.com/app/board/uXjVONgTB50=/?invite_link_id=986301656145)
+  - [Diagrama de Macroprocessos](https://miro.com/app/board/uXjVOOJxdWc=/?invite_link_id=184583999527)
+  - [Mapa de Macroprocessos](https://miro.com/app/board/uXjVOOroXvA=/?invite_link_id=576187018086)
+  - Diagrama de Banco de Dados
 
 Documentação adicional pode ser encontrada [aqui](https://frtechdev.github.io/flem-ppe-frontend/).
 
@@ -124,7 +123,6 @@ Para testar a aplicação, crie um arquivo .env com as seguintes variáveis de a
 
 Para mais informações sobre as variáveis de ambiente e como elas se comportam, por gentileza verifique a documentação das bibliotecas [activedirectory](https://www.npmjs.com/package/activedirectory) e [next-auth](https://www.npmjs.com/package/next-auth).
 
-
 <br>
 
 ## Autores
@@ -138,7 +136,7 @@ Para mais informações sobre as variáveis de ambiente e como elas se comportam
 ## Contato
 
 Se você gostou desse projeto, nos dê uma <a href="https://github.com/frtechdev/flem-ppe-frontend" data-icon="octicon-star" aria-label="Star frtechdev/flem-ppe-frontend on GitHub">estrela</a>. Isso agirá como um indicador da qualidade dos nossos serviços. <br>
-Para contato, envie um email a: <a href="mailto:devops@frtechnologies.com.br">devops@frtechnologies.com.br</a> 
+Para contato, envie um email a: <a href="mailto:devops@frtechnologies.com.br">devops@frtechnologies.com.br</a>
 
 <br>
 
