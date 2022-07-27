@@ -1,11 +1,12 @@
 {
   "name": "portal_ppe_flem",
   "private": true,
-  "version": "0.0.16-220603",
+  "version": "0.0.17-220727dx",
+  "license": "MIT",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "next lint",
     "docs": "jsdoc --readme README.md -c jsdoc-config.json"
   },
