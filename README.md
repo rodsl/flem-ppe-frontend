@@ -1,6 +1,6 @@
 <hr>
 <h1 align="center">flem-ppe-frontend</h1>
-<p align=center><i align="center">Aplicação Frontend para o Programa Primeiro Emprego, da FLEM</i></p>
+<p align=center><i align="center">Aplicação Frontend para o Projeto Primeiro Emprego, da FLEM</i></p>
 <hr>
 
 <div align="center">
@@ -40,8 +40,8 @@ Essa aplicação tem como função servir de Frontend para o Portal Primeiro Emp
 
 ## Objetivo
 
-- Apresentar uma nova solução informatizada que facilite, dinamize e aumente a produtividade dos sistemas computacionais que giram em torno do Programa Primeiro Emprego
-- Fornecer de maneira segura, confiável e precisa, dados relacionados ao Programa Primeiro Emprego, seguindo os Princípios Básicos de Desenvolvimento, para garantir a sustentabilidade, manutenibilidade e confiabilidade do Software, melhorando sua performance no geral
+- Apresentar uma nova solução informatizada que facilite, dinamize e aumente a produtividade dos sistemas computacionais que giram em torno do Projeto Primeiro Emprego
+- Fornecer de maneira segura, confiável e precisa, dados relacionados ao Projeto Primeiro Emprego, seguindo os Princípios Básicos de Desenvolvimento, para garantir a sustentabilidade, manutenibilidade e confiabilidade do Software, melhorando sua performance no geral
 - Promover documentação clara e densa o suficiente para discriminar processos e permitir que o Software seja facilmente mantido por qualquer profissional da área de Desenvolvimento
 
 <br>
@@ -108,18 +108,18 @@ Em breve.
 
 Para testar a aplicação, crie um arquivo .env com as seguintes variáveis de ambiente:
 
-| Variável                 | Uso  |
-| ------------------- | -------|
-|`LDAP_URI=`          | define o endereço do servidor de Domínio do AD para autenticação da API de login via AD. |
-|`LDAP_BASE_DN=`          | define um ponto de busca pelas credenciais dentro da organização ou OU |
-|`LDAP_USERNAME=`          | define o nome de usuário da autenticação |
-|`LDAP_PASSWORD=`          | define a senha da autenticação |
+| Variável         | Uso                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| `LDAP_URI=`      | define o endereço do servidor de Domínio do AD para autenticação da API de login via AD. |
+| `LDAP_BASE_DN=`  | define um ponto de busca pelas credenciais dentro da organização ou OU                   |
+| `LDAP_USERNAME=` | define o nome de usuário da autenticação                                                 |
+| `LDAP_PASSWORD=` | define a senha da autenticação                                                           |
 
-| Variável                 | Uso  |
-| ------------------- | -------|
-|`NEXTAUTH_SECRET=`          | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação (NextAuth) |
-|`JWT_SECRET=`          | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação do JWT |
-|`NEXTAUTH_URL=`          | endereço base da aplicação (caso publicado na web) |
+| Variável           | Uso                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `NEXTAUTH_SECRET=` | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação (NextAuth) |
+| `JWT_SECRET=`      | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação do JWT     |
+| `NEXTAUTH_URL=`    | endereço base da aplicação (caso publicado na web)                                                                  |
 
 Para mais informações sobre as variáveis de ambiente e como elas se comportam, por gentileza verifique a documentação das bibliotecas [activedirectory](https://www.npmjs.com/package/activedirectory) e [next-auth](https://www.npmjs.com/package/next-auth).
 

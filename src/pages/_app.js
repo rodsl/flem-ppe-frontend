@@ -9,6 +9,8 @@ import { Global, css } from "@emotion/react";
 import Head from "next/head";
 import theme from "styles/theme";
 import { DashboardLayout } from "components/Layout/DashboardLayout";
+import "styles/editor.css"
+import "styles/pagePrint.css"
 
 const myTheme = extendTheme(theme);
 

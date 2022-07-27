@@ -1,21 +1,9 @@
-/**
- * Serviço de rota de API
- * @param {Object} path caminho da API
- * @param {Object} options especificações e parâmetros
- * @returns {Object} resposta HTTP
- */
-export const apiService = (path, options) => {
-  return new Promise((resolve, reject) => {
-    if (!path) {
-      reject(new Error("Path is required"));
-    }
-    const baseUrl = "/api/";
-    const url = baseUrl + path;
-    try {
-      const res = fetch(url, options);
-      resolve(res);
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
+import axiosClient from "axios";
+const { NEXT_PUBLIC_URL_PORTAL_PPE_BACKEND } = process.env;
+
+export const axios = axiosClient.create({
+  baseURL:  "/",
+  // baseURL: NEXT_PUBLIC_URL_PORTAL_PPE_BACKEND || "/",
+  timeout: 8000,
+  // headers: { "X-Custom-Header": "foobar" },
+});

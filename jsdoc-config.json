@@ -1,7 +1,7 @@
 {
   "source": {
     "include": ["src", "README.md"],
-    "includePattern": ".+\\.js(doc|x)?$", 
+    "includePattern": ".+\\.js(doc|x)?$",
     "excludePattern": "(node_modules/|docs)"
   },
 
@@ -45,7 +45,7 @@
         },
         {
           "name": "description",
-          "content": "Aplicação FrontEnd para o Portal Programa Primeiro Emprego, da FLEM"
+          "content": "Aplicação FrontEnd para o Portal Projeto Primeiro Emprego, da FLEM"
         }
       ],
       "search": {},

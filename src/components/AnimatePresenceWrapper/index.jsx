@@ -3,7 +3,7 @@
  * @module AnimatePresenceWrapper
  */
 
-import { Box } from "@chakra-ui/react";
+import { Box, Center, ScaleFade, Spinner } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Component } from "react";
 import { variants } from "styles/transitions";
@@ -22,9 +22,21 @@ export function AnimatePresenceWrapper({ children, isLoaded, router }) {
   return (
     <>
       {!isLoaded ? (
-        <>Carregando...</>
+        <>
+          <ScaleFade in={!isLoaded} initialScale={0.9} unmountOnExit>
+            <Center h="90vh">
+              <Spinner
+                boxSize={20}
+                color="brand1.500"
+                thickness="4px"
+                speed=".5s"
+                emptyColor="gray.200"
+              />
+            </Center>
+          </ScaleFade>
+        </>
       ) : (
-        <AnimatePresence>
+        <ScaleFade in={isLoaded} initialScale={0.9}>
           <motion.div
             key={router.route}
             initial="pageInitial"
@@ -34,7 +46,7 @@ export function AnimatePresenceWrapper({ children, isLoaded, router }) {
           >
             <Box p={5}>{children}</Box>
           </motion.div>
-        </AnimatePresence>
+        </ScaleFade>
       )}
     </>
   );

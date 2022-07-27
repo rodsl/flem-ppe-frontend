@@ -12,7 +12,7 @@ import {
   TagLabel,
   Text,
 } from "@chakra-ui/react";
-import axios from "axios";
+import { axios } from "services/apiService";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FiTrash } from "react-icons/fi";

@@ -10,22 +10,27 @@ import {
 
 export function InputTextBox({
   id,
-  errors,
+  formControl: {
+    trigger,
+    formState: { errors },
+    register,
+    setValue,
+  },
   label,
   type,
   placeholder,
-  register,
   required = "Obrigatório",
   validate,
   isLoaded = true,
   onChange,
+  colorScheme = "brand1",
+  shadow = "md",
   value,
-  setValue,
   ...props
 }) {
-  setValue ? setValue(id, value) : null;
+  value ? setValue(id, value) : null;
   return (
-    <Box>
+    <Box px={0.5}>
       <FormControl id={id} isInvalid={errors[id]}>
         <FormLabel>{label}</FormLabel>
         <Skeleton isLoaded={isLoaded} fadeDuration={0.5}>
@@ -38,6 +43,8 @@ export function InputTextBox({
               validate: validate,
               onChange: onChange,
             })}
+            colorScheme={colorScheme}
+            shadow={shadow}
             {...props}
           />
         </Skeleton>

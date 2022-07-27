@@ -26,11 +26,14 @@ export function CellInput({
 
   return (
     <Input
-      value={value}
+      value={value.replace("*", "")}
       onChange={onChange}
       onBlur={onBlur}
       variant="flushed"
       w="36"
+      rounded="md"
+      bgColor={(value.includes("*") || value === "") && "red.200"}
+      isInvalid={value.includes("*") || value === ""}
     />
   );
 }
