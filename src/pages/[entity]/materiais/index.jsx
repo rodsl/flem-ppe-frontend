@@ -6,28 +6,50 @@
 import {
   Box,
   Button,
+  Center,
+  chakra,
+  Divider,
   Flex,
   Heading,
   HStack,
   Icon,
   IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  ScaleFade,
+  Spinner,
   Stack,
   Tag,
   TagLabel,
   Text,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { signIn, signOut, getSession, useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { FiCheck, FiMoreHorizontal, FiPlus, FiX } from "react-icons/fi";
+import {
+  FiCheck,
+  FiEdit,
+  FiMoreHorizontal,
+  FiPlus,
+  FiTrash2,
+  FiUnlock,
+  FiX,
+} from "react-icons/fi";
 import { Table } from "components/Table";
 import { Overlay } from "components/Overlay";
 import { InputBox } from "components/Inputs/InputBox";
 import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { useForm } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
 import { InputTextBox } from "components/Inputs/InputTextBox";
+import { MenuIconButton } from "components/Menus/MenuIconButton";
 
 /**
  * Renderiza o cadastro de materiais
@@ -41,12 +63,18 @@ export default function Cadastro({ entity, ...props }) {
   const router = useRouter();
   const { asPath } = router;
   const session = useSession();
-  const [selectedRow, setSelectedRow] = useState();
+  const [selectedRow, setSelectedRow] = useState(null);
   const {
     isOpen: addMaterialIsOpen,
     onOpen: addMaterialOnOpen,
     onClose: addMaterialOnClose,
   } = useDisclosure();
+  const {
+    isOpen: excluirMaterialIsOpen,
+    onOpen: excluirMaterialOnOpen,
+    onClose: excluirMaterialOnClose,
+  } = useDisclosure();
+  const formSubmit = useDisclosure();
 
   const columns = useMemo(
     () => [
@@ -65,10 +93,42 @@ export default function Cadastro({ entity, ...props }) {
       {
         Header: "Ações",
         Cell: (props) => (
-          <IconButton
+          // <IconButton
+          //   icon={<FiMoreHorizontal />}
+          //   onClick={() => setSelectedRow(props?.row?.original)}
+          //   variant="outline"
+          //   colorScheme="brand1"
+          // />
+          <MenuIconButton
             icon={<FiMoreHorizontal />}
-            onClick={() => setSelectedRow(props?.row?.original)}
-            variant="outline"
+            menuItems={[
+              {
+                menuGroupLabel: null,
+                menuGroupButtons: [
+                  {
+                    text: "Editar",
+                    icon: <FiEdit />,
+                    onClick: () => {
+                      setSelectedRow(props.row.original);
+                      setValue(
+                        "nome_material",
+                        props.row.original.nome_material
+                      );
+                      setValue("descricao", props.row.original.descricao);
+                      addMaterialOnOpen();
+                    },
+                  },
+                  {
+                    text: "Excluir",
+                    icon: <FiTrash2 />,
+                    onClick: () => {
+                      setSelectedRow(props.row.original);
+                      excluirMaterialOnOpen();
+                    },
+                  },
+                ],
+              },
+            ]}
             colorScheme="brand1"
           />
         ),
@@ -117,14 +177,13 @@ export default function Cadastro({ entity, ...props }) {
     []
   );
 
-  const {
-    control,
-    handleSubmit,
-    register,
-    formState: { errors },
-    getValues,
-    reset,
-  } = useForm();
+  const formAddMaterial = useForm({
+    mode: "onChange",
+  });
+
+  const { isValid: formAddMaterialValidation } = useFormState({
+    control: formAddMaterial.control,
+  });
 
   const onSubmit = (formData) => {
     console.log(formData);
@@ -136,7 +195,9 @@ export default function Cadastro({ entity, ...props }) {
     } else {
       setTimeout(onLoad, 1000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asPath]);
+
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
       <Flex justifyContent="space-between" alignItems="center" pb={5}>
@@ -150,38 +211,59 @@ export default function Cadastro({ entity, ...props }) {
           Adicionar
         </Button>
       </Flex>
-      <Table data={data} columns={columns} />
+      <ScaleFade in={fetchTableData.isOpen} initialScale={0.9} unmountOnExit>
+        <Center h="90vh">
+          <Spinner
+            boxSize={20}
+            color="brand1.500"
+            thickness="4px"
+            speed=".5s"
+            emptyColor="gray.200"
+          />
+        </Center>
+      </ScaleFade>
+      <ScaleFade in={!fetchTableData.isOpen} initialScale={0.9} unmountOnExit>
+        <Table data={data} columns={columns} />
+      </ScaleFade>
       <Overlay
-        onClose={addMaterialOnClose}
-        // isOpen={true}
+        onClose={() => {
+          addMaterialOnClose();
+          if (selectedRow) {
+            formAddMaterial.reset({});
+            setSelectedRow(null);
+          }
+        }}
         isOpen={addMaterialIsOpen}
-        header="Adicionar Material"
+        header={selectedRow ? "Editar Material" : "Adicionar Material"}
         closeButton
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack>
+        <chakra.form onSubmit={formAddMaterial.handleSubmit(onSubmit)}>
+          <Stack spacing={4}>
             <InputBox
               id="nome_material"
-              register={register}
-              errors={errors}
               label="Nome do Material"
-              colorScheme="brand1"
+              formControl={formAddMaterial}
             />
             <InputTextBox
               id="descricao"
-              register={register}
-              errors={errors}
               label="Descrição"
-              colorScheme="brand1"
+              formControl={formAddMaterial}
               required={false}
             />
           </Stack>
           <HStack py={6} justifyContent="flex-end">
-            <Button colorScheme="brand1" type="submit">
-              Cadastrar
+            <Button
+              colorScheme="brand1"
+              type="submit"
+              isLoading={formSubmit.isOpen}
+              isDisabled={!formAddMaterialValidation}
+              loadingText="Salvando"
+              shadow="md"
+            >
+              {selectedRow ? "Salvar" : "Cadastrar"}
             </Button>
           </HStack>
-        </form>
+        </chakra.form>
       </Overlay>
     </AnimatePresenceWrapper>
   );
@@ -189,8 +271,8 @@ export default function Cadastro({ entity, ...props }) {
 
 /**
  * @method getServerSideProps
- * @param {*} context 
- * @returns 
+ * @param {*} context
+ * @returns
  */
 export async function getServerSideProps(context) {
   const {

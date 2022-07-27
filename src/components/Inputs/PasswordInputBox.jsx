@@ -1,5 +1,4 @@
 import {
-  background,
   Box,
   FormControl,
   FormErrorMessage,
@@ -14,31 +13,35 @@ import {
 import { forwardRef, useRef } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
-
- /**
-   * Cria uma Inpux Box de senha.
-   * @method PasswordInputBox
-   * @memberof module:Inputs
-   * @param {String} id id do formulário
-   * @param {Function} errors manipula as mensagens de erro
-   * @param {Object} register define parâmetros de register 
-   * @param {*} required marca a Box como um campo obrigatório (true)
-   * ou opcional (false) (padrão: "Obrigatório" - força o campo como
-   * obrigatório, com o texto "Obrigatório")
-   * @param {Object} validate validação
-   * @param {Function} onChange transmite um callback após a validação
-   * do campo
-   * @returns {Component} componente estilizado com máscara
-   */
+/**
+ * Cria uma Inpux Box de senha.
+ * @method PasswordInputBox
+ * @memberof module:Inputs
+ * @param {String} id id do formulário
+ * @param {Function} errors manipula as mensagens de erro
+ * @param {Object} register define parâmetros de register
+ * @param {*} required marca a Box como um campo obrigatório (true)
+ * ou opcional (false) (padrão: "Obrigatório" - força o campo como
+ * obrigatório, com o texto "Obrigatório")
+ * @param {Object} validate validação
+ * @param {Function} onChange transmite um callback após a validação
+ * do campo
+ * @returns {Component} componente estilizado com máscara
+ */
 export const PasswordInputBox = forwardRef(
   (
     {
       id,
-      errors,
-      register,
+      formControl: {
+        trigger,
+        formState: { errors },
+        register,
+        setValue,
+      },
       required = "Obrigatório",
       validate,
       onChange,
+      shadow = "md",
       ...props
     },
     ref
@@ -58,7 +61,7 @@ export const PasswordInputBox = forwardRef(
     };
 
     return (
-      <Box>
+      <Box px={0.5}>
         <FormControl id={id} isInvalid={errors[id]}>
           <FormLabel>Senha</FormLabel>
           <InputGroup>
@@ -80,6 +83,7 @@ export const PasswordInputBox = forwardRef(
                 validate: validate,
                 onChange: onChange,
               })}
+              shadow={shadow}
               {...props}
             />
           </InputGroup>

@@ -18,7 +18,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useTable, useFilters } from "react-table";
-import axios from "axios";
+import { axios } from "services/apiService";
 import { FilterInput } from "components/Table/FilterInput";
 
 function Table({ columns, data }) {
@@ -36,19 +36,19 @@ function Table({ columns, data }) {
     console.log(rest.Header);
     return (
       <>
-      <FilterInput
-        value={filterValue || ""}
-        onChange={(e) => {
-          setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-        }}
-        cleanFilter={()=>setFilter("")}
-        placeholder={`Pesquisar ${count} registro${count > 1 ? "s" : ""}...`}
-        filterTitle={Header}
+        <FilterInput
+          value={filterValue || ""}
+          onChange={(e) => {
+            setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+          }}
+          cleanFilter={() => setFilter("")}
+          placeholder={`Pesquisar ${count} registro${count > 1 ? "s" : ""}...`}
+          filterTitle={Header}
         >
-       <Box>{Header}</Box>
-      </FilterInput> 
+          <Box>{Header}</Box>
+        </FilterInput>
       </>
-    )
+    );
   }
 
   const filterTypes = useMemo(
@@ -96,9 +96,9 @@ function Table({ columns, data }) {
           <Tr key={group.id} {...group.getHeaderGroupProps()}>
             {group.headers.map((column) => (
               <Th key={column.id} {...column.getHeaderProps()}>
-                  {column.canFilter
-                    ? column.render("Filter")
-                    : column.render("Header")}
+                {column.canFilter
+                  ? column.render("Filter")
+                  : column.render("Header")}
               </Th>
             ))}
           </Tr>
@@ -110,7 +110,11 @@ function Table({ columns, data }) {
           return (
             <Tr key={row.id} {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                return <Td key={cell.id} {...cell.getCellProps()}>{cell.render("Cell")}</Td>;
+                return (
+                  <Td key={cell.id} {...cell.getCellProps()}>
+                    {cell.render("Cell")}
+                  </Td>
+                );
               })}
             </Tr>
           );
@@ -120,7 +124,9 @@ function Table({ columns, data }) {
         {footerGroups.map((group) => (
           <Tr key={group.id} {...group.getFooterGroupProps()}>
             {group.headers.map((column) => (
-              <Td key={column.id} {...column.getFooterProps()}>{column.render("Footer")}</Td>
+              <Td key={column.id} {...column.getFooterProps()}>
+                {column.render("Footer")}
+              </Td>
             ))}
           </Tr>
         ))}

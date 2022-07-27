@@ -24,7 +24,7 @@ import { useEffect } from "react";
    * @returns {Component} Sidebar Item estilizado
    * 
    */
-export function NavItem({
+export function SidebarItem({
   icon,
   title,
   subItems,

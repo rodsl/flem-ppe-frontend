@@ -1,19 +1,6 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  IconButton,
-  Portal,
-  Tag,
-  TagLabel,
-  Text,
-} from "@chakra-ui/react";
-import axios from "axios";
+import { axios } from "services/apiService";
 import { Dropzone } from "components/Dropzone";
-import { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { FiTrash } from "react-icons/fi";
+import { useState } from "react";
 
 const getColor = (props) => {
   if (props.isDragAccept) {
@@ -28,30 +15,12 @@ const getColor = (props) => {
   return "gray.300";
 };
 
-// const Container = styled.div`
-//   flex: 1;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 20px;
-//   border-width: 2px;
-//   border-radius: 2px;
-//   border-color: ${props => getColor(props)};
-//   border-style: dashed;
-//   background-color: #fafafa;
-//   color: #bdbdbd;
-//   outline: none;
-//   transition: border .24s ease-in-out;
-// `;
-
 export default function StyledDropzone() {
   const [uploadProgress, setUploadProgress] = useState();
-  const onSubmit = async (data) => {
-    console.log(data);
-    const formData = new FormData();
-    // Object.keys(files).map((key, idx) => formData.append(key, files[key]));
-    formData.append("file", data[0]);
 
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("file", data[0]);
     const config = {
       headers: { "Content-Type": "multipart/form-data" },
       onUploadProgress: (event) => {
@@ -59,7 +28,7 @@ export default function StyledDropzone() {
           `Current progress:`,
           Math.round((event.loaded * 100) / event.total)
         );
-        setUploadProgress(Math.round((event.loaded * 100) / event.total))
+        setUploadProgress(Math.round((event.loaded * 100) / event.total));
       },
     };
     axios

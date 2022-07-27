@@ -43,6 +43,7 @@ export default function Dashboard({ entity, ...props }) {
     } else {
       setTimeout(onLoad, 1000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asPath]);
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
