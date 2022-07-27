@@ -12,8 +12,8 @@ module.exports = (phase) => {
         },
         {
           source: "/",
-          destination: "/ba",
-          permanent: true,
+          destination: "/ba/dashboard",
+          permanent: false,
         },
       ];
     },

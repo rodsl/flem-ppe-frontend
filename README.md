@@ -108,18 +108,17 @@ Em breve.
 
 Para testar a aplicação, crie um arquivo .env com as seguintes variáveis de ambiente:
 
-| Variável         | Uso                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------- |
-| `LDAP_URI=`      | define o endereço do servidor de Domínio do AD para autenticação da API de login via AD. |
-| `LDAP_BASE_DN=`  | define um ponto de busca pelas credenciais dentro da organização ou OU                   |
-| `LDAP_USERNAME=` | define o nome de usuário da autenticação                                                 |
-| `LDAP_PASSWORD=` | define a senha da autenticação                                                           |
+| Variável                 | Uso  |
+| ------------------- | -------|
+|`LDAP_URI=`          | define o endereço do servidor de Domínio do AD para autenticação da API de login via AD. |
+|`LDAP_BASE_DN=`          | define um ponto de busca pelas credenciais dentro da organização ou OU |
+|`LDAP_USERNAME=`          | define o nome de usuário da autenticação |
+|`LDAP_PASSWORD=`          | define a senha da autenticação |
+|`NEXTAUTH_SECRET=`          | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação (NextAuth) |
+|`JWT_SECRET=`          | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação do JWT |
+|`NEXTAUTH_URL=`          | endereço base da aplicação (caso publicado na web) |
 
-| Variável           | Uso                                                                                                                 |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `NEXTAUTH_SECRET=` | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação (NextAuth) |
-| `JWT_SECRET=`      | define uma chave criptográfica de 32 caracteres necessária para descriptografar e validar a autenticação do JWT     |
-| `NEXTAUTH_URL=`    | endereço base da aplicação (caso publicado na web)                                                                  |
+Para testar a aplicação sem envolver o processo de autenticação, defina como "false" o valor de "Dashboard.auth" em "/src/pages/entity/dashboard/index.jsx".
 
 Para mais informações sobre as variáveis de ambiente e como elas se comportam, por gentileza verifique a documentação das bibliotecas [activedirectory](https://www.npmjs.com/package/activedirectory) e [next-auth](https://www.npmjs.com/package/next-auth).
 
