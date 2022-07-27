@@ -1,10 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  Box,
   Button,
-  Collapse,
   Flex,
   Heading,
   IconButton,
@@ -12,20 +9,15 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  Spacer,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Table } from "components/Table";
-import { LineChart } from "components/Charts/LineChart";
-import { IoWallet } from "react-icons/io5";
-import { FiCalendar, FiEdit, FiMoreHorizontal, FiPlus } from "react-icons/fi";
+import { FiMoreHorizontal, FiPlus } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { Table2 } from "components/Table/Table2";
-import axios from "axios";
+import { axios } from "services/apiService";
 import { Dropzone } from "components/Dropzone";
 
 export default function Beneficiarios({ entity, ...props }) {
@@ -33,26 +25,12 @@ export default function Beneficiarios({ entity, ...props }) {
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
-  useEffect(() => {
-    if (entity === null) {
-      router.push("/ba/dashboard");
-    } else {
-      setTimeout(onLoad, 1000);
-    }
-  }, [asPath]);
-
   const [uploadProgress, setUploadProgress] = useState(null);
   const [controller, setController] = useState(null);
-
-  useEffect(() => {
-    setController(new AbortController());
-  }, []);
 
   const onSubmit = async (data) => {
     const formData = new FormData();
     Object.keys(data).map((key, idx) => formData.append(`files`, data[key]));
-    // formData.append("file", data[0]);
-
     const config = {
       headers: { "Content-Type": "multipart/form-data" },
       signal: controller.signal,
@@ -65,7 +43,7 @@ export default function Beneficiarios({ entity, ...props }) {
       },
     };
     axios
-      .post("/api/upload", formData, config)
+      .post(`/api/${entity}/beneficiarios/files/upload`, formData, config)
       .then(({ status, data }) => {
         if (status === 200) {
           router.push(
@@ -82,7 +60,6 @@ export default function Beneficiarios({ entity, ...props }) {
         return console.log(err.message);
       });
   };
-  console.log(router.asPath);
   const columns = useMemo(
     () => [
       {
@@ -139,7 +116,6 @@ export default function Beneficiarios({ entity, ...props }) {
     ],
     []
   );
-
   const data = useMemo(
     () => [
       {
@@ -182,6 +158,19 @@ export default function Beneficiarios({ entity, ...props }) {
     []
   );
 
+  useEffect(() => {
+    if (entity === null) {
+      router.push("/ba/dashboard");
+    } else {
+      setTimeout(onLoad, 1000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asPath]);
+
+  useEffect(() => {
+    setController(new AbortController());
+  }, []);
+
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
       <Flex justifyContent="space-between" alignItems="center" pb={5}>
@@ -195,11 +184,9 @@ export default function Beneficiarios({ entity, ...props }) {
           Importar
         </Button>
       </Flex>
-
       <SimpleGrid>
         <Table columns={columns} data={data} />
       </SimpleGrid>
-
       <Modal
         closeOnOverlayClick={false}
         isOpen={isOpen}

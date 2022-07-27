@@ -6,6 +6,9 @@ export function SelectCellInput({
   row: { index },
   column: { id },
   updateMyData, // This is a custom function that we supplied to our table instance
+  placeholder,
+  isInvalid,
+  children,
 }) {
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
@@ -24,17 +27,22 @@ export function SelectCellInput({
     setValue(initialValue);
   }, [initialValue]);
 
+  
   return (
     <Select
+      bg={(value.includes("*") || value === "") && "red.200"}
+      rounded="lg"
       value={value}
       onChange={onChange}
       onBlur={onBlur}
       variant="flushed"
-      w="36"
+      minW="36"
+      placeholder={placeholder}
+      isInvalid={value.includes("*") || value === ""}
+      _focus
+      maxW="80"
     >
-      <option value="option1">Option 1</option>
-      <option value="option2">Option 2</option>
-      <option value="option3">Option 3</option>
+      {children}
     </Select>
   );
 }

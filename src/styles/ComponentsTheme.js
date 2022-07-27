@@ -7,12 +7,12 @@ export const Button = {
   variants: {
     solid: ({ colorScheme }) => ({
       _focus: {
-        "box-shadow": `0 0 0 3px var(--chakra-colors-${colorScheme}-300)`,
+        boxShadow: `0 0 0 3px var(--chakra-colors-${colorScheme}-300)`,
       },
     }),
     outline: ({ colorScheme }) => ({
       _focus: {
-        "box-shadow": `0 0 0 3px var(--chakra-colors-${colorScheme}-300)`,
+        boxShadow: `0 0 0 3px var(--chakra-colors-${colorScheme}-300)`,
       },
     }),
   },
@@ -51,7 +51,7 @@ export const Input = {
         shadow: "base",
         _focus: {
           borderColor: `${colorScheme}.500`,
-          "box-shadow": `0 0 0 1px var(--chakra-colors-${colorScheme}-500)`,
+          boxShadow: `0 0 0 1px var(--chakra-colors-${colorScheme}-500)`,
         },
       },
     }),
@@ -73,7 +73,7 @@ export const Select = {
         shadow: "base",
         _focus: {
           borderColor: `${colorScheme}.500`,
-          "box-shadow": `0 0 0 1px var(--chakra-colors-${colorScheme}-500)`,
+          boxShadow: `0 0 0 1px var(--chakra-colors-${colorScheme}-500)`,
         },
       },
     }),

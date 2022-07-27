@@ -1,0 +1,9 @@
+div.editor-class, .wrapper-class,.rdw-editor-wrapper {
+
+    padding: 0 0.5rem;
+    height: 100%;
+  }
+  div.DraftEditor-editorContainer,
+  div.public-DraftEditor-content {
+    height: 100%;
+  }

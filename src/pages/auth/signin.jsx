@@ -36,14 +36,7 @@ export default function Signin({ csrfToken, ...props }) {
   const { error } = useRouter().query;
   const toastPosition = useBreakpointValue({ base: "top", sm: "top-right" });
   const toast = useToast();
-  const {
-    control,
-    handleSubmit,
-    register,
-    formState: { errors },
-    getValues,
-    reset,
-  } = useForm();
+  const signInForm = useForm();
 
   const onSubmit = async (data) => {
     // console.log(data);
@@ -134,7 +127,7 @@ export default function Signin({ csrfToken, ...props }) {
               })}
               px={4}
             >
-              Portal de Administração e Monitoramento do Programa Primeiro
+              Portal de Administração e Monitoramento do Projeto Primeiro
               Emprego
             </Heading>
 
@@ -176,20 +169,16 @@ export default function Signin({ csrfToken, ...props }) {
           }}
         >
           <Stack spacing="6">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={signInForm.handleSubmit(onSubmit)}>
               <Stack spacing="5">
                 <InputBox
                   id="username"
-                  type="text"
-                  errors={errors}
                   label="Usuário"
-                  register={register}
+                  formControl={signInForm}
                 />
-
                 <PasswordInputBox
                   id="password"
-                  errors={errors}
-                  register={register}
+                  formControl={signInForm}
                 />
               </Stack>
               <HStack justify="flex-end" my={4}>

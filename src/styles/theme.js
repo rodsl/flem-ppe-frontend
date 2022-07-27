@@ -4,27 +4,30 @@
 
 import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
-import { Button, Drawer, FormLabel, Input, Select, Modal } from "./ComponentsTheme";
+import {
+  Button,
+  Drawer,
+  FormLabel,
+  Input,
+  Select,
+  Modal,
+} from "./ComponentsTheme";
 
 const theme = extendTheme({
   initialColorMode: "light",
-  // fonts: {
-  //   body: `Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
-  //   // body: `Helvetica, sans-serif`
-  // },
   colors: {
     brand1: {
-      "50": "#ECF0F9",
-      "100": "#C9D6ED",
-      "200": "#A7BCE2",
-      "300": "#84A2D7",
-      "400": "#6188CC",
-      "500": "#3F6DC0",
-      "600": "#32579A",
-      "700": "#264273",
-      "800": "#192C4D",
-      "900": "#0D1626"
-    }
+      50: "#ECF0F9",
+      100: "#C9D6ED",
+      200: "#A7BCE2",
+      300: "#84A2D7",
+      400: "#6188CC",
+      500: "#3F6DC0",
+      600: "#32579A",
+      700: "#264273",
+      800: "#192C4D",
+      900: "#0D1626",
+    },
   },
   fontWeights: {
     normal: 400,
@@ -47,15 +50,20 @@ const theme = extendTheme({
       },
       body: {
         bg: mode("gray.50", "gray.800")(props),
-        fontFamily: 'Helvetica, sans-serif'
+        fontFamily: "Helvetica, sans-serif",
       },
       html: {
-        fontFamily: 'Helvetica, sans-serif'
-      }
+        fontFamily: "Helvetica, sans-serif",
+      },
     }),
   },
   components: {
-    Button, Drawer, FormLabel, Input, Select, Modal
+    Button,
+    Drawer,
+    FormLabel,
+    Input,
+    Select,
+    Modal,
   },
 });
 
