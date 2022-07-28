@@ -26,12 +26,8 @@ const handler = async (req, res) => {
     case "GET":
       await getFuncionariosRh(req, res);
       break;
-    case "POST":
-      await addSituacaoVaga(req, res);
-      break;
-
     default:
-      res.status(405).send({ message: "Only GET or POST requests allowed" });
+      res.status(405).send({ message: "Only GET requests allowed" });
       break;
   }
 };
@@ -41,41 +37,12 @@ export default allowCors(handler);
 const getFuncionariosRh = async (req, res) => {
   const { entity, ...params } = req.query;
   try {
-    const query = await prisma.ba_Colaboradores_Cr.findMany({
-      where: {
-        excluido: false,
-      },
-      orderBy: {
-        nome: "asc",
-      },
-    });
-    return res.status(200).json(query);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error });
-  }
-};
-
-const addFuncionarios = async (req, res) => {
-  const { entity, nome, cpf, matriculaFlem, matriculaSaeb } = req.query;
-  const { data: benef } = await axios.get(
-    "http://localhost:3001/api/funcionarios",
-    {
-      params: {
-        id_situacao: 1,
-        id_departamento: 125,
-        condition: "AND",
-      },
-    }
-  );
-  try {
-    const query = await prisma.ba_Colaboradores_Cr.createMany({
-      data: benef.map((ben) => ({
-        nome: ben.func_nome,
-        cpf: ben.func_cpf,
-        matriculaFlem: ben.func_matricula,
-      })),
-    });
+    const { data: query } = await axios.get(
+      "http://localhost:3001/api/funcionarios",
+      {
+        params,
+      }
+    );
     return res.status(200).json(query);
   } catch (error) {
     console.log(error);

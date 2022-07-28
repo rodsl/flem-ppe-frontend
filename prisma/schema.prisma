@@ -71,13 +71,13 @@ model Ba_Escritorio_Regional {
 }
 
 model Ba_Monitores {
-  id                    String                  @id @default(cuid())
-  matricula             Int                     @unique
-  excluido              Boolean                 @default(false)
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  escritorioRegional    Ba_Escritorio_Regional? @relation(fields: [escritorio_RegionalId], references: [id])
-  escritorio_RegionalId String?
+  id                 String                   @id @default(cuid())
+  matricula          Int                      @unique
+  nome               String
+  excluido           Boolean                  @default(false)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  escritoriosRegionais Ba_Escritorio_Regional[]
 }
 
 model Ba_Municipios {

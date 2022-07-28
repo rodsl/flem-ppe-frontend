@@ -1,4 +1,5 @@
 import { prisma } from "services/prisma/prismaClient";
+import { axios } from "services/apiService";
 
 const allowCors = (fn) => async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", true);
@@ -23,16 +24,16 @@ const allowCors = (fn) => async (req, res) => {
 const handler = async (req, res) => {
   switch (req.method) {
     case "GET":
-      await getEscritoriosRegionais(req, res);
+      await getMonitores(req, res);
       break;
     case "POST":
-      await addEscritorioRegional(req, res);
+      await addMonitor(req, res);
       break;
     case "PUT":
-      await modifyFormacao(req, res);
+      await modifyMonitor(req, res);
       break;
     case "DELETE":
-      await deleteFormacao(req, res);
+      await deleteMaterial(req, res);
       break;
 
     default:
@@ -43,91 +44,80 @@ const handler = async (req, res) => {
   }
 };
 
-export default allowCors(handler);
-
-const getEscritoriosRegionais = async (req, res) => {
+const getMonitores = async (req, res) => {
   const { entity } = req.query;
   try {
-    const table = `${entity}_Escritorio_Regional`;
-    // const query = await prisma[table].findMany({
-    const query = await prisma.ba_Escritorio_Regional.findMany({
-      orderBy: [
-        {
-          nome: "asc",
-        },
-      ],
+    const table = `${entity}_Monitores`;
+    const query = await prisma[table].findMany({
       where: {
         excluido: {
           equals: false,
         },
       },
       include: {
-        monitores: true,
-        municipios: true,
+        escritoriosRegionais: true,
       },
+      orderBy: [
+        {
+          nome: "asc",
+        },
+      ],
     });
+
     return res.status(200).json(query);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: error });
   }
 };
 
-const addEscritorioRegional = async (req, res) => {
+const addMonitor = async (req, res) => {
   const { entity } = req.query;
-  const {
-    cep,
-    num_contato,
-    nome,
-    logradouro,
-    complemento,
-    bairro,
-    cidade,
-    uf,
-    email,
-  } = req.body;
+  const { monitor, erAssoc } = req.body;
+
   try {
-    const table = `${entity}_Escritorio_Regional`;
-    // const query = await prisma[table].upsert({
+    const table = `${entity}_Monitores`;
+
+    const {
+      data: [colabFromRh],
+    } = await axios.get("http://localhost:3001/api/funcionarios", {
+      params: {
+        matricula: parseInt(monitor),
+        condition: "AND",
+      },
+    });
+
     if (
       (await prisma[table].findFirst({
         where: {
-          nome,
+          matricula: colabFromRh.func_matricula,
           excluido: false,
         },
       })) !== null
     ) {
-      const error = new Error("escritório já existe");
+      const error = new Error("Monitor já existe");
       error.code = "P2002";
       throw error;
     }
     const query = await prisma[table].upsert({
-      create: {
-        cep,
-        num_contato,
-        nome,
-        logradouro,
-        complemento: complemento === "" ? null : complemento,
-        bairro,
-        cidade,
-        uf,
-        email,
+      where: {
+        matricula: colabFromRh.func_matricula,
       },
       update: {
+        nome: colabFromRh.func_nome,
         excluido: false,
-        cep,
-        num_contato,
-        logradouro,
-        complemento: complemento === "" ? null : complemento,
-        bairro,
-        cidade,
-        uf,
-        email,
+        escritoriosRegionais: {
+          connect: erAssoc.map(({ id }) => ({ id })),
+        },
       },
-      where: {
-        nome,
+      create: {
+        nome: colabFromRh.func_nome,
+        matricula: colabFromRh.func_matricula,
+        escritoriosRegionais: {
+          connect: erAssoc.map(({ id }) => ({ id })),
+        },
       },
     });
+
     return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {
@@ -136,45 +126,29 @@ const addEscritorioRegional = async (req, res) => {
         break;
 
       default:
-        console.log(error);
         res.status(500).json({ error: error });
         break;
     }
   }
 };
 
-const modifyFormacao = async (req, res) => {
+const modifyMonitor = async (req, res) => {
   const { entity } = req.query;
-  const {
-    cep,
-    num_contato,
-    nome,
-    logradouro,
-    complemento,
-    bairro,
-    cidade,
-    uf,
-    email,
-    id,
-  } = req.body;
+  const { id, erAssoc } = req.body;
+
   try {
-    const table = `${entity}_Escritorio_Regional`;
+    const table = `${entity}_Monitores`;
     const query = await prisma[table].update({
       data: {
-        cep,
-        num_contato,
-        nome,
-        logradouro,
-        complemento: complemento === "" ? null : complemento,
-        bairro,
-        cidade,
-        uf,
-        email,
+        escritoriosRegionais: {
+          set: erAssoc.map(({ id }) => ({ id })),
+        },
       },
       where: {
         id,
       },
     });
+
     return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {
@@ -189,13 +163,16 @@ const modifyFormacao = async (req, res) => {
   }
 };
 
-const deleteFormacao = async (req, res) => {
+const deleteMaterial = async (req, res) => {
   const { entity, id } = req.query;
   try {
-    const table = `${entity}_Formacao`;
+    const table = `${entity}_Monitores`;
     const query = await prisma[table].update({
       data: {
         excluido: true,
+        escritoriosRegionais: {
+          set: [],
+        },
       },
       where: {
         id,
@@ -203,7 +180,8 @@ const deleteFormacao = async (req, res) => {
     });
     return res.status(200).json(query);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: error });
   }
 };
+
+export default allowCors(handler);
