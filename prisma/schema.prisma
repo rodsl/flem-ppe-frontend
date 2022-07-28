@@ -226,4 +226,15 @@ model Ba_Beneficiarios {
   acoes         Ba_Acoes_Cr[]
   contatosAcoes Ba_Contatos_Acoes_Cr[]
   eventos       Ba_Eventos[]
+  materiais     Ba_Materiais[]
+}
+
+model Ba_Materiais {
+  id            String             @id @default(cuid())
+  nome          String             @unique
+  descricao     String?
+  excluido      Boolean            @default(false)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  beneficiarios Ba_Beneficiarios[]
 }
