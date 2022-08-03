@@ -11,7 +11,7 @@ import {
   HiOutlineOfficeBuilding,
   HiOutlineUserGroup,
 } from "react-icons/hi";
-import { TbBuildingCommunity, TbPerspective } from "react-icons/tb";
+import { TbBrandTelegram, TbBuildingCommunity, TbPerspective } from "react-icons/tb";
 import { MdWorkOutline } from "react-icons/md";
 import { BiBuildings } from "react-icons/bi";
 
@@ -119,6 +119,11 @@ export const sidebarData = [
       //     },
       //   ]
       // },
+      {
+        title: "Comunicados",
+        icon: TbBrandTelegram,
+        href: "/comunicados",
+      },
       {
         title: "Envio de Ofícios",
         icon: FiFileText,

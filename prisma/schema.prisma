@@ -71,12 +71,12 @@ model Ba_Escritorio_Regional {
 }
 
 model Ba_Monitores {
-  id                 String                   @id @default(cuid())
-  matricula          Int                      @unique
-  nome               String
-  excluido           Boolean                  @default(false)
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime                 @updatedAt
+  id                   String                   @id @default(cuid())
+  matricula            Int                      @unique
+  nome                 String
+  excluido             Boolean                  @default(false)
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
   escritoriosRegionais Ba_Escritorio_Regional[]
 }
 
@@ -215,18 +215,20 @@ model Ba_Colaboradores_Cr {
 }
 
 model Ba_Beneficiarios {
-  id            String                 @id @default(cuid())
-  nome          String
-  cpf           String
-  matriculaFlem Int                    @unique
-  matriculaSaeb Int                    @unique
-  excluido      Boolean                @default(false)
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
-  acoes         Ba_Acoes_Cr[]
-  contatosAcoes Ba_Contatos_Acoes_Cr[]
-  eventos       Ba_Eventos[]
-  materiais     Ba_Materiais[]
+  id                String                    @id @default(cuid())
+  nome              String
+  cpf               String
+  matriculaFlem     Int                       @unique
+  matriculaSaeb     Int                       @unique
+  excluido          Boolean                   @default(false)
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  acoes             Ba_Acoes_Cr[]
+  contatosAcoes     Ba_Contatos_Acoes_Cr[]
+  eventos           Ba_Eventos[]
+  materiais         Ba_Materiais[]
+  comunicados       Ba_Comunicados[]
+  enviosComunicados Ba_Comunicados_Enviados[]
 }
 
 model Ba_Materiais {
@@ -237,4 +239,40 @@ model Ba_Materiais {
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   beneficiarios Ba_Beneficiarios[]
+}
+
+model Ba_Comunicados {
+  id                     String                     @id @default(cuid())
+  codComunicado          Int                        @default(autoincrement())
+  assunto                String
+  conteudoEmail          String                     @db.Text
+  excluido               Boolean                    @default(false)
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  remetenteComunicado_Id String?
+  benefAssoc             Ba_Beneficiarios[]
+  enviosComunicados      Ba_Comunicados_Enviados[]
+  remetenteComunicado    Ba_Comunicados_Remetentes? @relation(fields: [remetenteComunicado_Id], references: [id])
+}
+
+model Ba_Comunicados_Remetentes {
+  id          String           @id @default(cuid())
+  nome        String
+  email       String           @unique
+  comunicados Ba_Comunicados[]
+  excluido    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Ba_Comunicados_Enviados {
+  id              String            @id @default(cuid())
+  enviado         Boolean           @default(false)
+  conteudoEmail   String            @db.Text
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  comunicado_Id   String?
+  beneficiario_Id String?
+  comunicado      Ba_Comunicados?   @relation(fields: [comunicado_Id], references: [id])
+  beneficiario    Ba_Beneficiarios? @relation(fields: [beneficiario_Id], references: [id])
 }
