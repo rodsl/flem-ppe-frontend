@@ -204,7 +204,7 @@ export default function Comunicados({ entity, ...props }) {
     control: formEmailRemetente.control,
   });
 
-  const onSubmitDemandante = (formData, e) => {
+  const onSubmitComunicado = (formData, e) => {
     comunicadoFormSubmit.onOpen();
     e.preventDefault();
     if (selectedRow) {
@@ -355,6 +355,7 @@ export default function Comunicados({ entity, ...props }) {
       .catch((error) => console.log(error))
       .finally(() => enviarComunicadoFormSubmit.onClose());
   };
+  
   const assuntoEmailForm = formComunicado.watch("assunto");
 
   useEffect(() => {
@@ -448,7 +449,7 @@ export default function Comunicados({ entity, ...props }) {
         closeButton
       >
         <chakra.form
-          onSubmit={formComunicado.handleSubmit(onSubmitDemandante)}
+          onSubmit={formComunicado.handleSubmit(onSubmitComunicado)}
           w="100%"
         >
           <Stack spacing={4}>

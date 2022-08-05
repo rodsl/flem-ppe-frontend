@@ -521,28 +521,18 @@ export default function Oficios({ entity, ...props }) {
 
   const delta2 = {
     ops: [
+      { insert: "Olá, " },
       {
         insert: {
           mention: {
             index: "0",
-            denotationChar: "#",
+            denotationChar: "",
             id: "nome_beneficiario",
-            value: "Nome do Beneficiário",
+            value: "Acsa dos Santos Cerqueira",
           },
         },
       },
-      { insert: " \n" },
-      {
-        insert: {
-          mention: {
-            index: "1",
-            denotationChar: "#",
-            id: "matricula_beneficiario",
-            value: "Patrik Sjölin",
-          },
-        },
-      },
-      { insert: " \npoioioioi\n" },
+      { insert: " \n\nIsto é um teste.\n" },
     ],
   };
 
@@ -562,7 +552,7 @@ export default function Oficios({ entity, ...props }) {
   //   });
 
   useEffect(() => {
-    quill && quill.setContents(delta);
+    quill && quill.setContents(delta2);
   }, [delta]);
 
   //   console.log(quill && quill.getContents().ops.map((obj) => obj.insert.mention)[1].value)

@@ -13,21 +13,15 @@ import {
 } from "@chakra-ui/react";
 
 import { useQuill } from "react-quilljs";
-import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
 import "@deevotechvn/quill-mention/dist/quill.mention.min.css";
 import { useEffect } from "react";
 import { Logo } from "components/Logo";
 
-export function TextEditor({
+export function TextViewer({
   setContent,
   id,
   label,
-  formControl: {
-    trigger,
-    formState: { errors },
-    register,
-    setValue,
-  },
   type = "text",
   placeholder,
   required = "Obrigatório",
@@ -38,59 +32,6 @@ export function TextEditor({
   loadOnEditor,
   ...props
 }) {
-  const atValues = [
-    {
-      id: "nome_beneficiario",
-      value: "Nome do Beneficiário",
-    },
-    {
-      id: "codigo_oficio",
-      value: "Codigo do Oficio",
-    },
-    {
-      id: "unidade_lotacao",
-      value: "Unidade de Lotação",
-    },
-    {
-      id: "logr_unidade_lotacao",
-      value: "Logradouro da Unidade de Lotação",
-    },
-    {
-      id: "bairr_unidade_lotacao",
-      value: "Bairro da Unidade de Lotação",
-    },
-    {
-      id: "munic_vaga",
-      value: "Município da Vaga",
-    },
-    {
-      id: "ponto_focal_unidade",
-      value: "Ponto Focal da Unidade",
-    },
-    {
-      id: "sigl_demandante",
-      value: "Sigla do Demandante",
-    },
-    {
-      id: "form_beneficiario",
-      value: "Formação do Beneficiário",
-    },
-  ];
-
-  async function suggestPeople(searchTerm) {
-    return atValues.filter((person) => {
-      return person.value
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .includes(
-          searchTerm
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-        );
-    });
-  }
 
   const { quill, quillRef, Quill } = useQuill({
     formats: [
@@ -122,6 +63,8 @@ export function TextEditor({
         },
       },
     },
+    theme: "bubble",
+    readOnly: true,
   });
 
   if (Quill && !quill) {
@@ -131,12 +74,6 @@ export function TextEditor({
     Quill.register(MentionBlot);
   }
 
-  quill &&
-    quill.on("text-change", (delta) => {
-      setValue(id, quill.getContents());
-      trigger(id);
-    });
-
   useEffect(() => {
     if (quill && loadOnEditor) {
       quill.setContents(JSON.parse(loadOnEditor));
@@ -144,27 +81,8 @@ export function TextEditor({
   }, [quill, loadOnEditor]);
 
   return (
-    // <Input
-    //   as={Box}
-    //   {...register("template", {
-    //     onChange: (e) => console.log(e.target.value),
-    //     setValue: setValue,
-    //   })}
-    //   type="text"
-    //   id="template"
-    //   className="page"
-    //   ref={quillRef}
-    //   w="100%"
-    //   h="92%"
-    //   fontSize={14}
-    //   sx={{ border: "none !important" }}
-    //   shadow="none"
-    //   p={0}
-    // />
-
-    // <Box>
-    <Box>
-      <FormControl id={id} isInvalid={errors[id]} w="100%" h="100%">
+    <Box pb={6}>
+      <FormControl w="100%" h="100%">
         <FormLabel>{label}</FormLabel>
         <Flex justifyContent="center">
           <Box
@@ -196,15 +114,11 @@ export function TextEditor({
                   as={Box}
                   type={type}
                   placeholder={placeholder}
-                  {...register(id, {
-                    validate: (e) =>
-                      quill.getLength() > 2 || "Digite um template válido",
-                  })}
                   {...props}
                   className="page"
                   ref={quillRef}
                   w="100%"
-                  h="91%"
+                  h="99%"
                   fontSize={14}
                   p={0}
                   shadow="none"
@@ -214,9 +128,7 @@ export function TextEditor({
                   }}
                 />
               </Skeleton>
-              <FormErrorMessage pb={2} fontWeight="bold" alignSelf="flex-start">
-                {errors[id]?.message}
-              </FormErrorMessage>
+
               <Box w="100%" h="5%">
                 <Box>
                   <Text fontSize={9}>

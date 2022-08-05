@@ -20,6 +20,7 @@ import "quill/dist/quill.snow.css";
 import { Logo } from "components/Logo";
 import { useCallback } from "react";
 
+
 // const QuillMention = dynamic(() => import("quill-mention"), { ssr: false });
 
 export default function Oficios({ entity, ...props }) {
@@ -43,30 +44,33 @@ export default function Oficios({ entity, ...props }) {
   });
 
   const { quill, quillRef, Quill } = useQuill({
+    formats: [
+      "bold",
+      "italic",
+      "underline",
+      "strike",
+      "align",
+      "list",
+      "indent",
+      "size",
+      "header",
+      "link",
+      "image",
+      "video",
+      "color",
+      "background",
+      "clean",
+      "mention",
+    ],
     modules: {
       mention: {
         allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-        mentionDenotationChars: ["{", "}", "#"],
-        source: useCallback((searchTerm, renderItem, mentionChar) => {
-          let values;
-          if (mentionChar === "{" || mentionChar === "}") {
-            values = atValues;
-          } else if (mentionChar === "#") {
-            values = hashValues;
-          }
-
-          if (searchTerm.length === 0) {
-            renderItem(values, searchTerm);
-          } else if (values) {
-            const matches = [];
-            for (let i = 0; i < values.length; i += 1)
-              if (
-                values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
-              )
-                matches.push(`{${values[i]}`);
-            renderItem(matches, searchTerm);
-          }
-        }, []),
+        mentionDenotationChars: ["@"],
+        attributes: { bold: true },
+        source: async function (searchTerm, renderList) {
+          const matchedPeople = await suggestPeople(searchTerm);
+          renderList(matchedPeople);
+        },
       },
     },
   });
@@ -225,8 +229,24 @@ export default function Oficios({ entity, ...props }) {
       { attributes: { align: "justify" }, insert: "\n" },
     ],
   };
+  const delta2 = {
+    ops: [
+      { insert: "Olá, " },
+      {
+        insert: {
+          mention: {
+            index: "0",
+            denotationChar: "",
+            id: "nome_beneficiario",
+            value: "Acsa dos Santos Cerqueira",
+          },
+        },
+      },
+      { insert: " \n\nIsto é um teste.\n" },
+    ],
+  };
 
-  quill?.setContents(delta);
+  quill?.setContents(delta2);
 
   // useEffect(()=> {
   //   if(window){
@@ -260,6 +280,7 @@ export default function Oficios({ entity, ...props }) {
             </button>
             <Image
               src="http://www.itororoja.com.br/wp-content/uploads/2018/04/30657010_2085363125039982_1581435021703512064_n.jpg"
+              
               h={90}
             />
           </Flex>

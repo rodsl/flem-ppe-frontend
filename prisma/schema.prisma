@@ -20,6 +20,7 @@ model Ba_Oficio_Template {
   updatedAt     DateTime        @updatedAt
   tipo          Ba_Oficio_Tipo? @relation(fields: [oficio_TipoId], references: [id])
   oficio_TipoId String?
+  Ba_Oficios    Ba_Oficios[]
 }
 
 model Ba_Oficio_Tipo {
@@ -30,6 +31,35 @@ model Ba_Oficio_Tipo {
   oficios   Ba_Oficio_Template[]
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
+}
+
+model Ba_Oficios {
+  id                 String                     @id @default(cuid())
+  codOficio          Int                        @default(autoincrement())
+  assunto            String
+  conteudoEmail      String                     @db.Text
+  excluido           Boolean                    @default(false)
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  remetenteOficio_Id String?
+  templateOficio_Id  String
+  benefAssoc         Ba_Beneficiarios[]
+  enviosOficios      Ba_Oficios_Enviados[]
+  templateOficio     Ba_Oficio_Template         @relation(fields: [templateOficio_Id], references: [id])
+  remetenteOficio    Ba_Comunicados_Remetentes? @relation(fields: [remetenteOficio_Id], references: [id])
+}
+
+model Ba_Oficios_Enviados {
+  id              String            @id @default(cuid())
+  enviado         Boolean           @default(false)
+  conteudoEmail   String            @db.Text
+  conteudoOficio  String            @db.Text
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  oficio_Id       String?
+  beneficiario_Id String?
+  oficio          Ba_Oficios?       @relation(fields: [oficio_Id], references: [id])
+  beneficiario    Ba_Beneficiarios? @relation(fields: [beneficiario_Id], references: [id])
 }
 
 model Ba_Formacao {
@@ -229,6 +259,8 @@ model Ba_Beneficiarios {
   materiais         Ba_Materiais[]
   comunicados       Ba_Comunicados[]
   enviosComunicados Ba_Comunicados_Enviados[]
+  oficios           Ba_Oficios[]
+  enviosOficios     Ba_Oficios_Enviados[]
 }
 
 model Ba_Materiais {
@@ -259,10 +291,11 @@ model Ba_Comunicados_Remetentes {
   id          String           @id @default(cuid())
   nome        String
   email       String           @unique
-  comunicados Ba_Comunicados[]
   excluido    Boolean          @default(false)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+  comunicados Ba_Comunicados[]
+  oficios     Ba_Oficios[]
 }
 
 model Ba_Comunicados_Enviados {

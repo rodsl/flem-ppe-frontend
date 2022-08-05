@@ -11,7 +11,11 @@ import {
   HiOutlineOfficeBuilding,
   HiOutlineUserGroup,
 } from "react-icons/hi";
-import { TbBrandTelegram, TbBuildingCommunity, TbPerspective } from "react-icons/tb";
+import {
+  TbBrandTelegram,
+  TbBuildingCommunity,
+  TbPerspective,
+} from "react-icons/tb";
 import { MdWorkOutline } from "react-icons/md";
 import { BiBuildings } from "react-icons/bi";
 
@@ -71,21 +75,9 @@ export const sidebarData = [
         href: "/formacoes",
       },
       {
-        title: "Ofícios",
+        title: "Templates de Ofícios",
         icon: FiFileText,
-        href: "/oficios",
-        subItems: [
-          {
-            title: "Templates",
-            icon: FiFileText,
-            href: "/templates",
-          },
-          {
-            title: "Parâmetros",
-            icon: FiFileText,
-            href: "/parametros",
-          },
-        ],
+        href: "/templates-oficios",
       },
       {
         title: "Situações de Vaga",
