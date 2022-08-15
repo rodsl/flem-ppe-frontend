@@ -68,113 +68,36 @@ const getOficios = async (req, res) => {
 
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error);
     return res.status(500).send(error.message);
-  }
-};
-
-const postOficio = async (req, res) => {
-  const { entity } = req.query;
-  const {
-    templateOficio,
-    emailRemetente,
-    conteudoEmail,
-    benefAssoc,
-    assunto,
-    anexos = [],
-  } = req.body;
-
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
-
-  try {
-    const table = `${entity}_Oficios`;
-    const tableBeneficiarios = `${entity}_Beneficiarios`;
-    const benefToConnectComunicado = await prisma[tableBeneficiarios].findMany({
-      where: {
-        OR: [
-          {
-            cpf: {
-              in: benefCPFs,
-            },
-          },
-          {
-            matriculaFlem: {
-              in: benefMatriculas,
-            },
-          },
-        ],
-      },
-    });
-
-    const query = await prisma[table].create({
-      data: {
-        assunto,
-        conteudoEmail: JSON.stringify(conteudoEmail),
-        benefAssoc: {
-          connect: benefToConnectComunicado.map(({ id }) => ({ id })),
-        },
-        anexosId: anexos.length === 0 ? null : JSON.stringify(anexos),
-        remetenteOficio_Id: emailRemetente,
-        templateOficio_Id: templateOficio,
-      },
-    });
-
-    return res.status(200).json(query);
-  } catch (error) {
-    switch (error.code) {
-      case "P2002":
-        res.status(409).json({ error: "Unique constraint failed" });
-        break;
-
-      default:
-        res.status(500).send(error.message);
-        break;
-    }
   }
 };
 
 const putOficio = async (req, res) => {
   const { entity, id } = req.query;
-  const {
-    templateOficio,
-    emailRemetente,
-    assunto,
-    conteudoEmail,
-    benefAssoc = [],
-  } = req.body;
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
-
+  const { anexosId } = req.body;
+console.log(anexosId)
   try {
     const table = `${entity}_Oficios`;
-    const tableBeneficiarios = `${entity}_Beneficiarios`;
 
-    const benefToConnectComunicado = await prisma[tableBeneficiarios].findMany({
+    const teste = await prisma.ba_Uploads.updateMany({
+      data: {
+        excluido: true,
+      },
       where: {
-        OR: [
-          {
-            cpf: {
-              in: benefCPFs,
-            },
+        AND: {
+          referencesTo: id,
+          id: {
+            notIn: anexosId.map(({ id }) => id),
           },
-          {
-            matriculaFlem: {
-              in: benefMatriculas,
-            },
-          },
-        ],
+        },
       },
     });
-
-    const query = await prisma[table].update({
+console.log(teste)
+    const query = await prisma.ba_Oficios.update({
+      // const query = await prisma[table].update({
       data: {
-        assunto,
-        conteudoEmail: JSON.stringify(conteudoEmail),
-        benefAssoc: {
-          set: benefToConnectComunicado.map(({ id }) => ({ id })),
-        },
-        remetenteOficio_Id: emailRemetente,
-        templateOficio_Id: templateOficio,
+        anexosId: anexosId.length === 0 ? null : JSON.stringify(anexosId),
       },
       where: {
         id,
@@ -189,6 +112,7 @@ const putOficio = async (req, res) => {
         break;
 
       default:
+        console.log(error);
         res.status(500).send(error.message);
         break;
     }

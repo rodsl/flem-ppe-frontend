@@ -46,6 +46,7 @@ import { EmailEditor } from "components/EmailEditor";
 import ChakraTagInput from "components/Inputs/TagInput";
 import { cpfMask } from "masks-br";
 import { DateTime } from "luxon";
+import { Dropzone } from "components/Dropzone";
 
 export default function Comunicados({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
@@ -56,6 +57,8 @@ export default function Comunicados({ entity, ...props }) {
   const [comunicadosFromBd, setComunicadosFromBd] = useState([]);
   const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
   const [nomeEvento, setNomeEvento] = useState("");
+  const [uploadProgress, setUploadProgress] = useState();
+  const [controller, setController] = useState(null);
   const addComunicado = useDisclosure();
   const addEmailRemetente = useDisclosure();
   const enviarComunicado = useDisclosure();
@@ -207,23 +210,49 @@ export default function Comunicados({ entity, ...props }) {
   const onSubmitComunicado = (formData, e) => {
     comunicadoFormSubmit.onOpen();
     e.preventDefault();
+
+    const anexos = new FormData();
+    formData.anexos.map((file, idx) => anexos.append(`files`, file));
+
+    const fileUpload = async (data, params) => {
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+        signal: controller.signal,
+        onUploadProgress: (event) => {
+          setUploadProgress(Math.round((event.loaded * 100) / event.total));
+        },
+        params,
+      };
+      const response = await axios.post(`/api/upload`, data, config);
+      return response;
+    };
+
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
         .put(`/api/${entity}/comunicados`, formData)
         .then((res) => {
           if (res.status === 200) {
-            comunicadoFormSubmit.onClose();
-            addComunicado.onClose();
-            setSelectedRow(null);
-            formComunicado.reset({});
-            toast({
-              title: "Comunicado atualizado com sucesso",
-              status: "success",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
+            fileUpload(anexos, { referencesTo: res.data.id }).then(
+              async (res) => {
+                await axios.put(
+                  `/api/${entity}/comunicados/anexos`,
+                  { anexosId: res.data.files },
+                  { params: { id: res.data.referencesTo } }
+                );
+                comunicadoFormSubmit.onClose();
+                addComunicado.onClose();
+                setSelectedRow(null);
+                formComunicado.reset({});
+                toast({
+                  title: "Comunicado atualizado com sucesso",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: false,
+                  position,
+                });
+              }
+            );
           }
         })
         .catch((error) => {
@@ -237,25 +266,35 @@ export default function Comunicados({ entity, ...props }) {
               position,
             });
           } else {
-            throw new Error(error);
+            throw new Error(error.response.data);
           }
         });
     }
+
     axios
       .post(`/api/${entity}/comunicados`, formData)
       .then((res) => {
         if (res.status === 200) {
-          comunicadoFormSubmit.onClose();
-          addComunicado.onClose();
-          setSelectedRow(null);
-          formComunicado.reset({});
-          toast({
-            title: "Comunicado adicionado com sucesso",
-            status: "success",
-            duration: 5000,
-            isClosable: false,
-            position,
-          });
+          fileUpload(anexos, { referencesTo: res.data.id }).then(
+            async (res) => {
+              await axios.put(
+                `/api/${entity}/comunicados/anexos`,
+                { anexosId: res.data.files },
+                { params: { id: res.data.referencesTo } }
+              );
+              comunicadoFormSubmit.onClose();
+              addComunicado.onClose();
+              setSelectedRow(null);
+              formComunicado.reset({});
+              toast({
+                title: "Comunicado adicionado com sucesso",
+                status: "success",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            }
+          );
         }
       })
       .catch((error) => {
@@ -355,7 +394,7 @@ export default function Comunicados({ entity, ...props }) {
       .catch((error) => console.log(error))
       .finally(() => enviarComunicadoFormSubmit.onClose());
   };
-  
+
   const assuntoEmailForm = formComunicado.watch("assunto");
 
   useEffect(() => {
@@ -373,8 +412,12 @@ export default function Comunicados({ entity, ...props }) {
       .get(`/api/${entity}/comunicados`)
       .then((res) => {
         if (res.status === 200) {
-          setComunicadosFromBd(res.data);
-          console.log(res.data);
+          setComunicadosFromBd(
+            res.data.map((row) => ({
+              ...row,
+              anexosId: JSON.parse(row.anexosId),
+            }))
+          );
         }
       })
       .catch((error) => console.log(error))
@@ -404,6 +447,10 @@ export default function Comunicados({ entity, ...props }) {
     setNomeEvento(assuntoEmailForm);
   }, [assuntoEmailForm]);
 
+  useEffect(() => {
+    setController(new AbortController());
+  }, []);
+  
   return (
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
@@ -498,6 +545,21 @@ export default function Comunicados({ entity, ...props }) {
                 title={"Corpo do E-mail "}
                 formControl={formComunicado}
                 loadOnEditor={selectedRow?.conteudoEmail}
+              />
+              <Dropzone
+                id="anexos"
+                label="Anexos"
+                formControl={formComunicado}
+                onUploadProgress={uploadProgress}
+                setUploadProgress={setUploadProgress}
+                uploadController={controller}
+                defaultValue={
+                  Array.isArray(selectedRow?.anexosId)
+                    ? selectedRow.anexosId.map(
+                        (anexo) => new File([], anexo.name)
+                      )
+                    : undefined
+                }
               />
               <ChakraTagInput
                 id="benefAssoc"

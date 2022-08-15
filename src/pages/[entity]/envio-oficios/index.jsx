@@ -48,8 +48,9 @@ import { useCustomForm } from "hooks/useCustomForm";
 import { TextViewer } from "components/TextViewer";
 import { maskCapitalize } from "utils/maskCapitalize";
 import { DateTime } from "luxon";
+import { Dropzone } from "components/Dropzone";
 
-export default function TemplateOficios({ entity, ...props }) {
+export default function EnvioOficios({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
@@ -59,12 +60,14 @@ export default function TemplateOficios({ entity, ...props }) {
   const [templatesFromBd, setTemplatesFromBd] = useState();
   const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
   const [nomeEvento, setNomeEvento] = useState("");
+  const [uploadProgress, setUploadProgress] = useState();
+  const [controller, setController] = useState(null);
   const viewTemplate = useDisclosure();
   const formSubmit = useDisclosure();
   const enviarOficioModal = useDisclosure();
   const enviarOficioSubmit = useDisclosure();
   const excluirOficioModal = useDisclosure();
-  const formEnvioOficio = useCustomForm();
+  const formAddOficio = useCustomForm();
   const fetchTableData = useDisclosure();
   const toast = useToast();
   const position = useBreakpointValue({ base: "bottom", sm: "top-right" });
@@ -134,7 +137,9 @@ export default function TemplateOficios({ entity, ...props }) {
         Cell: ({ value, row: { original } }) => (
           <Box minW={200}>
             {value.length === 0 && "Não"}
-            {value.length === original.benefAssoc.length && "Sim"}
+            {value.length !== 0 &&
+              value.length === original.benefAssoc.length &&
+              "Sim"}
           </Box>
         ),
         Footer: false,
@@ -144,6 +149,7 @@ export default function TemplateOficios({ entity, ...props }) {
         Cell: ({ row: { original } }) => (
           <MenuIconButton
             isDisabled={
+              original.benefAssoc.length !== 0 &&
               original.benefAssoc.length === original.enviosOficios.length
             }
             icon={<FiMoreHorizontal />}
@@ -156,7 +162,7 @@ export default function TemplateOficios({ entity, ...props }) {
                     icon: <FiEdit />,
                     onClick: () => {
                       setSelectedRow(original);
-                      formEnvioOficio.openOverlay();
+                      formAddOficio.openOverlay();
                     },
                   },
                   {
@@ -166,6 +172,7 @@ export default function TemplateOficios({ entity, ...props }) {
                       setSelectedRow(original);
                       enviarOficioModal.onOpen();
                     },
+                    disabled: original.benefAssoc.length === 0,
                   },
                   {
                     text: "Excluir",
@@ -190,9 +197,26 @@ export default function TemplateOficios({ entity, ...props }) {
 
   const data = useMemo(() => oficiosFromBd, [oficiosFromBd]);
 
-  const onSubmit = (formData, e) => {
-    formEnvioOficio.setLoading();
+  const onSubmit = async (formData, e) => {
     e.preventDefault();
+    formAddOficio.setLoading();
+
+    const anexos = new FormData();
+    formData.anexos.map((file, idx) => anexos.append(`files`, file));
+
+    const fileUpload = async (data, params) => {
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+        signal: controller.signal,
+        onUploadProgress: (event) => {
+          setUploadProgress(Math.round((event.loaded * 100) / event.total));
+        },
+        params,
+      };
+      const response = await axios.post(`/api/upload`, data, config);
+      return response;
+    };
+
     if (selectedRow) {
       return axios
         .put(`/api/${entity}/oficios/gerenciar`, formData, {
@@ -200,23 +224,32 @@ export default function TemplateOficios({ entity, ...props }) {
         })
         .then((res) => {
           if (res.status === 200) {
-            formEnvioOficio.setLoaded();
-            formEnvioOficio.closeOverlay();
-            setSelectedRow(null);
-            toast({
-              title: "Ofício atualizado com sucesso",
-              status: "success",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
+            fileUpload(anexos, { referencesTo: res.data.id }).then(
+              async (res) => {
+                await axios.put(
+                  `/api/${entity}/oficios/anexos`,
+                  { anexosId: res.data.files },
+                  { params: { id: res.data.referencesTo } }
+                );
+                setSelectedRow(null);
+                formAddOficio.setLoaded();
+                formAddOficio.closeOverlay();
+                toast({
+                  title: "Ofício adicionado com sucesso",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: false,
+                  position,
+                });
+              }
+            );
           }
         })
         .catch((error) => {
           if (error.response.status === 409) {
-            formEnvioOficio.setLoaded();
+            formAddOficio.setLoaded();
             toast({
-              title: "Título já existe",
+              title: "Ofício já existe",
               status: "error",
               duration: 5000,
               isClosable: false,
@@ -227,27 +260,37 @@ export default function TemplateOficios({ entity, ...props }) {
           }
         });
     }
+
     axios
       .post(`/api/${entity}/oficios/gerenciar`, formData)
       .then((res) => {
         if (res.status === 200) {
-          formEnvioOficio.setLoaded();
-          formEnvioOficio.closeOverlay();
-          setSelectedRow(null);
-          toast({
-            title: "Ofício adicionado com sucesso",
-            status: "success",
-            duration: 5000,
-            isClosable: false,
-            position,
-          });
+          fileUpload(anexos, { referencesTo: res.data.id }).then(
+            async (res) => {
+              await axios.put(
+                `/api/${entity}/oficios/anexos`,
+                { anexosId: res.data.files },
+                { params: { id: res.data.referencesTo } }
+              );
+              formAddOficio.setLoaded();
+              formAddOficio.closeOverlay();
+              setSelectedRow(null);
+              toast({
+                title: "Ofício adicionado com sucesso",
+                status: "success",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            }
+          );
         }
       })
       .catch((error) => {
         if (error.response.status === 409) {
-          formEnvioOficio.setLoaded();
+          formAddOficio.setLoaded();
           toast({
-            title: "Título já existe",
+            title: "Ofício já existe",
             status: "error",
             duration: 5000,
             isClosable: false,
@@ -259,7 +302,7 @@ export default function TemplateOficios({ entity, ...props }) {
       });
   };
 
-  const deleteTemplateOficio = (formData) => {
+  const deleteOficio = (formData) => {
     excluirOficioSubmit.onOpen();
     axios
       .delete(`/api/${entity}/oficios/gerenciar`, {
@@ -316,14 +359,19 @@ export default function TemplateOficios({ entity, ...props }) {
       .get(`/api/${entity}/oficios/gerenciar`)
       .then((res) => {
         if (res.status === 200) {
-          setOficiosFromBd(res.data);
+          setOficiosFromBd(
+            res.data.map((row) => ({
+              ...row,
+              anexosId: JSON.parse(row.anexosId),
+            }))
+          );
         }
       })
       .catch((error) => console.log(error))
       .finally(fetchTableData.onClose);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    formEnvioOficio.overlayIsOpen,
+    formAddOficio.overlayIsOpen,
     enviarOficioModal.isOpen,
     excluirOficioModal.isOpen,
   ]);
@@ -364,12 +412,16 @@ export default function TemplateOficios({ entity, ...props }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formWatchAssunto = formEnvioOficio.control.watch("assunto");
-  const formWatchTemplate = formEnvioOficio.control.watch("templateOficio");
+  const formWatchAssunto = formAddOficio.control.watch("assunto");
+  const formWatchTemplate = formAddOficio.control.watch("templateOficio");
 
   useEffect(() => {
     setNomeEvento(formWatchAssunto);
   }, [formWatchAssunto]);
+
+  useEffect(() => {
+    setController(new AbortController());
+  }, []);
 
   return (
     <>
@@ -380,7 +432,7 @@ export default function TemplateOficios({ entity, ...props }) {
             colorScheme="brand1"
             shadow="md"
             leftIcon={<FiSend />}
-            onClick={formEnvioOficio.openOverlay}
+            onClick={formAddOficio.openOverlay}
           >
             Novo Envio
           </Button>
@@ -404,21 +456,21 @@ export default function TemplateOficios({ entity, ...props }) {
       {/* Adicionar template de oficio Overlay  */}
       <Overlay
         onClose={() => {
-          formEnvioOficio.closeOverlay();
+          formAddOficio.closeOverlay();
           if (selectedRow) {
             setSelectedRow(null);
           }
         }}
         size="lg"
-        isOpen={formEnvioOficio.overlayIsOpen}
-        header={selectedRow ? "Editar Envio de Ofício" : "Enviar Ofício"}
+        isOpen={formAddOficio.overlayIsOpen}
+        header={selectedRow ? "Editar Ofício" : "Adicionar Ofício"}
         closeButton
       >
-        <chakra.form onSubmit={formEnvioOficio.handleSubmit(onSubmit)} w="100%">
+        <chakra.form onSubmit={formAddOficio.handleSubmit(onSubmit)} w="100%">
           <Stack spacing={4}>
             <SelectInputBox
               id="templateOficio"
-              formControl={formEnvioOficio.control}
+              formControl={formAddOficio.control}
               label="Template de Ofício"
               colorScheme="brand1"
               options={templatesFromBd}
@@ -446,7 +498,7 @@ export default function TemplateOficios({ entity, ...props }) {
             />
             <SelectInputBox
               id="emailRemetente"
-              formControl={formEnvioOficio.control}
+              formControl={formAddOficio.control}
               label="E-mail Rementente"
               colorScheme="brand1"
               options={emailsRemetentesFromBd}
@@ -463,7 +515,7 @@ export default function TemplateOficios({ entity, ...props }) {
             <InputBox
               id="assunto"
               label="Assunto"
-              formControl={formEnvioOficio.control}
+              formControl={formAddOficio.control}
               defaultValue={selectedRow?.assunto}
             />
           </Stack>
@@ -472,12 +524,27 @@ export default function TemplateOficios({ entity, ...props }) {
               <EmailEditor
                 id="conteudoEmail"
                 title={"Corpo do E-mail "}
-                formControl={formEnvioOficio.control}
+                formControl={formAddOficio.control}
                 loadOnEditor={selectedRow?.conteudoEmail}
+              />
+              <Dropzone
+                id="anexos"
+                label="Anexos"
+                formControl={formAddOficio.control}
+                onUploadProgress={uploadProgress}
+                setUploadProgress={setUploadProgress}
+                uploadController={controller}
+                defaultValue={
+                  Array.isArray(selectedRow?.anexosId)
+                    ? selectedRow.anexosId.map(
+                        (anexo) => new File([], anexo.name)
+                      )
+                    : undefined
+                }
               />
               <ChakraTagInput
                 id="benefAssoc"
-                formControl={formEnvioOficio.control}
+                formControl={formAddOficio.control}
                 label="Beneficiários"
                 placeholder="Matrículas ou CPFs separados por vírgula"
                 mask={cpfMask}
@@ -491,12 +558,13 @@ export default function TemplateOficios({ entity, ...props }) {
               />
             </Stack>
           </Fade>
+
           <HStack py={6} justifyContent="flex-end">
             <Button
               colorScheme="brand1"
               type="submit"
-              isLoading={formEnvioOficio.isLoading}
-              isDisabled={!formEnvioOficio.validation}
+              isLoading={formAddOficio.isLoading}
+              isDisabled={!formAddOficio.validation}
               loadingText="Salvando"
               shadow="md"
             >
@@ -544,7 +612,7 @@ export default function TemplateOficios({ entity, ...props }) {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Box>Excluir Material</Box>{" "}
+            <Box>Excluir Ofício</Box>{" "}
             <Icon
               as={FiTrash2}
               color="white"
@@ -567,7 +635,7 @@ export default function TemplateOficios({ entity, ...props }) {
                   colorScheme="red"
                   variant="outline"
                   onClick={() => {
-                    deleteTemplateOficio(selectedRow);
+                    deleteOficio(selectedRow);
                     setSelectedRow(null);
                   }}
                   isLoading={formSubmit.isOpen}
@@ -609,7 +677,7 @@ export default function TemplateOficios({ entity, ...props }) {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Box>Enviar Comunicado</Box>
+            <Box>Enviar Ofício</Box>
             <Icon
               as={FiSend}
               color="white"
@@ -681,5 +749,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-TemplateOficios.auth = false;
-TemplateOficios.dashboard = true;
+EnvioOficios.auth = false;
+EnvioOficios.dashboard = true;

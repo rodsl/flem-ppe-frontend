@@ -38,6 +38,7 @@ model Ba_Oficios {
   codOficio          Int                        @default(autoincrement())
   assunto            String
   conteudoEmail      String                     @db.Text
+  anexosId           String?
   excluido           Boolean                    @default(false)
   createdAt          DateTime                   @default(now())
   updatedAt          DateTime                   @updatedAt
@@ -54,6 +55,7 @@ model Ba_Oficios_Enviados {
   enviado         Boolean           @default(false)
   conteudoEmail   String            @db.Text
   conteudoOficio  String            @db.Text
+  anexosId        String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   oficio_Id       String?
@@ -278,6 +280,7 @@ model Ba_Comunicados {
   codComunicado          Int                        @default(autoincrement())
   assunto                String
   conteudoEmail          String                     @db.Text
+  anexosId               String?
   excluido               Boolean                    @default(false)
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
@@ -302,10 +305,22 @@ model Ba_Comunicados_Enviados {
   id              String            @id @default(cuid())
   enviado         Boolean           @default(false)
   conteudoEmail   String            @db.Text
+  anexosId        String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   comunicado_Id   String?
   beneficiario_Id String?
   comunicado      Ba_Comunicados?   @relation(fields: [comunicado_Id], references: [id])
   beneficiario    Ba_Beneficiarios? @relation(fields: [beneficiario_Id], references: [id])
+}
+
+model Ba_Uploads {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  originalName String
+  path         String
+  referencesTo String
+  excluido     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
