@@ -24,7 +24,7 @@ const allowCors = (fn) => async (req, res) => {
 const handler = async (req, res) => {
   switch (req.method) {
     case "GET":
-      await getSituacoesVaga(req, res);
+      await getEvento(req, res);
       break;
     case "POST":
       await addEvento(req, res);
@@ -46,12 +46,38 @@ const handler = async (req, res) => {
 
 export default allowCors(handler);
 
-const getSituacoesVaga = async (req, res) => {
-  const { entity } = req.query;
+const getEvento = async (req, res) => {
+  const { entity, idEvento } = req.query;
   try {
     const table = `${entity}_Eventos`;
-    const query = await prisma.ba_Eventos.findMany({
-      // const query = await prisma[table].findMany({
+
+    if (idEvento) {
+      const query = await prisma[table].findFirst({
+        orderBy: [
+          {
+            nome: "asc",
+          },
+        ],
+        where: {
+          excluido: {
+            equals: false,
+          },
+          id: idEvento,
+        },
+        include: {
+          localEvento: true,
+          tipoEvento: true,
+          benefAssoc: true,
+          acao_Cr: {
+            include: {
+              colabCr: true,
+            },
+          },
+        },
+      });
+      return res.status(200).json(query);
+    }
+    const query = await prisma[table].findMany({
       orderBy: [
         {
           nome: "asc",

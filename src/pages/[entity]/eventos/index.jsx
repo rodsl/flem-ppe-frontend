@@ -25,12 +25,24 @@ import {
   ScaleFade,
   Center,
   Spinner,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { FiEdit, FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
+import {
+  FiEdit,
+  FiMoreHorizontal,
+  FiPlus,
+  FiTrash2,
+  FiUserCheck,
+} from "react-icons/fi";
+import { BsClipboardCheck } from "react-icons/bs";
 import { DateTime } from "luxon";
 import { Table } from "components/Table";
 import { Overlay } from "components/Overlay";
@@ -46,8 +58,10 @@ import { SwitchButton } from "components/Buttons/SwitchButton";
 import { MaskedInputBox } from "components/Inputs/MaskedInputBox";
 import { cepMask, cpfMask } from "masks-br";
 import { maskCapitalize } from "utils/maskCapitalize";
+import download from "downloadjs";
+import { useCustomForm } from "hooks";
 
-export default function TemplateOficios({ entity, ...props }) {
+export default function Eventos({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
@@ -66,6 +80,7 @@ export default function TemplateOficios({ entity, ...props }) {
   const [modalidade, setModalidade] = useState("");
   const [nomeEvento, setNomeEvento] = useState("");
   const tipoEventoFormSubmit = useDisclosure();
+  const downloadingFile = useDisclosure();
   const addEvento = useDisclosure();
   const formSubmit = useDisclosure();
   const localEventoFormSubmit = useDisclosure();
@@ -78,6 +93,7 @@ export default function TemplateOficios({ entity, ...props }) {
   const position = useBreakpointValue({ base: "bottom", sm: "top-right" });
   const fetchTableData = useDisclosure();
   const toast = useToast();
+  const informarPresenca = useCustomForm();
 
   const columns = useMemo(
     () => [
@@ -143,6 +159,24 @@ export default function TemplateOficios({ entity, ...props }) {
                 menuGroupLabel: null,
                 menuGroupButtons: [
                   {
+                    text: "Gerar Lista de Presença",
+                    icon: <BsClipboardCheck />,
+                    onClick: () => {
+                      downloadListaPresenca(props.row.original);
+                    },
+                    disabled: props.row.original.benefAssoc.length === 0,
+                  },
+                  {
+                    text: "Informar presença",
+                    icon: <FiUserCheck />,
+                    onClick: () => {
+                      setSelectedRow(props.row.original);
+                      informarPresenca.openOverlay();
+                    },
+                    disabled: props.row.original.benefAssoc.length === 0,
+                  },
+
+                  {
                     text: "Editar",
                     icon: <FiEdit />,
                     onClick: () => {
@@ -179,6 +213,7 @@ export default function TemplateOficios({ entity, ...props }) {
   const formLocalEvento = useForm({
     mode: "onChange",
   });
+
   const formTipoEvento = useForm({
     mode: "onChange",
   });
@@ -186,9 +221,11 @@ export default function TemplateOficios({ entity, ...props }) {
   const { isValid: formAddEventoValidation } = useFormState({
     control: formAddEvento.control,
   });
+
   const { isValid: formLocalEventoValidation } = useFormState({
     control: formLocalEvento.control,
   });
+
   const { isValid: formTipoEventoValidation } = useFormState({
     control: formTipoEvento.control,
   });
@@ -335,6 +372,31 @@ export default function TemplateOficios({ entity, ...props }) {
       });
   };
 
+  const onSubmitInformarPresenca = (formData, e) => {
+    e.preventDefault();
+    informarPresenca.setLoading();
+    formData.eventoId = selectedRow.id;
+    axios
+      .post(`/api/${entity}/eventos/presenca`, formData)
+      .then((res) => {
+        if (res.status === 200) {
+          informarPresenca.closeOverlay();
+          setSelectedRow(null);
+          toast({
+            title: "Tipo de evento adicionado com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: false,
+            position,
+          });
+        }
+      })
+      .catch((error) => {
+        throw new Error(error);
+      })
+      .finally(informarPresenca.setLoaded);
+  };
+
   const deleteTemplateOficio = (formData) => {
     formSubmit.onOpen();
     axios
@@ -355,6 +417,34 @@ export default function TemplateOficios({ entity, ...props }) {
             isClosable: false,
             position,
           });
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const downloadListaPresenca = ({ id, nome }) => {
+    downloadingFile.onOpen();
+    axios
+      .get(`/api/${entity}/reports`, {
+        params: {
+          id,
+          reportUrl: "/eventos/lista-presenca",
+        },
+        responseType: "blob",
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          const content = res.headers["content-type"];
+
+          toast({
+            title: "Lista gerada com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: false,
+            position,
+          });
+          download(res.data, `PPE_LISTA_PRESENCA_${nome}.pdf`, content);
+          downloadingFile.onClose();
         }
       })
       .catch((error) => console.log(error));
@@ -1078,6 +1168,104 @@ export default function TemplateOficios({ entity, ...props }) {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {/* Gerar lista de presença modal */}
+      <AlertDialog
+        isOpen={downloadingFile.isOpen}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Gerar lista de presença
+            </AlertDialogHeader>
+
+            <AlertDialogBody display="flex" alignItems="center">
+              Aguarde, o download do arquivo comecará em breve...
+              <Box>
+                <Spinner color="brand1.500" size="lg" />
+              </Box>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      {/* Informar presença modal */}
+      <AlertDialog
+        isOpen={informarPresenca.overlayIsOpen}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" pb={0}>
+              Informar presença
+            </AlertDialogHeader>
+
+            <AlertDialogBody
+              display="flex"
+              alignItems="center"
+              flexDir="column"
+              justifyContent="space-between"
+            >
+              <Text pb={2}>
+                Informar lista de beneficiários presentes no evento abaixo:
+              </Text>
+              <Stack py={4} bg="gray.200" w="full" mb={4} rounded="md">
+                <Text textAlign="center">{selectedRow?.nome}</Text>
+                <Text textAlign="center">
+                  Realizado em:{" "}
+                  {DateTime.fromISO(selectedRow?.data).toLocaleString(
+                    DateTime.DATETIME_SHORT
+                  )}
+                  h
+                </Text>
+              </Stack>
+              <Stack
+                as={chakra.form}
+                onSubmit={informarPresenca.handleSubmit(
+                  onSubmitInformarPresenca
+                )}
+                w="full"
+              >
+                <ChakraTagInput
+                  id="benefAssoc"
+                  formControl={informarPresenca.control}
+                  placeholder="Matrículas ou CPFs separados por vírgula"
+                  mask={cpfMask}
+                />
+                <Flex alignSelf="flex-end" pb={4}>
+                  <HStack>
+                    <Button
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => {
+                        informarPresenca.closeOverlay();
+                        setSelectedRow(null);
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="submit"
+                      colorScheme="brand1"
+                      variant="outline"
+                      isDisabled={!informarPresenca.validation}
+                      isLoading={informarPresenca.isLoading}
+                      loadingText="Aguarde..."
+                    >
+                      Salvar
+                    </Button>
+                  </HStack>
+                </Flex>
+              </Stack>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 }
@@ -1105,5 +1293,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-TemplateOficios.auth = false;
-TemplateOficios.dashboard = true;
+Eventos.auth = false;
+Eventos.dashboard = true;

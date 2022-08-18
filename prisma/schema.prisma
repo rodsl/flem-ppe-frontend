@@ -169,19 +169,31 @@ model Ba_Tipos_Eventos {
 }
 
 model Ba_Eventos {
-  id             String             @id @default(cuid())
-  nome           String
-  data           DateTime
-  modalidade     String
-  benefAssoc     Ba_Beneficiarios[]
-  excluido       Boolean            @default(false)
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  localEvento    Ba_Locais_Eventos? @relation(fields: [local_EventoId], references: [id])
-  local_EventoId String?
-  tipoEvento     Ba_Tipos_Eventos?  @relation(fields: [tipo_eventoId], references: [id])
-  tipo_eventoId  String?
-  acao_Cr        Ba_Acoes_Cr[]
+  id                    String                      @id @default(cuid())
+  nome                  String
+  data                  DateTime
+  modalidade            String
+  benefAssoc            Ba_Beneficiarios[]
+  excluido              Boolean                     @default(false)
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
+  localEvento           Ba_Locais_Eventos?          @relation(fields: [local_EventoId], references: [id])
+  local_EventoId        String?
+  tipoEvento            Ba_Tipos_Eventos?           @relation(fields: [tipo_eventoId], references: [id])
+  tipo_eventoId         String?
+  acao_Cr               Ba_Acoes_Cr[]
+  evento_lista_Presenca Ba_Eventos_Lista_Presenca[]
+}
+
+model Ba_Eventos_Lista_Presenca {
+  id           String            @id @default(cuid())
+  excluido     Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  eventoId     String?
+  evento       Ba_Eventos?       @relation(fields: [eventoId], references: [id])
+  benefAssocId String?
+  benefAssoc   Ba_Beneficiarios? @relation(fields: [benefAssocId], references: [id])
 }
 
 model Ba_Acoes_Cr {
@@ -247,22 +259,23 @@ model Ba_Colaboradores_Cr {
 }
 
 model Ba_Beneficiarios {
-  id                String                    @id @default(cuid())
-  nome              String
-  cpf               String
-  matriculaFlem     Int                       @unique
-  matriculaSaeb     Int                       @unique
-  excluido          Boolean                   @default(false)
-  createdAt         DateTime                  @default(now())
-  updatedAt         DateTime                  @updatedAt
-  acoes             Ba_Acoes_Cr[]
-  contatosAcoes     Ba_Contatos_Acoes_Cr[]
-  eventos           Ba_Eventos[]
-  materiais         Ba_Materiais[]
-  comunicados       Ba_Comunicados[]
-  enviosComunicados Ba_Comunicados_Enviados[]
-  oficios           Ba_Oficios[]
-  enviosOficios     Ba_Oficios_Enviados[]
+  id                     String                      @id @default(cuid())
+  nome                   String
+  cpf                    String
+  matriculaFlem          Int                         @unique
+  matriculaSaeb          Int                         @unique
+  excluido               Boolean                     @default(false)
+  createdAt              DateTime                    @default(now())
+  updatedAt              DateTime                    @updatedAt
+  acoes                  Ba_Acoes_Cr[]
+  contatosAcoes          Ba_Contatos_Acoes_Cr[]
+  eventos                Ba_Eventos[]
+  eventos_lista_presenca Ba_Eventos_Lista_Presenca[]
+  materiais              Ba_Materiais[]
+  comunicados            Ba_Comunicados[]
+  enviosComunicados      Ba_Comunicados_Enviados[]
+  oficios                Ba_Oficios[]
+  enviosOficios          Ba_Oficios_Enviados[]
 }
 
 model Ba_Materiais {

@@ -22,15 +22,12 @@ const allowCors = (fn) => async (req, res) => {
 
 const handler = async (req, res) => {
   switch (req.method) {
-    case "GET":
-      await getLocaisEventos(req, res);
-      break;
     case "POST":
-      await addLocalEvento(req, res);
+      await postPresencaBenefEvento(req, res);
       break;
 
     default:
-      res.status(405).send({ message: "Only GET or POST requests allowed" });
+      res.status(405).send({ message: "Only POST requests allowed" });
       break;
   }
 };
@@ -59,35 +56,38 @@ const getLocaisEventos = async (req, res) => {
   }
 };
 
-const addLocalEvento = async (req, res) => {
+const postPresencaBenefEvento = async (req, res) => {
   const { entity } = req.query;
-  const { nome, cep, logradouro, complemento, bairro, cidade, uf } = req.body;
+  const { benefAssoc, eventoId } = req.body;
+
+  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Locais_Eventos`;
-    const query = await prisma[table].upsert({
-      create: {
-        nome,
-        cep,
-        logradouro,
-        complemento: complemento === "" ? null : complemento,
-        bairro,
-        cidade,
-        uf,
-      },
-      update: {
-        nome,
-        cep,
-        logradouro,
-        complemento: complemento === "" ? null : complemento,
-        bairro,
-        cidade,
-        uf,
-        excluido: false,
-      },
+    const tableBeneficiarios = `${entity}_Beneficiarios`;
+
+    const benefToInformPresenca = await prisma[tableBeneficiarios].findMany({
       where: {
-        nome,
+        OR: [
+          {
+            cpf: {
+              in: benefCPFs,
+            },
+          },
+          {
+            matriculaFlem: {
+              in: benefMatriculas,
+            },
+          },
+        ],
       },
+    });
+
+    const query = await prisma[table].createMany({
+      data: benefToInformPresenca.map(({ id }) => ({
+        benefAssocId: id,
+      })),
     });
     return res.status(200).json(query);
   } catch (error) {
