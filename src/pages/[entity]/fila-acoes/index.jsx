@@ -308,7 +308,7 @@ export default function FilaAcoesCR({ entity, ...props }) {
           setSelectedBenef(null);
           formContatoAcao.reset({});
           toast({
-            title: "Demandante adicionado com sucesso",
+            title: "Informação inserida com sucesso",
             status: "success",
             duration: 5000,
             isClosable: false,
@@ -322,7 +322,7 @@ export default function FilaAcoesCR({ entity, ...props }) {
         if (error.response.status === 409) {
           contatoAcaoFormSubmit.onClose();
           toast({
-            title: "Demandante já existe",
+            title: "Informação já existe",
             status: "error",
             duration: 5000,
             isClosable: false,

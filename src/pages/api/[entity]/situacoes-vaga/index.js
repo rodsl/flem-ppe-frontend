@@ -62,11 +62,12 @@ const getSituacoesVaga = async (req, res) => {
       },
 
       include: {
-        tipoSituacaoVaga: true,
+        tipoSituacao: true,
       },
     });
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ error: error });
   }
 };
@@ -88,22 +89,25 @@ const addSituacaoVaga = async (req, res) => {
       error.code = "P2002";
       throw error;
     }
-    const query = await prisma[table].upsert({
+    const query = await prisma.ba_Situacoes_Vaga.upsert({
+    // const query = await prisma[table].upsert({
       create: {
         nome: situacao,
-        situacao_Vaga_Id: tipo,
+        tipoSituacao_Id: tipo,
       },
       update: {
         excluido: false,
         nome: situacao,
-        situacao_Vaga_Id: tipo,
+        tipoSituacao_Id: tipo,
       },
       where: {
         nome: situacao,
+        
       },
     });
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error)
     switch (error.code) {
       case "P2002":
         res.status(409).json({ error: "Unique constraint failed" });
@@ -124,7 +128,7 @@ const modifySituacaoVaga = async (req, res) => {
     const query = await prisma[table].update({
       data: {
         nome: situacao,
-        situacao_Vaga_Id: tipo,
+        tipoSituacao_Id: tipo,
       },
       where: {
         id,

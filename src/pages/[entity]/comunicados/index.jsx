@@ -39,7 +39,7 @@ import { Overlay } from "components/Overlay";
 import { SelectInputBox } from "components/Inputs/SelectInputBox";
 import { useForm, useFormState } from "react-hook-form";
 import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { axios } from "services/apiService";
+import { axios, filesAPIUpload } from "services/apiService";
 import { maskCapitalize } from "utils/maskCapitalize";
 import { InputBox } from "components/Inputs/InputBox";
 import { EmailEditor } from "components/EmailEditor";
@@ -99,7 +99,7 @@ export default function Comunicados({ entity, ...props }) {
         accessor: "remetenteComunicado",
         Cell: ({ value }) => (
           <Box minW={200}>
-            {value.nome} - {value.email}
+            {value?.nome} - {value?.email}
           </Box>
         ),
         Footer: false,
@@ -216,14 +216,13 @@ export default function Comunicados({ entity, ...props }) {
 
     const fileUpload = async (data, params) => {
       const config = {
-        headers: { "Content-Type": "multipart/form-data" },
         signal: controller.signal,
         onUploadProgress: (event) => {
           setUploadProgress(Math.round((event.loaded * 100) / event.total));
         },
         params,
       };
-      const response = await axios.post(`/api/upload`, data, config);
+      const response = await filesAPIUpload.post(`/uploadFile`, data, config);
       return response;
     };
 
@@ -233,12 +232,12 @@ export default function Comunicados({ entity, ...props }) {
         .put(`/api/${entity}/comunicados`, formData)
         .then((res) => {
           if (res.status === 200) {
-            fileUpload(anexos, { referencesTo: res.data.id }).then(
+            fileUpload(anexos, { referenceObjId: res.data.id }).then(
               async (res) => {
                 await axios.put(
                   `/api/${entity}/comunicados/anexos`,
-                  { anexosId: res.data.files },
-                  { params: { id: res.data.referencesTo } }
+                  { anexosId: res.data },
+                  { params: { id: selectedRow.id } }
                 );
                 comunicadoFormSubmit.onClose();
                 addComunicado.onClose();
@@ -275,12 +274,12 @@ export default function Comunicados({ entity, ...props }) {
       .post(`/api/${entity}/comunicados`, formData)
       .then((res) => {
         if (res.status === 200) {
-          fileUpload(anexos, { referencesTo: res.data.id }).then(
+          fileUpload(anexos, { referenceObjId: res.data.id }).then(
             async (res) => {
               await axios.put(
                 `/api/${entity}/comunicados/anexos`,
-                { anexosId: res.data.files },
-                { params: { id: res.data.referencesTo } }
+                { anexosId: res.data },
+                { params: { id: res.data[0].referenceObjId } }
               );
               comunicadoFormSubmit.onClose();
               addComunicado.onClose();
@@ -450,7 +449,7 @@ export default function Comunicados({ entity, ...props }) {
   useEffect(() => {
     setController(new AbortController());
   }, []);
-  
+
   return (
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
@@ -553,6 +552,7 @@ export default function Comunicados({ entity, ...props }) {
                 onUploadProgress={uploadProgress}
                 setUploadProgress={setUploadProgress}
                 uploadController={controller}
+                multiple
                 defaultValue={
                   Array.isArray(selectedRow?.anexosId)
                     ? selectedRow.anexosId.map(

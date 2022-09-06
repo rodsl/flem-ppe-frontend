@@ -46,13 +46,17 @@ export function Dropzone({
     register,
     setValue,
   },
-  required = "Obrigatório",
+  validate = (v) => true,
+  maxFiles = 4,
+  multiple = false,
+  ...rest
 }) {
   const [myFiles, setMyFiles] = useState([]);
 
   const onDrop = useCallback(
     (acceptedFiles) => {
       setMyFiles([...myFiles, ...acceptedFiles]);
+      trigger(id);
     },
     [myFiles]
   );
@@ -67,6 +71,8 @@ export function Dropzone({
   } = useDropzone({
     onDrop,
     noClick: true,
+    maxFiles,
+    multiple,
   });
 
   const removeFile = (file) => () => {
@@ -145,12 +151,13 @@ export function Dropzone({
         transition="all .24s ease-in-out"
         {...getRootProps()}
         onClick={() => (myFiles.length > 0 ? null : open())}
+        {...rest}
       >
         <Flex flexDir="column" alignItems="center">
           <input
             {...getInputProps()}
             {...register(id, {
-              required: false,
+              validate,
             })}
           />
           {files.length === 0 && (

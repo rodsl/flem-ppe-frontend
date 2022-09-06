@@ -3,6 +3,8 @@ import {
   FiCalendar,
   FiFileText,
   FiHome,
+  FiList,
+  FiMapPin,
   FiPackage,
   FiUsers,
 } from "react-icons/fi";
@@ -55,19 +57,29 @@ export const sidebarData = [
       //   ]
       // },
       {
+        title: "Unidades de Lotação",
+        icon: FiMapPin,
+        href: "/unidade-lotacao",
+      },
+      {
         title: "Escritórios Regionais",
         icon: HiOutlineOfficeBuilding,
         href: "/escritorios-regionais",
       },
-      {
-        title: "Monitores",
-        icon: HiOutlineUserGroup,
-        href: "/monitores",
-      },
+      // {
+      //   title: "Monitores",
+      //   icon: HiOutlineUserGroup,
+      //   href: "/monitores",
+      // },
       {
         title: "Materiais",
         icon: FiPackage,
         href: "/materiais",
+      },
+      {
+        title: "Tipos de Histórico",
+        icon: FiList,
+        href: "/tipo-historico",
       },
       {
         title: "Formações",
@@ -88,6 +100,11 @@ export const sidebarData = [
         title: "Eventos",
         icon: FiCalendar,
         href: "/eventos",
+      },
+      {
+        title: "Colaboradores CR",
+        icon: FiUsers,
+        href: "/colaboradores-cr",
       },
       {
         title: "Ações CR",

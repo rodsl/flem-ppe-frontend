@@ -39,7 +39,7 @@ import { Table } from "components/Table";
 import { Overlay } from "components/Overlay";
 import { InputBox } from "components/Inputs/InputBox";
 import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { axios } from "services/apiService";
+import { axios, filesAPIUpload } from "services/apiService";
 import { MenuIconButton } from "components/Menus/MenuIconButton";
 import { EmailEditor } from "components/EmailEditor";
 import ChakraTagInput from "components/Inputs/TagInput";
@@ -66,6 +66,7 @@ export default function EnvioOficios({ entity, ...props }) {
   const formSubmit = useDisclosure();
   const enviarOficioModal = useDisclosure();
   const enviarOficioSubmit = useDisclosure();
+  const excluirOficioSubmit = useDisclosure();
   const excluirOficioModal = useDisclosure();
   const formAddOficio = useCustomForm();
   const fetchTableData = useDisclosure();
@@ -179,7 +180,7 @@ export default function EnvioOficios({ entity, ...props }) {
                     icon: <FiTrash2 />,
                     onClick: () => {
                       setSelectedRow(original);
-                      excluirComunicado.onOpen();
+                      excluirOficioModal.onOpen();
                     },
                   },
                 ],
@@ -206,14 +207,13 @@ export default function EnvioOficios({ entity, ...props }) {
 
     const fileUpload = async (data, params) => {
       const config = {
-        headers: { "Content-Type": "multipart/form-data" },
         signal: controller.signal,
         onUploadProgress: (event) => {
           setUploadProgress(Math.round((event.loaded * 100) / event.total));
         },
         params,
       };
-      const response = await axios.post(`/api/upload`, data, config);
+      const response = await filesAPIUpload.post(`/uploadFile`, data, config);
       return response;
     };
 
@@ -224,12 +224,12 @@ export default function EnvioOficios({ entity, ...props }) {
         })
         .then((res) => {
           if (res.status === 200) {
-            fileUpload(anexos, { referencesTo: res.data.id }).then(
+            fileUpload(anexos, { referenceObjId: res.data.id }).then(
               async (res) => {
                 await axios.put(
                   `/api/${entity}/oficios/anexos`,
-                  { anexosId: res.data.files },
-                  { params: { id: res.data.referencesTo } }
+                  { anexosId: res.data },
+                  { params: { id: selectedRow.id } }
                 );
                 setSelectedRow(null);
                 formAddOficio.setLoaded();
@@ -265,12 +265,12 @@ export default function EnvioOficios({ entity, ...props }) {
       .post(`/api/${entity}/oficios/gerenciar`, formData)
       .then((res) => {
         if (res.status === 200) {
-          fileUpload(anexos, { referencesTo: res.data.id }).then(
+          fileUpload(anexos, { referenceObjId: res.data.id }).then(
             async (res) => {
               await axios.put(
                 `/api/${entity}/oficios/anexos`,
-                { anexosId: res.data.files },
-                { params: { id: res.data.referencesTo } }
+                { anexosId: res.data },
+                { params: { id: res.data[0].referenceObjId } }
               );
               formAddOficio.setLoaded();
               formAddOficio.closeOverlay();
@@ -534,6 +534,7 @@ export default function EnvioOficios({ entity, ...props }) {
                 onUploadProgress={uploadProgress}
                 setUploadProgress={setUploadProgress}
                 uploadController={controller}
+                multiple
                 defaultValue={
                   Array.isArray(selectedRow?.anexosId)
                     ? selectedRow.anexosId.map(
@@ -626,9 +627,9 @@ export default function EnvioOficios({ entity, ...props }) {
           <Divider />
           <ModalBody pb={6}>
             <VStack my={3} spacing={6}>
-              <Heading size="md">Deseja excluir o seguinte template?</Heading>
+              <Heading size="md">Deseja excluir o seguinte ofício?</Heading>
               <Text fontSize="xl" align="center">
-                {selectedRow?.titulo}
+                {selectedRow?.assunto}
               </Text>
               <HStack>
                 <Button

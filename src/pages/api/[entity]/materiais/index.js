@@ -84,7 +84,7 @@ const addMaterial = async (req, res) => {
       error.code = "P2002";
       throw error;
     }
-      const query = await prisma[table].create({
+      const query = await prisma[table].upsert({
       where: {
         nome,
       },
@@ -101,13 +101,14 @@ const addMaterial = async (req, res) => {
 
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error)
     switch (error.code) {
       case "P2002":
         res.status(409).json({ error: "Unique constraint failed" });
         break;
 
       default:
-        res.status(500).json({ error: error });
+        res.status(409).json({ error: error });
         break;
     }
   }

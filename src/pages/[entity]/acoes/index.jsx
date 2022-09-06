@@ -401,14 +401,13 @@ export default function AcoesCR({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/funcionarios`)
+      .get(`/api/${entity}/colaboradores-cr`)
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromBd(
-            res.data.map(({ matriculaFlem, nome, cpf }) => ({
-              value: matriculaFlem,
-              label: `${matriculaFlem} - ` + maskCapitalize(nome),
-              cpf: cpf,
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: maskCapitalize(nome),
             }))
           );
         }

@@ -32,7 +32,6 @@ export function TextViewer({
   loadOnEditor,
   ...props
 }) {
-
   const { quill, quillRef, Quill } = useQuill({
     formats: [
       "bold",
@@ -103,10 +102,10 @@ export function TextViewer({
                 w="100%"
                 px={1}
               >
-                <Logo h={30} my={10} />
+                <Logo h={30} my={12} />
                 <Image
-                  src="http://www.itororoja.com.br/wp-content/uploads/2018/04/30657010_2085363125039982_1581435021703512064_n.jpg"
-                  h={90}
+                  src="https://www.planserv.ba.gov.br/wp-content/uploads/2022/07/Brasa%E2%95%A0ao-Horizontal_Cor.png"
+                  h={50}
                 />
               </Flex>
               <Skeleton isLoaded={isLoaded} fadeDuration={0.5} w="100%" h="90%">

@@ -119,15 +119,39 @@ const postOficio = async (req, res) => {
       },
     });
 
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Ofício",
+        descricao: `Criação do ofício: ${assunto}`,
+        beneficiario: {
+          connect: benefToConnectComunicado.map(({ id }) => ({ id })),
+        },
+        oficio: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Ofício",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error);
+
     switch (error.code) {
       case "P2002":
         res.status(409).json({ error: "Unique constraint failed" });
         break;
 
       default:
-        res.status(500).send(error.message);
+        res.status(409).send(error.message);
         break;
     }
   }
@@ -181,6 +205,28 @@ const putOficio = async (req, res) => {
       },
     });
 
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Ofício",
+        descricao: `Modificação do ofício: ${assunto}`,
+        beneficiario: {
+          connect: benefToConnectComunicado.map(({ id }) => ({ id })),
+        },
+        oficio: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Ofício",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {
@@ -217,6 +263,29 @@ const deleteOficio = async (req, res) => {
         id,
       },
     });
+
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Ofício",
+        descricao: `Exclusão do ofício: ${assunto}`,
+        beneficiario: {
+          connect: benefToConnectComunicado.map(({ id }) => ({ id })),
+        },
+        oficio: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Ofício",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     return res.status(500).send(error.message);

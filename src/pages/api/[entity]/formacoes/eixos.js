@@ -47,6 +47,9 @@ const getEixoFormacao = async (req, res) => {
           nome: "asc",
         },
       ],
+      include: {
+        formacoes: true,
+      },
     });
     return res.status(200).json(query);
   } catch (error) {

@@ -20,7 +20,6 @@ import "quill/dist/quill.snow.css";
 import { Logo } from "components/Logo";
 import { useCallback } from "react";
 
-
 // const QuillMention = dynamic(() => import("quill-mention"), { ssr: false });
 
 export default function Oficios({ entity, ...props }) {
@@ -279,9 +278,8 @@ export default function Oficios({ entity, ...props }) {
               PRINT ME!
             </button>
             <Image
-              src="http://www.itororoja.com.br/wp-content/uploads/2018/04/30657010_2085363125039982_1581435021703512064_n.jpg"
-              
-              h={90}
+              src="https://www.planserv.ba.gov.br/wp-content/uploads/2022/07/Brasa%E2%95%A0ao-Horizontal_Cor.png"
+              h={50}
             />
           </Flex>
         </Box>

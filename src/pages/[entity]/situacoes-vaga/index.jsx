@@ -62,7 +62,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
       },
       {
         Header: "Tipo",
-        accessor: "tipoSituacaoVaga.nome",
+        accessor: "tipoSituacao.nome",
         Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
         Footer: false,
       },
@@ -362,7 +362,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
                   defaultValue={
                     selectedRow &&
                     tiposSituacoesFromBd.filter(
-                      (tipo) => tipo.value === selectedRow.tipoSituacaoVaga.id
+                      (tipo) => tipo.value === selectedRow.tipoSituacao.id
                     )
                   }
                 />

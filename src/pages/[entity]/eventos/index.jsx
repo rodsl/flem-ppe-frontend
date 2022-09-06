@@ -72,8 +72,10 @@ export default function Eventos({ entity, ...props }) {
   const [locaisEventosFromBd, setLocaisEventosFromBd] = useState([]);
   const [tiposEventoFromBd, setTiposEventoFromBd] = useState([]);
   const [municipiosFromBd, setMunicipiosFromBd] = useState([]);
+  const [demandantesFromBd, setDemandantesFromBd] = useState([]);
   const [colaboradoresFromRh, setColaboradoresFromRh] = useState([]);
   const [beneficiariosFromRh, setBeneficiariosFromRh] = useState([]);
+  const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
   const [emailAlerts, emailAlertsState] = useState(false);
   const [criarAcaoCR, setCriarAcaoCR] = useState(false);
   const [benefLote, setBenefLote] = useState(false);
@@ -181,6 +183,7 @@ export default function Eventos({ entity, ...props }) {
                     icon: <FiEdit />,
                     onClick: () => {
                       setSelectedRow(props.row.original);
+                      console.log(props.row.original);
                       addEvento.onOpen();
                     },
                   },
@@ -235,7 +238,9 @@ export default function Eventos({ entity, ...props }) {
     e.preventDefault();
     if (selectedRow) {
       formData.id = selectedRow.id;
-      formData.acao_CrId = selectedRow.acao_CrId;
+      formData.acao_CrId = selectedRow.acao_Cr[0]?.id;
+      formData.comunicado_Id = selectedRow.comunicado[0]?.id;
+
       return axios
         .put(`/api/${entity}/eventos`, formData)
         .then((res) => {
@@ -383,7 +388,7 @@ export default function Eventos({ entity, ...props }) {
           informarPresenca.closeOverlay();
           setSelectedRow(null);
           toast({
-            title: "Tipo de evento adicionado com sucesso",
+            title: "Presença em evento informada com sucesso",
             status: "success",
             duration: 5000,
             isClosable: false,
@@ -461,14 +466,13 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/funcionarios`)
+      .get(`/api/${entity}/colaboradores-cr`)
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromRh(
-            res.data.map(({ matriculaFlem, nome, cpf }) => ({
-              value: matriculaFlem,
-              label: `${matriculaFlem} - ` + maskCapitalize(nome),
-              cpf: cpf,
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: maskCapitalize(nome),
             }))
           );
         }
@@ -562,6 +566,37 @@ export default function Eventos({ entity, ...props }) {
       .catch((error) => console.log(error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addEvento.isOpen, addLocalEvento.isOpen]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/${entity}/comunicados/remetentes`)
+      .then((res) => {
+        if (res.status === 200) {
+          setEmailsRemetentesFromBd(
+            res.data.map(({ id, email, nome }) => ({
+              value: id,
+              id,
+              label: `${nome} - ${email}`,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+    axios
+      .get(`/api/${entity}/demandantes`)
+      .then((res) => {
+        if (res.status === 200) {
+          setDemandantesFromBd(
+            res.data.map(({ id, sigla, nome }) => ({
+              value: id,
+              id,
+              label: `${sigla} - ${nome}`,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   const cepInput = formLocalEvento.watch("cep");
   const filtroParticipantes = formAddEvento.watch("filtro");
@@ -840,7 +875,7 @@ export default function Eventos({ entity, ...props }) {
                   id="filtroDemandantes"
                   label="Filtrar por Demandantes"
                   placeholder="Selecione..."
-                  options={tiposEventoFromBd}
+                  options={demandantesFromBd}
                   formControl={formAddEvento}
                 />
               </Stack>
@@ -950,13 +985,36 @@ export default function Eventos({ entity, ...props }) {
                 id="emailAlerts"
                 label="Notificar participantes por e-mail?"
                 formControl={formAddEvento}
+                defaultChecked={
+                  selectedRow && selectedRow?.comunicado[0]?.excluido === false
+                }
               />
               <Fade in={emailAlerts} unmountOnExit>
+                <Box mt={4} mb={2}>
+                  <SelectInputBox
+                    id="emailRemetente"
+                    formControl={formAddEvento}
+                    label="E-mail Rementente"
+                    colorScheme="brand1"
+                    options={emailsRemetentesFromBd}
+                    placeholder="Selecione..."
+                    defaultValue={
+                      selectedRow
+                        ? emailsRemetentesFromBd &&
+                          emailsRemetentesFromBd.filter(
+                            ({ id }) =>
+                              id ===
+                              selectedRow.comunicado[0]?.remetenteComunicado_Id
+                          )
+                        : null
+                    }
+                  />{" "}
+                </Box>
                 <EmailEditor
                   id="conteudoEmail"
                   title={nomeEvento ? nomeEvento : "Nome do Evento"}
                   formControl={formAddEvento}
-                  loadOnEditor={selectedRow?.conteudo}
+                  loadOnEditor={selectedRow?.comunicado[0]?.conteudoEmail}
                 />
               </Fade>
             </Box>
@@ -1023,7 +1081,9 @@ export default function Eventos({ entity, ...props }) {
                   formControl={formLocalEvento}
                   label="Logradouro"
                   isLoaded={!buscaCep.isOpen}
-                  value={(cepData && cepData.street) || selectedRow?.logradouro}
+                  defaultValue={
+                    (cepData && cepData.street) || selectedRow?.logradouro
+                  }
                 />
                 <InputBox
                   id="complemento"
@@ -1035,7 +1095,7 @@ export default function Eventos({ entity, ...props }) {
                   id="bairro"
                   formControl={formLocalEvento}
                   label="Bairro"
-                  value={
+                  defaultValue={
                     selectedRow?.bairro || (cepData && cepData.neighborhood)
                   }
                   isLoaded={!buscaCep.isOpen}
@@ -1044,14 +1104,16 @@ export default function Eventos({ entity, ...props }) {
                   id="cidade"
                   formControl={formLocalEvento}
                   label="Cidade"
-                  value={selectedRow?.cidade || (cepData && cepData.city)}
+                  defaultValue={
+                    selectedRow?.cidade || (cepData && cepData.city)
+                  }
                   isLoaded={!buscaCep.isOpen}
                 />
                 <InputBox
                   id="uf"
                   formControl={formLocalEvento}
                   label="UF"
-                  value={selectedRow?.uf || (cepData && cepData.state)}
+                  defaultValue={selectedRow?.uf || (cepData && cepData.state)}
                   isLoaded={!buscaCep.isOpen}
                 />
               </Stack>

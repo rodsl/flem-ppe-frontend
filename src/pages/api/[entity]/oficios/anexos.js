@@ -76,7 +76,6 @@ const getOficios = async (req, res) => {
 const putOficio = async (req, res) => {
   const { entity, id } = req.query;
   const { anexosId } = req.body;
-console.log(anexosId)
   try {
     const table = `${entity}_Oficios`;
 
@@ -93,7 +92,7 @@ console.log(anexosId)
         },
       },
     });
-console.log(teste)
+
     const query = await prisma.ba_Oficios.update({
       // const query = await prisma[table].update({
       data: {

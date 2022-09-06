@@ -47,8 +47,7 @@ const getComunicados = async (req, res) => {
   const { entity } = req.query;
   try {
     const table = `${entity}_Comunicados`;
-    const query = await prisma.ba_Comunicados.findMany({
-      // const query = await prisma[table].findMany({
+    const query = await prisma[table].findMany({
       where: {
         excluido: {
           equals: false,
@@ -61,7 +60,7 @@ const getComunicados = async (req, res) => {
       },
       orderBy: [
         {
-          assunto: "asc",
+          codComunicado: "desc",
         },
       ],
     });
@@ -111,16 +110,38 @@ const addComunicado = async (req, res) => {
       },
     });
 
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Comunicado",
+        descricao: `Criação do comunicado: ${assunto}`,
+        beneficiario: {
+          connect: benefToConnectComunicado.map(({ id }) => ({ id })),
+        },
+        comunicados: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Comunicado",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error);
     switch (error.code) {
       case "P2002":
         res.status(409).json({ error: "Unique constraint failed" });
         break;
 
       default:
-        console.log(error);
-        res.status(409).json({ error: error });
+        res.status(500).json({ error: error });
         break;
     }
   }
@@ -129,9 +150,9 @@ const addComunicado = async (req, res) => {
 const modifyComunicado = async (req, res) => {
   const { entity } = req.query;
   const { id, emailRemetente, assunto, conteudoEmail, benefAssoc } = req.body;
-  console.log(benefAssoc);
   const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
   const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+
   try {
     const table = `${entity}_Comunicados`;
     const tableBeneficiarios = `${entity}_Beneficiarios`;
@@ -152,6 +173,7 @@ const modifyComunicado = async (req, res) => {
         ],
       },
     });
+
     const query = await prisma[table].update({
       data: {
         assunto,
@@ -163,6 +185,28 @@ const modifyComunicado = async (req, res) => {
       },
       where: {
         id,
+      },
+    });
+
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Comunicado",
+        descricao: `Modificação do comunicado: ${assunto}`,
+        beneficiario: {
+          connect: benefToConnectComunicado.map(({ id }) => ({ id })),
+        },
+        comunicados: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Comunicado",
+            },
+          })
+        ).id,
       },
     });
 
@@ -185,8 +229,7 @@ const deleteComunicado = async (req, res) => {
   try {
     const table = `${entity}_Comunicados`;
 
-    const query = await prisma.ba_Comunicados.update({
-      // const query = await prisma[table].update({
+    const query = await prisma[table].update({
       data: {
         excluido: true,
         benefAssoc: {
@@ -202,9 +245,31 @@ const deleteComunicado = async (req, res) => {
         id,
       },
     });
+
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Comunicado",
+        descricao: `Exclusão do comunicado: ${query.assunto}`,
+        beneficiario: {
+          connect: query.benefAssoc.map(({ id }) => ({ id })),
+        },
+        comunicados: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Comunicado",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: error });
   }
 };

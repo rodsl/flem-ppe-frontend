@@ -64,7 +64,7 @@ const postPresencaBenefEvento = async (req, res) => {
   const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
 
   try {
-    const table = `${entity}_Locais_Eventos`;
+    const table = `${entity}_Eventos_Lista_Presenca`;
     const tableBeneficiarios = `${entity}_Beneficiarios`;
 
     const benefToInformPresenca = await prisma[tableBeneficiarios].findMany({
@@ -91,6 +91,7 @@ const postPresencaBenefEvento = async (req, res) => {
     });
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error);
     switch (error.code) {
       case "P2002":
         res.status(409).json({ error: "Unique constraint failed" });

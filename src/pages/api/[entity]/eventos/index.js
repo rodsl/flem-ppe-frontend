@@ -73,6 +73,7 @@ const getEvento = async (req, res) => {
               colabCr: true,
             },
           },
+          comunicado: true,
         },
       });
       return res.status(200).json(query);
@@ -97,8 +98,10 @@ const getEvento = async (req, res) => {
             colabCr: true,
           },
         },
+        comunicado: true,
       },
     });
+
     return res.status(200).json(query);
   } catch (error) {
     console.log(error);
@@ -117,6 +120,8 @@ const addEvento = async (req, res) => {
     benefAssoc,
     criarAcaoCR,
     colabAcaoCR = [],
+    emailAlerts,
+    emailRemetente,
     conteudoEmail = null,
   } = req.body;
   const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
@@ -145,6 +150,7 @@ const addEvento = async (req, res) => {
     });
 
     const query = await prisma[table].create({
+      // const query = await prisma[table].create({
       data: {
         nome,
         modalidade,
@@ -171,9 +177,26 @@ const addEvento = async (req, res) => {
               },
             }
           : {},
+        comunicado: emailAlerts
+          ? {
+              create: {
+                assunto: `PPE - Novo Evento: ${nome}`,
+                conteudoEmail,
+                remetenteComunicado: {
+                  connect: {
+                    id: emailRemetente,
+                  },
+                },
+                benefAssoc: {
+                  connect: benefToConnectAcao.map(({ id }) => ({ id })),
+                },
+              },
+            }
+          : {},
       },
       include: {
         acao_Cr: true,
+        comunicado: true,
       },
     });
 
@@ -204,6 +227,9 @@ const modifyEvento = async (req, res) => {
     acao_CrId,
     criarAcaoCR,
     colabAcaoCR = [],
+    emailAlerts,
+    comunicado_Id,
+    emailRemetente,
     conteudoEmail = null,
   } = req.body;
   const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
@@ -213,6 +239,7 @@ const modifyEvento = async (req, res) => {
   try {
     const table = `${entity}_Eventos`;
     const tableAcoesCr = `${entity}_Acoes_Cr`;
+    const tableComunicados = `${entity}_Comunicados`;
     const tableBeneficiarios = `${entity}_Beneficiarios`;
 
     const benefToConnectAcao = await prisma[tableBeneficiarios].findMany({
@@ -232,28 +259,47 @@ const modifyEvento = async (req, res) => {
       },
     });
 
-    const acaoCr = async () => {
+    const getAcaoCr = async () => {
       if (criarAcaoCR) {
-        return await prisma[tableAcoesCr].upsert({
+        return await prisma.ba_Acoes_Cr.upsert({
+          // return await prisma[tableAcoesCr].upsert({
           where: {
-            id: acao_CrId === null ? "" : acao_CrId,
+            id: acao_CrId === undefined ? "" : acao_CrId,
           },
           update: {
             nome,
             descricao:
-              "Ação gerada automaticamente na criação do evento " + nome,
+              "Ação gerada automaticamente na modificação do evento " + nome,
             benefAssoc: {
               set: benefToConnectAcao.map(({ id }) => ({ id })),
             },
             colabCr: {
               set: colabMatriculas.map((value) => ({ matriculaFlem: value })),
             },
+            historico: {
+              create: {
+                // categoria: "Ação CR",
+                descricao:
+                  "Atualização de ação em função da modificação do evento: " +
+                  nome,
+                beneficiario: {
+                  connect: benefToConnectAcao.map(({ id }) => ({ id })),
+                },
+                tipoHistorico_Id: (
+                  await prisma.ba_Historico_Tipo.findFirst({
+                    where: {
+                      nome: "Ação CR",
+                    },
+                  })
+                ).id,
+              },
+            },
             excluido: false,
           },
           create: {
             nome,
             descricao:
-              "Ação gerada automaticamente na criação do evento " + nome,
+              "Ação gerada automaticamente na modificação do evento " + nome,
             benefAssoc: {
               connect: benefToConnectAcao.map(({ id }) => ({ id })),
             },
@@ -262,10 +308,27 @@ const modifyEvento = async (req, res) => {
                 matriculaFlem: value,
               })),
             },
+            historico: {
+              create: {
+                // categoria: "Ação CR",
+                descricao:
+                  "Criação de ação em função da modificação do evento: " + nome,
+                beneficiario: {
+                  connect: benefToConnectAcao.map(({ id }) => ({ id })),
+                },
+                tipoHistorico_Id: (
+                  await prisma.ba_Historico_Tipo.findFirst({
+                    where: {
+                      nome: "Ação CR",
+                    },
+                  })
+                ).id,
+              },
+            },
           },
         });
-      } else if (acao_CrId !== null) {
-        return await prisma[tableAcoesCr].update({
+      } else if (acao_CrId !== undefined) {
+        return prisma[tableAcoesCr].update({
           data: {
             excluido: true,
           },
@@ -278,17 +341,110 @@ const modifyEvento = async (req, res) => {
       }
     };
 
+    const getComunicado = async () => {
+      if (emailAlerts) {
+        return prisma[tableComunicados].upsert({
+          where: {
+            id: comunicado_Id === undefined ? "" : comunicado_Id,
+          },
+          update: {
+            assunto: nome,
+            remetenteComunicado: {
+              connect: {
+                id: emailRemetente,
+              },
+            },
+            benefAssoc: {
+              set: benefToConnectAcao.map(({ id }) => ({ id })),
+            },
+            conteudoEmail: JSON.stringify(conteudoEmail),
+            excluido: false,
+            historico: {
+              create: {
+                // categoria: "Comunicado",
+                descricao:
+                  "Atualização de comunicado em função da modificação do evento: " +
+                  nome,
+                beneficiario: {
+                  connect: benefToConnectAcao.map(({ id }) => ({ id })),
+                },
+
+                tipoHistorico_Id: (
+                  await prisma.ba_Historico_Tipo.findFirst({
+                    where: {
+                      nome: "Comunicado",
+                    },
+                  })
+                ).id,
+              },
+            },
+          },
+          create: {
+            assunto: nome,
+            benefAssoc: {
+              connect: benefToConnectAcao.map(({ id }) => ({ id })),
+            },
+            remetenteComunicado: {
+              connect: {
+                id: emailRemetente,
+              },
+            },
+            conteudoEmail: JSON.stringify(conteudoEmail),
+            historico: {
+              create: {
+                // categoria: "Comunicado",
+                descricao:
+                  "Criação de comunicado em função da modificação do evento: " +
+                  nome,
+                beneficiario: {
+                  connect: benefToConnectAcao.map(({ id }) => ({ id })),
+                },
+
+                tipoHistorico_Id: (
+                  await prisma.ba_Historico_Tipo.findFirst({
+                    where: {
+                      nome: "Comunicado",
+                    },
+                  })
+                ).id,
+              },
+            },
+          },
+        });
+      } else if (comunicado_Id !== undefined) {
+        return prisma[tableComunicados].update({
+          data: {
+            excluido: true,
+          },
+          where: {
+            id: comunicado_Id,
+          },
+        });
+      } else {
+        return null;
+      }
+    };
+
+    const acaoCr = await getAcaoCr();
+    const comunicado = await getComunicado();
+
     const query = await prisma[table].update({
       data: {
         nome,
         modalidade,
         data: DateTime.fromISO(data).toISO(),
+
         tipo_eventoId: tipo,
         local_EventoId: local || null,
         benefAssoc: {
           set: benefToConnectAcao.map(({ id }) => ({ id })),
         },
-        acao_CrId: acaoCr().id,
+        acao_Cr: {
+          set: acaoCr ? [{ id: acaoCr.id }] : [],
+        },
+        comunicado: {
+          set: comunicado ? [{ id: comunicado.id }] : [],
+        },
       },
       where: {
         id,
@@ -303,7 +459,8 @@ const modifyEvento = async (req, res) => {
         break;
 
       default:
-        res.status(500).json({ error: error });
+        console.log(error);
+        res.status(409).json({ error: error });
         break;
     }
   }
@@ -321,6 +478,22 @@ const deleteEvento = async (req, res) => {
         id,
       },
     });
+
+    await prisma.ba_Historico.create({
+      data: {
+        categoria: "Evento",
+        descricao: `Exclusão do evento: ${query.nome}`,
+        beneficiario: {
+          connect: query.benefAssoc.map(({ id }) => ({ id })),
+        },
+        eventos: {
+          connect: {
+            id: query.id,
+          },
+        },
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     return res.status(500).json({ error: error });

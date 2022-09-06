@@ -78,6 +78,28 @@ const addEnvios = async (req, res) => {
       data: enviosToCreate,
     });
 
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Envio de Comunicado",
+        descricao: `Envio do comunicado: ${getComunicado.assunto}`,
+        beneficiario: {
+          connect: getComunicado.benefAssoc.map(({ id }) => ({ id })),
+        },
+        comunicados: {
+          connect: {
+            id: getComunicado.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Envio de Comunicado",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {

@@ -3,7 +3,6 @@
  *  @module Navbar
  */
 
-
 import {
   Avatar,
   Box,
@@ -34,19 +33,18 @@ import { EditIcon } from "@chakra-ui/icons";
 import { IconBox } from "components/Icons/IconBox";
 import { getSession, signOut } from "next-auth/react";
 
-
 /**
-   * Monta a Navbar.
-   * @method Navbar
-   * @memberof module:Navbar
-   * @param {Object} appName nome de exibição na Navbar
-   * @param {Object} entities valor da "entity", que define a
-   * localização do projeto (BA ou TO)
-   * @param {Object} onclick definição de ação após o clique
-   * @param {Component} children estruturas filho da composição
-   * @returns {Component} componente estilizado.
-   * 
-   */
+ * Monta a Navbar.
+ * @method Navbar
+ * @memberof module:Navbar
+ * @param {Object} appName nome de exibição na Navbar
+ * @param {Object} entities valor da "entity", que define a
+ * localização do projeto (BA ou TO)
+ * @param {Object} onclick definição de ação após o clique
+ * @param {Component} children estruturas filho da composição
+ * @returns {Component} componente estilizado.
+ *
+ */
 export function Navbar({
   appName = "[App Name]",
   entities,
@@ -69,7 +67,7 @@ export function Navbar({
   const [icon, setIcon] = useControllableState({ defaultValue: <FiLogOut /> });
   const signOutSession = () => {
     setIcon(<Icon as={Spinner} color="black" mt={1} />);
-    signOut()
+    signOut();
   };
 
   useEffect(() => {
@@ -138,11 +136,11 @@ export function Navbar({
                     display={["none", "flex"]}
                   >
                     <Heading as="h3" size="sm">
-                      Rodrigo Lima
+                      Username
                     </Heading>
-                    <Text color="brand1">Admin</Text>
+                    {/* <Text color="brand1">Admin</Text> */}
                   </Flex>
-                  <Avatar size="md" src="https://github.com/rodsl.png" mr={1} />
+                  <Avatar size="md" mr={1} />
                   <FiChevronDown />
                 </Flex>
               </MenuButton>
