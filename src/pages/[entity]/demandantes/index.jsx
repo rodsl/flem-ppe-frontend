@@ -393,5 +393,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Demandantes.auth = false;
+Demandantes.auth = true;
 Demandantes.dashboard = true;

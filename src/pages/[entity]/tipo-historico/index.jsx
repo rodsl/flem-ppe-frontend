@@ -28,11 +28,7 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import {
-  FiMoreHorizontal,
-  FiPlus,
-  FiTrash2,
-} from "react-icons/fi";
+import { FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
 import { Table } from "components/Table";
 import { Overlay } from "components/Overlay";
 import { MenuIconButton } from "components/Menus/MenuIconButton";
@@ -375,5 +371,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-TipoHistorico.auth = false;
+TipoHistorico.auth = true;
 TipoHistorico.dashboard = true;

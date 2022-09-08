@@ -94,7 +94,9 @@ export default function Eventos({ entity, ...props }) {
   const buscaCep = useDisclosure();
   const position = useBreakpointValue({ base: "bottom", sm: "top-right" });
   const fetchTableData = useDisclosure();
-  const toast = useToast();
+  const toast = useToast({
+    position,
+  });
   const informarPresenca = useCustomForm();
 
   const columns = useMemo(
@@ -183,7 +185,6 @@ export default function Eventos({ entity, ...props }) {
                     icon: <FiEdit />,
                     onClick: () => {
                       setSelectedRow(props.row.original);
-                      console.log(props.row.original);
                       addEvento.onOpen();
                     },
                   },
@@ -254,7 +255,6 @@ export default function Eventos({ entity, ...props }) {
               status: "success",
               duration: 5000,
               isClosable: false,
-              position,
             });
           }
         })
@@ -266,7 +266,6 @@ export default function Eventos({ entity, ...props }) {
               status: "error",
               duration: 5000,
               isClosable: false,
-              position,
             });
           } else {
             throw new Error(error);
@@ -286,7 +285,6 @@ export default function Eventos({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -298,7 +296,6 @@ export default function Eventos({ entity, ...props }) {
             status: "error",
             duration: 5000,
             isClosable: false,
-            position,
           });
         } else {
           throw new Error(error);
@@ -321,7 +318,6 @@ export default function Eventos({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -333,7 +329,6 @@ export default function Eventos({ entity, ...props }) {
             status: "error",
             duration: 5000,
             isClosable: false,
-            position,
           });
         } else {
           throw new Error(error);
@@ -357,7 +352,6 @@ export default function Eventos({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -369,7 +363,6 @@ export default function Eventos({ entity, ...props }) {
             status: "error",
             duration: 5000,
             isClosable: false,
-            position,
           });
         } else {
           throw new Error(error);
@@ -392,7 +385,6 @@ export default function Eventos({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -420,7 +412,6 @@ export default function Eventos({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -446,7 +437,6 @@ export default function Eventos({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
           download(res.data, `PPE_LISTA_PRESENCA_${nome}.pdf`, content);
           downloadingFile.onClose();
@@ -619,7 +609,6 @@ export default function Eventos({ entity, ...props }) {
         status: "success",
         duration: 5000,
         isClosable: false,
-        position,
       });
     } catch (error) {
       setCepData(null);
@@ -632,7 +621,6 @@ export default function Eventos({ entity, ...props }) {
         status: "warning",
         duration: 5000,
         isClosable: false,
-        position,
         containerStyle: {
           width: "300px",
         },
@@ -1355,5 +1343,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Eventos.auth = false;
+Eventos.auth = true;
 Eventos.dashboard = true;

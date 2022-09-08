@@ -35,7 +35,7 @@ import {
   FiPlus,
   FiUnlock,
 } from "react-icons/fi";
-import { variants, variantsTab } from "styles/transitions";
+import { variants } from "styles/transitions";
 import { celularMask, cepMask, cpfMask, rgMask } from "masks-br";
 import { axios, filesAPIService, filesAPIUpload } from "services/apiService";
 import { useCustomForm } from "hooks";
@@ -55,20 +55,6 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
   const [benefData, setBenefData] = useState([]);
   const [benefDataNotFound, setBenefDataNotFound] = useState(true);
   const formDadosBeneficiario = useCustomForm();
-
-  const onSubmit2 = (formData, e) => {
-    const anexos = new FormData();
-
-    if (formData.anexoDocumento) {
-      formData.anexoDocumento.map((file, idx) => anexos.append(`files`, file));
-    }
-
-    if (anexos.getAll("files").length) {
-      console.log("TEM ANEXOS");
-    } else {
-      console.log("TEM NADA AQUI");
-    }
-  };
 
   const fileUpload = async (data, params) => {
     const config = {
@@ -238,27 +224,6 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
         />
       ),
     },
-    // {
-    //   label: "Informações Complementares",
-    //   content: <>Informações Complementares</>,
-    // },
-    // {
-    //   label: "Eventos",
-    //   content: <>Eventos</>,
-    // },
-
-    // {
-    //   label: "Pendências",
-    //   content: <>Pendências</>,
-    // },
-    // {
-    //   label: "Ofícios",
-    //   content: <>Ofícios</>,
-    // },
-    // {
-    //   label: "Comunicados",
-    //   content: <>Comunicados</>,
-    // },
   ];
 
   useEffect(() => {
@@ -380,7 +345,7 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
                       initial="pageInitial"
                       animate="pageAnimate"
                       exit="pageExit"
-                      variants={variantsTab}
+                      variants={variants}
                     >
                       <Box pos="relative">
                         <Stack
@@ -407,7 +372,6 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
                             <HStack>
                               <Text>Carregando</Text>
                               <Spinner
-                                // boxSize={20}
                                 color="brand1.500"
                                 thickness="2px"
                                 speed=".5s"
@@ -707,7 +671,6 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
 
   const formEmail = emailQtd.map((obj, idx, arr) => ({
     id: `email.${idx}`,
-    // label: "E-mail",
     formControl,
     placeholder: "email@exemplo.com",
     defaultValue: obj.contato,
@@ -1342,15 +1305,6 @@ const Documentos = ({
   );
 
   const formDocumentoInputs = [
-    // {
-    //   id: "idCatDocumento",
-    //   label: "Categoria",
-    //   placeholder: "Selecione...",
-    //   formControl: formControl,
-    //   type: "select",
-    //   options: tiposDocumentoFromBd,
-    //   required: "Obrigatório",
-    // },
     {
       id: "descricaoDocumento",
       label: "Descrição",
@@ -1364,7 +1318,7 @@ const Documentos = ({
       uploadProgress,
       setUploadProgress,
       uploadController,
-      // validate: (v) => v.length || "Obrigatório",
+      validate: (v) => v.length || "Obrigatório",
       mt: 4,
     },
     {
@@ -1561,37 +1515,6 @@ const Historico = ({
         Cell: ({ value }) => <Box minW={200}>{value}</Box>,
         Footer: false,
       },
-      // {
-      //   Header: "Ações",
-      //   Cell: (props) => (
-      //     // <IconButton
-      //     //   icon={<FiMoreHorizontal />}
-      //     //   onClick={() => setSelectedRow(props?.row?.original)}
-      //     //   variant="outline"
-      //     //   colorScheme="brand1"
-      //     // />
-      //     <MenuIconButton
-      //       icon={<FiMoreHorizontal />}
-      //       menuItems={[
-      //         {
-      //           menuGroupLabel: null,
-      //           menuGroupButtons: [
-      //             {
-      //               text: "Download",
-      //               icon: <FiDownload />,
-      //               onClick: () => {
-      //                 setSelectedRow(props.row.original);
-      //                 formAddUnidade.openOverlay();
-      //               },
-      //             },
-      //           ],
-      //         },
-      //       ]}
-      //       colorScheme="brand1"
-      //     />
-      //   ),
-      //   Footer: false,
-      // },
     ],
     []
   );
@@ -2062,15 +1985,6 @@ const InformacoesSigilosas = ({
   ];
 
   const formDocumentoSigilosoInputs = [
-    // {
-    //   id: "idCatDocumento",
-    //   label: "Categoria",
-    //   placeholder: "Selecione...",
-    //   formControl: formControl,
-    //   type: "select",
-    //   options: tiposDocumentoFromBd,
-    //   required: "Obrigatório",
-    // },
     {
       id: "descricaoDocumento",
       label: "Descrição",
@@ -2084,7 +1998,7 @@ const InformacoesSigilosas = ({
       uploadProgress,
       setUploadProgress,
       uploadController,
-      // validate: (v) => v.length || "Obrigatório",
+      validate: (v) => v.length || "Obrigatório",
       mt: 4,
     },
     {
@@ -2461,7 +2375,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   }, [data.vaga]);
 
   useEffect(() => {
-    // getDistanciaVaga();
+    getDistanciaVaga();
   }, [vagaInfo]);
 
   return (
@@ -2487,5 +2401,5 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   );
 };
 
-Beneficiarios.auth = false;
+Beneficiarios.auth = true;
 Beneficiarios.dashboard = true;

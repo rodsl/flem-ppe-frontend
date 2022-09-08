@@ -49,5 +49,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Cadastro.auth = false;
+Cadastro.auth = true;
 Cadastro.dashboard = true;

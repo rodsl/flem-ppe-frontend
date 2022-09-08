@@ -31,7 +31,6 @@ import { FiEdit, FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
 import { axios } from "services/apiService";
 import _ from "lodash";
 
-
 export default function ColaboradoresCR({ entity }) {
   const router = useRouter();
   const { asPath } = router;
@@ -46,7 +45,7 @@ export default function ColaboradoresCR({ entity }) {
   });
 
   const formAddColabCr = useCustomForm();
-  
+
   const formDeleteColabCr = useCustomForm();
 
   const tableColabCrColumns = useMemo(
@@ -144,14 +143,11 @@ export default function ColaboradoresCR({ entity }) {
     e.preventDefault();
     formDeleteColabCr.setLoading();
     try {
-      const { status } = await axios.delete(
-        `/api/${entity}/colaboradores-cr`,
-        {
-          params: {
-            id: selectedRow.id,
-          },
-        }
-      );
+      const { status } = await axios.delete(`/api/${entity}/colaboradores-cr`, {
+        params: {
+          id: selectedRow.id,
+        },
+      });
 
       if (status === 200) {
         toast({
@@ -289,7 +285,9 @@ export default function ColaboradoresCR({ entity }) {
           <Divider />
           <ModalBody pb={6}>
             <VStack my={3} spacing={6}>
-              <Heading size="md">Deseja excluir o seguinte colaborador?</Heading>
+              <Heading size="md">
+                Deseja excluir o seguinte colaborador?
+              </Heading>
               <Text fontSize="xl" align="center">
                 {selectedRow?.nome}
               </Text>
@@ -348,5 +346,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-ColaboradoresCR.auth = false;
+ColaboradoresCR.auth = true;
 ColaboradoresCR.dashboard = true;

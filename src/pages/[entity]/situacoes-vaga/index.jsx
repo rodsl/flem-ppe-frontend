@@ -528,5 +528,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-SituacoesDeVaga.auth = false;
+SituacoesDeVaga.auth = true;
 SituacoesDeVaga.dashboard = true;

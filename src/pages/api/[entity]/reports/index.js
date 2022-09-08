@@ -52,11 +52,16 @@ const getSituacoesVaga = async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: true,
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? "/usr/bin/chromium-browser"
+          : null,
       args: [
         "--disable-gpu",
         "--disable-dev-shm-usage",
         "--disable-setuid-sandbox",
         "--no-sandbox",
+        "--lang=pt-BR",
       ],
     });
     const page = await browser.newPage();
@@ -66,7 +71,7 @@ const getSituacoesVaga = async (req, res) => {
         waitUntil: "networkidle0",
       }
     );
-    
+
     const pdf = await page.pdf({
       printBackground: true,
       format: "A4",

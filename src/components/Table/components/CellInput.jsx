@@ -32,14 +32,19 @@ export function CellInput({
 
   return (
     <Input
-      value={value.length && value.replace("*", "")}
+      value={value.toString().length ? value.toString().replace("*", "") : ""}
       onChange={onChange}
       onBlur={onBlur}
       variant="flushed"
       w="36"
       rounded="md"
-      bgColor={(value.length && value.includes("*") || (required && value === "")) && "red.200"}
-      isInvalid={value.length && value.includes("*") || (required && value === "")}
+      bgColor={
+        ((value.length && value.includes("*")) || (required && value === "")) &&
+        "red.200"
+      }
+      isInvalid={
+        (value.length && value.includes("*")) || (required && value === "")
+      }
     />
   );
 }

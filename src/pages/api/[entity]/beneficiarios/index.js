@@ -97,7 +97,6 @@ const patchBeneficiarios = async (req, res) => {
       //   },
       // ],
     });
-    console.log(query);
     return res.status(200).json(query);
   } catch (error) {
     console.log(error);

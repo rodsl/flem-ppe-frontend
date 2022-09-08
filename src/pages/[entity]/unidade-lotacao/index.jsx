@@ -488,7 +488,6 @@ export default function UnidadeLotacao({ entity, ...props }) {
       .then((res) => {
         if (res.status === 200) {
           setUnidadesLotacaoFromBd(res.data);
-          console.log(res.data);
         }
       })
       .catch((error) => console.log(error))
@@ -503,7 +502,6 @@ export default function UnidadeLotacao({ entity, ...props }) {
       .then((res) => {
         if (res.status === 200) {
           setPontosFocaisFromBd(res.data);
-          console.log(res.data);
         }
       })
       .catch((error) => console.log(error))
@@ -611,7 +609,9 @@ export default function UnidadeLotacao({ entity, ...props }) {
                   formControl={formAddUnidade.control}
                   label="Logradouro"
                   isLoaded={!buscaCep}
-                  defaultValue={(cepData && cepData.street) || selectedRow?.logradouro}
+                  defaultValue={
+                    (cepData && cepData.street) || selectedRow?.logradouro
+                  }
                 />
                 <InputBox
                   id="complemento"
@@ -632,7 +632,9 @@ export default function UnidadeLotacao({ entity, ...props }) {
                   id="municipio"
                   formControl={formAddUnidade.control}
                   label="Município"
-                  defaultValue={selectedRow?.municipio || (cepData && cepData.city)}
+                  defaultValue={
+                    selectedRow?.municipio || (cepData && cepData.city)
+                  }
                   isLoaded={!buscaCep}
                 />
                 <InputBox
@@ -1039,5 +1041,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-UnidadeLotacao.auth = false;
+UnidadeLotacao.auth = true;
 UnidadeLotacao.dashboard = true;

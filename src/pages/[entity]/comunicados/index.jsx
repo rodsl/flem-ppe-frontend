@@ -784,5 +784,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Comunicados.auth = false;
+Comunicados.auth = true;
 Comunicados.dashboard = true;

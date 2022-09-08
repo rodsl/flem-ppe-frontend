@@ -31,7 +31,7 @@ import { Component, useEffect } from "react";
 import { Logo } from "components/Logo";
 import { EditIcon } from "@chakra-ui/icons";
 import { IconBox } from "components/Icons/IconBox";
-import { getSession, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 /**
  * Monta a Navbar.
@@ -63,6 +63,7 @@ export function Navbar({
         entities.find((entity) => entity.value === defaultPath)?.value) ||
       "",
   });
+  const { data: session } = useSession();
 
   const [icon, setIcon] = useControllableState({ defaultValue: <FiLogOut /> });
   const signOutSession = () => {
@@ -120,7 +121,7 @@ export function Navbar({
             alignItems="center"
             justifyContent="flex-end"
           >
-            <Logo alt="logo" me={[0, 1]} h={[4, 30]} />
+            <Logo alt="logo_flem" me={[0, 1]} h={[4, 30]} />
             <Divider
               orientation="vertical"
               mx={[2, 4]}
@@ -136,30 +137,30 @@ export function Navbar({
                     display={["none", "flex"]}
                   >
                     <Heading as="h3" size="sm">
-                      Username
+                      {session ? session.user.name : "Development"}
                     </Heading>
                     {/* <Text color="brand1">Admin</Text> */}
                   </Flex>
                   <Avatar size="md" mr={1} />
-                  <FiChevronDown />
+                  {session && <FiChevronDown />}
                 </Flex>
               </MenuButton>
-              <MenuList>
-                <MenuGroup title="Profile">
-                  <MenuItem>My Account</MenuItem>
+              <MenuList hidden={!session}>
+                <MenuGroup title="Opções">
+                  {/* <MenuItem>My Account</MenuItem> */}
                   <MenuItem
                     icon={icon}
                     closeOnSelect={false}
                     onClick={signOutSession}
                   >
-                    Sair{" "}
+                    Sair
                   </MenuItem>
                 </MenuGroup>
-                <MenuDivider />
+                {/* <MenuDivider />
                 <MenuGroup title="Help">
                   <MenuItem>Docs</MenuItem>
                   <MenuItem>FAQ</MenuItem>
-                </MenuGroup>
+                </MenuGroup> */}
               </MenuList>
             </Menu>
           </GridItem>

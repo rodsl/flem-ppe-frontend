@@ -206,11 +206,7 @@ export default function Beneficiarios({ entity, ...props }) {
           },
         }) => {
           const vaga = vagas.reverse()[0];
-          return (
-            <Box minW={200}>
-              {vaga && vaga?.municipio?.nome}
-            </Box>
-          );
+          return <Box minW={200}>{vaga && vaga?.municipio?.nome}</Box>;
         },
         Footer: false,
       },
@@ -224,7 +220,8 @@ export default function Beneficiarios({ entity, ...props }) {
           const vaga = vagas.reverse()[0];
           return (
             <Box minW={200}>
-              {vaga && `${vaga?.situacaoVaga?.tipoSituacao?.nome} - ${vaga?.situacaoVaga?.nome}`}
+              {vaga &&
+                `${vaga?.situacaoVaga?.tipoSituacao?.nome} - ${vaga?.situacaoVaga?.nome}`}
             </Box>
           );
         },
@@ -283,7 +280,6 @@ export default function Beneficiarios({ entity, ...props }) {
 
   useEffect(() => {
     axios.get(`/api/${entity}/beneficiarios`).then(({ data }) => {
-      console.log(data);
       setBenefFromBd(data);
     });
     // .then(({ data }) => setBenefFromBd(data));
@@ -379,5 +375,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Beneficiarios.auth = false;
+Beneficiarios.auth = true;
 Beneficiarios.dashboard = true;

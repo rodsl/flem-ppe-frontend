@@ -315,7 +315,6 @@ export default function FilaAcoesCR({ entity, ...props }) {
             position,
           });
         }
-        console.log(res.data);
         contatoAcaoFormSubmit.onClose();
       })
       .catch((error) => {
@@ -596,5 +595,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-FilaAcoesCR.auth = false;
+FilaAcoesCR.auth = true;
 FilaAcoesCR.dashboard = true;

@@ -81,13 +81,13 @@ export default function Dashboard({ entity, ...props }) {
         <Card
           icon={FiUsers}
           label="Beneficiários Ativos"
-          value={benefAtivos.length}
+          value={benefAtivos.length.toString()}
           isLoading={getheringData}
         />
         <Card
           icon={FiUsers}
           label="Total Beneficiários"
-          value={benefAtivos.length}
+          value={benefAtivos.length.toString()}
           isLoading={getheringData}
         />
         {/* <Card icon={FiCalendar} />
@@ -125,5 +125,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Dashboard.auth = false;
+Dashboard.auth = true;
 Dashboard.dashboard = true;

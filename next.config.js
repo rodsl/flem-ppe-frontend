@@ -17,6 +17,7 @@ module.exports = (phase) => {
         },
       ];
     },
-    reactStrictMode: false
+    reactStrictMode: false,
+    output: "standalone",
   };
 };

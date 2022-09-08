@@ -521,5 +521,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Formacoes.auth = false;
+Formacoes.auth = true;
 Formacoes.dashboard = true;

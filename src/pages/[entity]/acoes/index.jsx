@@ -717,5 +717,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-AcoesCR.auth = false;
+AcoesCR.auth = true;
 AcoesCR.dashboard = true;

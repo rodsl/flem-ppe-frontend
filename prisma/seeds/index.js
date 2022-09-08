@@ -6,6 +6,7 @@ const { tipoHistoricoSeed } = require("./historicoTipo");
 const { demandantesSeed } = require("./demandantes");
 const { municSeed } = require("./municipios");
 const { situacoesVagaSeed } = require("./situacoesVaga");
+const { tiposContatoSeed } = require("./tiposContato");
 
 module.exports = {
   tamanhoUniformeSeed,
@@ -15,5 +16,6 @@ module.exports = {
   tipoHistoricoSeed,
   demandantesSeed,
   municSeed,
-  situacoesVagaSeed
+  situacoesVagaSeed,
+  tiposContatoSeed
 };

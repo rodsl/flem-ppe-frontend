@@ -114,8 +114,6 @@ handler.get(async (req, res) => {
       cellDates: true,
     });
 
-    console.log(fileFromApi);
-
     // INSTANCIA O OBJETO CONTENDO OS DADOS
     const sheet = {};
     // RECEBE E MARCA OS DADOS DA PLANILHA
@@ -124,7 +122,6 @@ handler.get(async (req, res) => {
         raw: true,
         defval: null,
       });
-      console.log(110, rawRows);
 
       // FORMATA OS DADOS QUE SÃO AS COLUNAS DA PLANILHA
       rawRows.map((row) => replaceKeys(row));

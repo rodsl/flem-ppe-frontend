@@ -328,7 +328,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
     gerenciarEscritorio.isOpen,
     excluirEscritorio.isOpen,
   ]);
-console.log(selectedRow)
+  console.log(selectedRow);
   const cepInput = formAddEscritorio.watch("cep");
 
   const consultaEndereco = async () => {
@@ -752,5 +752,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-EscritoriosRegionais.auth = false;
+EscritoriosRegionais.auth = true;
 EscritoriosRegionais.dashboard = true;

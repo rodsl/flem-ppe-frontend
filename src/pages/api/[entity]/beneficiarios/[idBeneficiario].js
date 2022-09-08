@@ -360,8 +360,6 @@ const putBeneficiarios = async (req, res) => {
         }),
       ]);
 
-    console.log(260, queryDocumento, queryMaterial, queryHistorico);
-
     if (queryMaterial.id) {
       await prisma.ba_Historico.create({
         data: {

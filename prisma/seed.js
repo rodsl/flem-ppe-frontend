@@ -8,7 +8,8 @@ const {
   tipoHistoricoSeed,
   demandantesSeed,
   municSeed,
-  situacoesVagaSeed
+  situacoesVagaSeed,
+  tiposContatoSeed,
 } = require("./seeds");
 
 const main = async () => {
@@ -20,6 +21,7 @@ const main = async () => {
   const demandantes = await demandantesSeed(prisma);
   const municipios = await municSeed(prisma);
   const situacoesVaga = await situacoesVagaSeed(prisma);
+  const tiposContato = await tiposContatoSeed(prisma);
 
   console.log({
     etnia,
@@ -29,7 +31,8 @@ const main = async () => {
     tiposHistorico,
     demandantes,
     municipios,
-    situacoesVaga
+    situacoesVaga,
+    tiposContato,
   });
 };
 

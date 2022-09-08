@@ -750,5 +750,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-EnvioOficios.auth = false;
+EnvioOficios.auth = true;
 EnvioOficios.dashboard = true;

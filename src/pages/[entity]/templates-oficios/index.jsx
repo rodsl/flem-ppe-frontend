@@ -563,5 +563,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-TemplateOficios.auth = false;
+TemplateOficios.auth = true;
 TemplateOficios.dashboard = true;

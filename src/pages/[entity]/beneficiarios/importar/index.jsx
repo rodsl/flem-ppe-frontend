@@ -46,7 +46,7 @@ import { CellInput } from "components/Table/components/CellInput";
 import { SelectCellInput } from "components/Table/components/SelectCellInput";
 import { FormMaker } from "components/Form";
 import { useCustomForm } from "hooks";
-import { maskCapitalize } from "utils/masks";
+import { maskCapitalize, maskCPF } from "utils/masks";
 
 export default function Importar({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure(false);
@@ -87,6 +87,7 @@ export default function Importar({ entity, ...props }) {
       })
       .then(({ status, data }) => {
         setSheet(data.output2);
+        console.log(data.output2)
         setFileDetails(data.fileDetails);
       })
       .catch((err) => console.log(err.response))
@@ -165,6 +166,7 @@ export default function Importar({ entity, ...props }) {
         telefone01: row.telefone01.formatted,
         telefone02: row.telefone02.formatted,
         raca_cor: row.raca_cor,
+        cpfAluno: cpfMask(row.cpfAluno),
       }));
     setRowsData(rows.filter(({ update, found }) => !found && !update));
     setRowsDataUpdate(rows.filter(({ update, found }) => found && update));
@@ -514,7 +516,7 @@ export default function Importar({ entity, ...props }) {
         .filter((columnHeader) => columnHeader.accessor === "matricula")
         .map((columnHeader) => ({
           ...columnHeader,
-          Cell: (props) => <CellInput {...props} />,
+          Cell: (props) => <CellInput {...props}  />,
         }));
 
     const columnHeadersCustomCell = demandante &&
@@ -561,7 +563,7 @@ export default function Importar({ entity, ...props }) {
   );
 
   const tableDataIgnore = useMemo(
-    () => rowsDataIgnore.length && rowsDataIgnore,
+    () => rowsDataIgnore.length && rowsDataIgnore || [],
     [rowsDataIgnore]
   );
 
@@ -601,12 +603,13 @@ export default function Importar({ entity, ...props }) {
       .patch(`/api/${entity}/beneficiarios/files/sheets/validar-pendencias`, [
         ...tableData,
         ...tableDataUpdate,
+        ...tableDataIgnore,
       ])
       .then(({ data }) => {
         setRowsData(data.filter(({ update, found }) => !found && !update));
         setRowsDataUpdate(data.filter(({ update, found }) => found && update));
         setRowsDataIgnore(data.filter(({ found, update }) => found && !update));
-        setTableError(JSON.stringify(data).includes("*"));
+        setTableError(JSON.stringify(!data.filter(({ found, update }) => found && !update)).includes("*") || data.filter(({ found, update }) => found && !update).filter(({matricula}) => matricula === "").length);
       })
       .catch((err) => console.log(err))
       .finally(() => {
@@ -872,5 +875,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Importar.auth = false;
+Importar.auth = true;
 Importar.dashboard = true;

@@ -1,4 +1,6 @@
 const etnias = [
+  { etnia: "Não Informada" },
+  { etnia: "Amarela" },
   { etnia: "Branca" },
   { etnia: "Indígena" },
   { etnia: "Parda" },

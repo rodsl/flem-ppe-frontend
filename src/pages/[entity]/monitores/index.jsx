@@ -280,7 +280,9 @@ export default function Monitores({ entity, ...props }) {
                 value: `${func_matricula}`,
                 label: `${func_matricula} - ${maskCapitalize(func_nome)}`,
                 ...func,
-                isDisabled: monitoresFromBd.find(({matricula}) => matricula === func_matricula)
+                isDisabled: monitoresFromBd.find(
+                  ({ matricula }) => matricula === func_matricula
+                ),
               }))
           );
         }
@@ -372,8 +374,10 @@ export default function Monitores({ entity, ...props }) {
               options={escritoriosFromBd}
               defaultValue={
                 selectedRow &&
-                escritoriosFromBd.filter(
-                  ({ value }) => selectedRow.escritoriosRegionais.find(({id}) => id === value)
+                escritoriosFromBd.filter(({ value }) =>
+                  selectedRow.escritoriosRegionais.find(
+                    ({ id }) => id === value
+                  )
                 )
               }
               required={false}
@@ -427,9 +431,7 @@ export default function Monitores({ entity, ...props }) {
           <Divider />
           <ModalBody pb={6}>
             <VStack my={3} spacing={6}>
-              <Heading size="md">
-                Deseja excluir o seguinte Monitor(a)?
-              </Heading>
+              <Heading size="md">Deseja excluir o seguinte Monitor(a)?</Heading>
               <Text fontSize="xl" align="center">
                 {selectedRow?.matricula} - {maskCapitalize(selectedRow?.nome)}
               </Text>
@@ -487,5 +489,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Monitores.auth = false;
+Monitores.auth = true;
 Monitores.dashboard = true;
