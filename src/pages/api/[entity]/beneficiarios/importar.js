@@ -116,7 +116,7 @@ const getbenef = async (req, res) => {
           createdAt: "2022-09-02T00:08:44.959Z",
           updatedAt: "2022-09-02T00:08:44.960Z",
           situacaoVaga_Id: "cl7jntrub0019vr24ycup3gs4",
-          remessaSetre_Id: null,
+          remessaSec_Id: null,
           unidadeLotacao_Id: null,
           demandante_Id: "cl7i2ch7j0046rf24ade3pj59",
           beneficiario_Id: "cl7jpxbq701317o243tbe1c5i",
@@ -186,7 +186,7 @@ const getbenef = async (req, res) => {
           createdAt: "2022-09-02T00:08:44.961Z",
           updatedAt: "2022-09-02T00:08:44.961Z",
           situacaoVaga_Id: "cl7jntrub0019vr24ycup3gs4",
-          remessaSetre_Id: null,
+          remessaSec_Id: null,
           unidadeLotacao_Id: null,
           demandante_Id: "cl7i2ch7k0071rf24xmmyqcva",
           beneficiario_Id: "cl7jpxbq901357o246ggxl68e",
@@ -351,7 +351,7 @@ const postBeneficiariosLote = async (req, res) => {
           ).toISO(),
           situacaoVaga_Id: situacaoDefault.id,
           municipio_Id: benef.municipioVagaId,
-          remessaSetre_Id: remessaCreate.id,
+          remessaSec_Id: remessaCreate.id,
         },
       },
     }));
@@ -397,7 +397,7 @@ const postBeneficiariosLote = async (req, res) => {
               id,
             })),
           },
-          remessaSetre: {
+          remessaSec: {
             connect: {
               id: remessaCreate.id,
             },

@@ -353,7 +353,7 @@ CREATE TABLE [dbo].[Ba_Vaga] (
     [createdAt] DATETIME2 NOT NULL CONSTRAINT [Ba_Vaga_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2 NOT NULL,
     [situacaoVaga_Id] NVARCHAR(1000) NOT NULL,
-    [remessaSetre_Id] NVARCHAR(1000) NOT NULL,
+    [remessaSec_Id] NVARCHAR(1000) NOT NULL,
     [unidadeLotacao_Id] NVARCHAR(1000) NOT NULL,
     [beneficiario_Id] NVARCHAR(1000),
     CONSTRAINT [Ba_Vaga_pkey] PRIMARY KEY CLUSTERED ([id])
@@ -373,7 +373,7 @@ CREATE TABLE [dbo].[Ba_SituacaoVaga] (
 );
 
 -- CreateTable
-CREATE TABLE [dbo].[Ba_RemessaSetre] (
+CREATE TABLE [dbo].[Ba_RemessaSec] (
     [id] NVARCHAR(1000) NOT NULL,
     [remessa] INT NOT NULL,
     [data_remessa] DATETIME2 NOT NULL,
@@ -473,7 +473,7 @@ ALTER TABLE [dbo].[Ba_Documentos] ADD CONSTRAINT [Ba_Documentos_tipoDocumento_Id
 ALTER TABLE [dbo].[Ba_Documentos] ADD CONSTRAINT [Ba_Documentos_benefAssoc_Id_fkey] FOREIGN KEY ([benefAssoc_Id]) REFERENCES [dbo].[Ba_Beneficiarios]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSetre_Id]) REFERENCES [dbo].[Ba_RemessaSetre]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSec_Id]) REFERENCES [dbo].[Ba_RemessaSec]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_situacaoVaga_Id_fkey] FOREIGN KEY ([situacaoVaga_Id]) REFERENCES [dbo].[Ba_SituacaoVaga]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;

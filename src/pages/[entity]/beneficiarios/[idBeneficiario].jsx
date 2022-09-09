@@ -2314,7 +2314,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       label: "Remessa/Lote",
       placeholder: "Remessa/Lote",
       formControl,
-      defaultValue: vagaInfo?.remessaSetre?.remessa,
+      defaultValue: vagaInfo?.remessaSec?.remessa,
       readOnly: true,
     },
     {
@@ -2322,8 +2322,8 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       label: "Data Remessa/Lote",
       placeholder: "Data Remessa/Lote",
       formControl,
-      defaultValue: vagaInfo?.remessaSetre?.data_remessa
-        ? DateTime.fromISO(vagaInfo?.remessaSetre?.data_remessa).toLocaleString(
+      defaultValue: vagaInfo?.remessaSec?.data_remessa
+        ? DateTime.fromISO(vagaInfo?.remessaSec?.data_remessa).toLocaleString(
             DateTime.DATE_MED
           )
         : null,
@@ -2334,8 +2334,8 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       label: "Mês Remessa/Lote",
       placeholder: "Mês Remessa/Lote",
       formControl,
-      defaultValue: vagaInfo?.remessaSetre?.data_remessa
-        ? DateTime.fromISO(vagaInfo?.remessaSetre?.data_remessa)
+      defaultValue: vagaInfo?.remessaSec?.data_remessa
+        ? DateTime.fromISO(vagaInfo?.remessaSec?.data_remessa)
             .setLocale("pt-BR")
             .toFormat("MMMM 'de' yyyy")
         : null,

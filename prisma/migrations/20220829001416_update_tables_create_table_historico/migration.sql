@@ -10,7 +10,7 @@
   - A unique constraint covering the columns `[historico_Id]` on the table `Ba_Eventos` will be added. If there are existing duplicate values, this will fail.
   - A unique constraint covering the columns `[ba_HistoricoId]` on the table `Ba_Eventos_Lista_Presenca` will be added. If there are existing duplicate values, this will fail.
   - A unique constraint covering the columns `[historico_Id]` on the table `Ba_Oficios_Enviados` will be added. If there are existing duplicate values, this will fail.
-  - A unique constraint covering the columns `[historico_Id]` on the table `Ba_RemessaSetre` will be added. If there are existing duplicate values, this will fail.
+  - A unique constraint covering the columns `[historico_Id]` on the table `Ba_RemessaSec` will be added. If there are existing duplicate values, this will fail.
   - A unique constraint covering the columns `[historico_Id]` on the table `Ba_Vaga` will be added. If there are existing duplicate values, this will fail.
 
 */
@@ -61,7 +61,7 @@ ALTER TABLE [dbo].[Ba_Eventos_Lista_Presenca] ADD CONSTRAINT [Ba_Eventos_Lista_P
 ALTER TABLE [dbo].[Ba_Oficios_Enviados] ADD CONSTRAINT [Ba_Oficios_Enviados_historico_Id_key] UNIQUE NONCLUSTERED ([historico_Id]);
 
 -- CreateIndex
-ALTER TABLE [dbo].[Ba_RemessaSetre] ADD CONSTRAINT [Ba_RemessaSetre_historico_Id_key] UNIQUE NONCLUSTERED ([historico_Id]);
+ALTER TABLE [dbo].[Ba_RemessaSec] ADD CONSTRAINT [Ba_RemessaSetre_historico_Id_key] UNIQUE NONCLUSTERED ([historico_Id]);
 
 -- CreateIndex
 ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_historico_Id_key] UNIQUE NONCLUSTERED ([historico_Id]);
@@ -79,7 +79,7 @@ ALTER TABLE [dbo].[Ba_Contatos_Acoes_Cr] ADD CONSTRAINT [Ba_Contatos_Acoes_Cr_hi
 ALTER TABLE [dbo].[Ba_Comunicados_Enviados] ADD CONSTRAINT [Ba_Comunicados_Enviados_comunicado_Id_fkey] FOREIGN KEY ([comunicado_Id]) REFERENCES [dbo].[Ba_Comunicados]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSetre_Id]) REFERENCES [dbo].[Ba_RemessaSetre]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSec_Id]) REFERENCES [dbo].[Ba_RemessaSec]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
 COMMIT TRAN;
 

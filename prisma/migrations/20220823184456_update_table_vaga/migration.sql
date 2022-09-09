@@ -16,12 +16,12 @@ ALTER TABLE [dbo].[Ba_Beneficiarios] ADD CONSTRAINT [Ba_Beneficiarios_ausenciaEs
 
 -- AlterTable
 ALTER TABLE [dbo].[Ba_Vaga] ALTER COLUMN [situacaoVaga_Id] NVARCHAR(1000) NULL;
-ALTER TABLE [dbo].[Ba_Vaga] ALTER COLUMN [remessaSetre_Id] NVARCHAR(1000) NULL;
+ALTER TABLE [dbo].[Ba_Vaga] ALTER COLUMN [remessaSec_Id] NVARCHAR(1000) NULL;
 ALTER TABLE [dbo].[Ba_Vaga] ALTER COLUMN [unidadeLotacao_Id] NVARCHAR(1000) NULL;
 ALTER TABLE [dbo].[Ba_Vaga] ADD [demandante_Id] NVARCHAR(1000);
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSetre_Id]) REFERENCES [dbo].[Ba_RemessaSetre]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSec_Id]) REFERENCES [dbo].[Ba_RemessaSec]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_situacaoVaga_Id_fkey] FOREIGN KEY ([situacaoVaga_Id]) REFERENCES [dbo].[Ba_SituacaoVaga]([id]) ON DELETE SET NULL ON UPDATE CASCADE;

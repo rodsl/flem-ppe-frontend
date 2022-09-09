@@ -27,7 +27,7 @@ ALTER TABLE [dbo].[Ba_Oficios] DROP CONSTRAINT [Ba_Oficios_historico_Id_key];
 ALTER TABLE [dbo].[Ba_Oficios_Enviados] DROP CONSTRAINT [Ba_Oficios_Enviados_historico_Id_key];
 
 -- DropIndex
-ALTER TABLE [dbo].[Ba_RemessaSetre] DROP CONSTRAINT [Ba_RemessaSetre_historico_Id_key];
+ALTER TABLE [dbo].[Ba_RemessaSec] DROP CONSTRAINT [Ba_RemessaSetre_historico_Id_key];
 
 COMMIT TRAN;
 

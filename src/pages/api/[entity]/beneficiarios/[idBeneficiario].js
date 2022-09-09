@@ -58,7 +58,7 @@ const getBeneficiario = async (req, res) => {
                 territorioIdentidade: true,
               },
             },
-            remessaSetre: true,
+            remessaSec: true,
           },
         },
         etnia: true,

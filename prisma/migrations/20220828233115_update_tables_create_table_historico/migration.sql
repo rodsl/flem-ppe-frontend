@@ -69,7 +69,7 @@ ALTER TABLE [dbo].[Ba_Oficios] ADD [historico_Id] NVARCHAR(1000);
 ALTER TABLE [dbo].[Ba_Oficios_Enviados] ADD [historico_Id] NVARCHAR(1000);
 
 -- AlterTable
-ALTER TABLE [dbo].[Ba_RemessaSetre] ADD [historico_Id] NVARCHAR(1000);
+ALTER TABLE [dbo].[Ba_RemessaSec] ADD [historico_Id] NVARCHAR(1000);
 
 -- AlterTable
 ALTER TABLE [dbo].[Ba_Vaga] ADD [historico_Id] NVARCHAR(1000);
@@ -133,13 +133,13 @@ ALTER TABLE [dbo].[Ba_Contatos_Beneficiarios] ADD CONSTRAINT [Ba_Contatos_Benefi
 ALTER TABLE [dbo].[Ba_Documentos] ADD CONSTRAINT [Ba_Documentos_historico_Id_fkey] FOREIGN KEY ([historico_Id]) REFERENCES [dbo].[Ba_Historico]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSetre_Id]) REFERENCES [dbo].[Ba_RemessaSetre]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_remessaSetre_Id_fkey] FOREIGN KEY ([remessaSec_Id]) REFERENCES [dbo].[Ba_RemessaSec]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Ba_Vaga] ADD CONSTRAINT [Ba_Vaga_historico_Id_fkey] FOREIGN KEY ([historico_Id]) REFERENCES [dbo].[Ba_Historico]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[Ba_RemessaSetre] ADD CONSTRAINT [Ba_RemessaSetre_historico_Id_fkey] FOREIGN KEY ([historico_Id]) REFERENCES [dbo].[Ba_Historico]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE [dbo].[Ba_RemessaSec] ADD CONSTRAINT [Ba_RemessaSetre_historico_Id_fkey] FOREIGN KEY ([historico_Id]) REFERENCES [dbo].[Ba_Historico]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[_Ba_BeneficiariosToBa_Historico] ADD CONSTRAINT [_Ba_BeneficiariosToBa_Historico_A_fkey] FOREIGN KEY ([A]) REFERENCES [dbo].[Ba_Beneficiarios]([id]) ON DELETE CASCADE ON UPDATE CASCADE;

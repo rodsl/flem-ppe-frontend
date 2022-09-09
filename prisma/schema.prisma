@@ -248,8 +248,8 @@ model Ba_Eventos_Lista_Presenca {
   evento         Ba_Eventos?       @relation(fields: [eventoId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   benefAssocId   String?
   benefAssoc     Ba_Beneficiarios? @relation(fields: [benefAssocId], references: [id])
-  historico      Ba_Historico?     @relation(fields: [ba_HistoricoId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  ba_HistoricoId String?           @unique
+  historico      Ba_Historico?     @relation(fields: [historicoId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  historicoId String?
 }
 
 model Ba_Acoes_Cr {
@@ -412,19 +412,6 @@ model Ba_Comunicados_Enviados {
   historico_Id    String?
 }
 
-model Ba_Uploads {
-  id           String   @id @default(cuid())
-  name         String   @unique
-  originalName String
-  path         String
-  referencesTo String
-  excluido     Boolean  @default(false)
-  createdBy    String   @default("SISTEMA")
-  updatedBy    String   @default("SISTEMA")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
 model Ba_Beneficiarios {
   id                      String                      @id @default(cuid())
   nome                    String
@@ -506,15 +493,15 @@ model Ba_Etnia {
 }
 
 model Ba_TamanhoUniforme {
-  id                     String                   @id @default(cuid())
-  tamanho                String
-  beneficiarios          Ba_Beneficiarios[]
-  createdBy              String                   @default("SISTEMA")
-  updatedBy              String                   @default("SISTEMA")
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  excluido               Boolean                  @default(false)
-  Ba_Materiais_Entregues Ba_Materiais_Entregues[]
+  id                 String                   @id @default(cuid())
+  tamanho            String
+  beneficiarios      Ba_Beneficiarios[]
+  createdBy          String                   @default("SISTEMA")
+  updatedBy          String                   @default("SISTEMA")
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  excluido           Boolean                  @default(false)
+  materiaisEntregues Ba_Materiais_Entregues[]
 }
 
 model Ba_Contatos_Tipos {
@@ -542,7 +529,7 @@ model Ba_Contatos_Beneficiarios {
   tipoContato    Ba_Contatos_Tipos @relation(fields: [tipoContato_Id], references: [id])
   benefAssoc     Ba_Beneficiarios  @relation(fields: [benefAssoc_Id], references: [id])
   historico      Ba_Historico?     @relation(fields: [historico_Id], references: [id])
-  historico_Id   String? 
+  historico_Id   String?
 }
 
 model Ba_Contatos_Pontos_Focais {
@@ -617,11 +604,11 @@ model Ba_Vaga {
   createdAt              DateTime            @default(now())
   updatedAt              DateTime            @updatedAt
   situacaoVaga_Id        String?
-  remessaSetre_Id        String?
+  remessaSec_Id          String?
   unidadeLotacao_Id      String?
   demandante_Id          String?
   municipio              Ba_Municipios?      @relation(fields: [municipio_Id], references: [id])
-  remessaSetre           Ba_RemessaSetre?    @relation(fields: [remessaSetre_Id], references: [id])
+  remessaSec             Ba_RemessaSec?      @relation(fields: [remessaSec_Id], references: [id])
   situacaoVaga           Ba_Situacoes_Vaga?  @relation(fields: [situacaoVaga_Id], references: [id])
   unidadeLotacao         Ba_Unidade_Lotacao? @relation(fields: [unidadeLotacao_Id], references: [id])
   beneficiario           Ba_Beneficiarios?   @relation(fields: [beneficiario_Id], references: [id])
@@ -632,7 +619,7 @@ model Ba_Vaga {
   municipio_Id           String?
 }
 
-model Ba_RemessaSetre {
+model Ba_RemessaSec {
   id                 String        @id @default(cuid())
   remessa            Int
   data_remessa       DateTime
@@ -670,7 +657,7 @@ model Ba_Historico {
   contatosBeneficiarios Ba_Contatos_Beneficiarios[]
   documentos            Ba_Documentos[]
   vaga                  Ba_Vaga[]
-  remessaSetre          Ba_RemessaSetre[]
+  remessaSec            Ba_RemessaSec[]
   materialEntregue      Ba_Materiais_Entregues[]
 }
 
@@ -688,14 +675,14 @@ model Ba_Pendencias {
 }
 
 model Ba_Pendencias_Tipos {
-  id            String          @id @default(cuid())
-  label         String
-  excluido      Boolean         @default(false)
-  createdBy     String          @default("SISTEMA")
-  updatedBy     String          @default("SISTEMA")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  Ba_Pendencias Ba_Pendencias[]
+  id         String          @id @default(cuid())
+  label      String
+  excluido   Boolean         @default(false)
+  createdBy  String          @default("SISTEMA")
+  updatedBy  String          @default("SISTEMA")
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  pendencias Ba_Pendencias[]
 }
 
 model Ba_Historico_Tipo {
