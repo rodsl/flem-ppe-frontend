@@ -218,7 +218,7 @@ const postBeneficiariosLote = async (req, res) => {
   try {
     const table = `${entity}_Beneficiarios`;
 
-    const remessaCreate = await prisma.ba_RemessaSetre.create({
+    const remessaCreate = await prisma.ba_RemessaSec.create({
       data: {
         remessa: parseInt(numRemessa),
         data_remessa: DateTime.fromSQL(dataRemessa).toISO(),
