@@ -1,11 +1,11 @@
 {
   "name": "portal_ppe_flem",
   "private": true,
-  "version": "v0.0.24-220905",
+  "version": "v0.0.27-220909",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "next lint",
     "docs": "jsdoc --readme README.md -c jsdoc-config.json",
     "db-push:dev": "dotenv -e .env.development -- yarn prisma db push",
