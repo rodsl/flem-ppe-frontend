@@ -52,7 +52,7 @@ const getDemandantes = async (req, res) => {
     const query = await prisma[table].findMany({
       orderBy: [
         {
-          nome: "asc",
+          sigla: "asc",
         },
       ],
       where: {

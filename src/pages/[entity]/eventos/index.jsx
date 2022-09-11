@@ -25,12 +25,24 @@ import {
   ScaleFade,
   Center,
   Spinner,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { FiEdit, FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
+import {
+  FiEdit,
+  FiMoreHorizontal,
+  FiPlus,
+  FiTrash2,
+  FiUserCheck,
+} from "react-icons/fi";
+import { BsClipboardCheck } from "react-icons/bs";
 import { DateTime } from "luxon";
 import { Table } from "components/Table";
 import { Overlay } from "components/Overlay";
@@ -46,8 +58,10 @@ import { SwitchButton } from "components/Buttons/SwitchButton";
 import { MaskedInputBox } from "components/Inputs/MaskedInputBox";
 import { cepMask, cpfMask } from "masks-br";
 import { maskCapitalize } from "utils/maskCapitalize";
+import download from "downloadjs";
+import { useCustomForm } from "hooks";
 
-export default function TemplateOficios({ entity, ...props }) {
+export default function Eventos({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
@@ -58,14 +72,17 @@ export default function TemplateOficios({ entity, ...props }) {
   const [locaisEventosFromBd, setLocaisEventosFromBd] = useState([]);
   const [tiposEventoFromBd, setTiposEventoFromBd] = useState([]);
   const [municipiosFromBd, setMunicipiosFromBd] = useState([]);
+  const [demandantesFromBd, setDemandantesFromBd] = useState([]);
   const [colaboradoresFromRh, setColaboradoresFromRh] = useState([]);
   const [beneficiariosFromRh, setBeneficiariosFromRh] = useState([]);
+  const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
   const [emailAlerts, emailAlertsState] = useState(false);
   const [criarAcaoCR, setCriarAcaoCR] = useState(false);
   const [benefLote, setBenefLote] = useState(false);
   const [modalidade, setModalidade] = useState("");
   const [nomeEvento, setNomeEvento] = useState("");
   const tipoEventoFormSubmit = useDisclosure();
+  const downloadingFile = useDisclosure();
   const addEvento = useDisclosure();
   const formSubmit = useDisclosure();
   const localEventoFormSubmit = useDisclosure();
@@ -77,7 +94,10 @@ export default function TemplateOficios({ entity, ...props }) {
   const buscaCep = useDisclosure();
   const position = useBreakpointValue({ base: "bottom", sm: "top-right" });
   const fetchTableData = useDisclosure();
-  const toast = useToast();
+  const toast = useToast({
+    position,
+  });
+  const informarPresenca = useCustomForm();
 
   const columns = useMemo(
     () => [
@@ -143,6 +163,24 @@ export default function TemplateOficios({ entity, ...props }) {
                 menuGroupLabel: null,
                 menuGroupButtons: [
                   {
+                    text: "Gerar Lista de Presença",
+                    icon: <BsClipboardCheck />,
+                    onClick: () => {
+                      downloadListaPresenca(props.row.original);
+                    },
+                    disabled: props.row.original.benefAssoc.length === 0,
+                  },
+                  {
+                    text: "Informar presença",
+                    icon: <FiUserCheck />,
+                    onClick: () => {
+                      setSelectedRow(props.row.original);
+                      informarPresenca.openOverlay();
+                    },
+                    disabled: props.row.original.benefAssoc.length === 0,
+                  },
+
+                  {
                     text: "Editar",
                     icon: <FiEdit />,
                     onClick: () => {
@@ -179,6 +217,7 @@ export default function TemplateOficios({ entity, ...props }) {
   const formLocalEvento = useForm({
     mode: "onChange",
   });
+
   const formTipoEvento = useForm({
     mode: "onChange",
   });
@@ -186,9 +225,11 @@ export default function TemplateOficios({ entity, ...props }) {
   const { isValid: formAddEventoValidation } = useFormState({
     control: formAddEvento.control,
   });
+
   const { isValid: formLocalEventoValidation } = useFormState({
     control: formLocalEvento.control,
   });
+
   const { isValid: formTipoEventoValidation } = useFormState({
     control: formTipoEvento.control,
   });
@@ -198,7 +239,9 @@ export default function TemplateOficios({ entity, ...props }) {
     e.preventDefault();
     if (selectedRow) {
       formData.id = selectedRow.id;
-      formData.acao_CrId = selectedRow.acao_CrId;
+      formData.acao_CrId = selectedRow.acao_Cr[0]?.id;
+      formData.comunicado_Id = selectedRow.comunicado[0]?.id;
+
       return axios
         .put(`/api/${entity}/eventos`, formData)
         .then((res) => {
@@ -212,7 +255,6 @@ export default function TemplateOficios({ entity, ...props }) {
               status: "success",
               duration: 5000,
               isClosable: false,
-              position,
             });
           }
         })
@@ -224,7 +266,6 @@ export default function TemplateOficios({ entity, ...props }) {
               status: "error",
               duration: 5000,
               isClosable: false,
-              position,
             });
           } else {
             throw new Error(error);
@@ -244,7 +285,6 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -256,7 +296,6 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "error",
             duration: 5000,
             isClosable: false,
-            position,
           });
         } else {
           throw new Error(error);
@@ -279,7 +318,6 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -291,7 +329,6 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "error",
             duration: 5000,
             isClosable: false,
-            position,
           });
         } else {
           throw new Error(error);
@@ -315,7 +352,6 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
         }
       })
@@ -327,12 +363,35 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "error",
             duration: 5000,
             isClosable: false,
-            position,
           });
         } else {
           throw new Error(error);
         }
       });
+  };
+
+  const onSubmitInformarPresenca = (formData, e) => {
+    e.preventDefault();
+    informarPresenca.setLoading();
+    formData.eventoId = selectedRow.id;
+    axios
+      .post(`/api/${entity}/eventos/presenca`, formData)
+      .then((res) => {
+        if (res.status === 200) {
+          informarPresenca.closeOverlay();
+          setSelectedRow(null);
+          toast({
+            title: "Presença em evento informada com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: false,
+          });
+        }
+      })
+      .catch((error) => {
+        throw new Error(error);
+      })
+      .finally(informarPresenca.setLoaded);
   };
 
   const deleteTemplateOficio = (formData) => {
@@ -353,8 +412,34 @@ export default function TemplateOficios({ entity, ...props }) {
             status: "success",
             duration: 5000,
             isClosable: false,
-            position,
           });
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const downloadListaPresenca = ({ id, nome }) => {
+    downloadingFile.onOpen();
+    axios
+      .get(`/api/${entity}/reports`, {
+        params: {
+          id,
+          reportUrl: "/eventos/lista-presenca",
+        },
+        responseType: "blob",
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          const content = res.headers["content-type"];
+
+          toast({
+            title: "Lista gerada com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: false,
+          });
+          download(res.data, `PPE_LISTA_PRESENCA_${nome}.pdf`, content);
+          downloadingFile.onClose();
         }
       })
       .catch((error) => console.log(error));
@@ -371,14 +456,13 @@ export default function TemplateOficios({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/funcionarios`)
+      .get(`/api/${entity}/colaboradores-cr`)
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromRh(
-            res.data.map(({ matriculaFlem, nome, cpf }) => ({
-              value: matriculaFlem,
-              label: `${matriculaFlem} - ` + maskCapitalize(nome),
-              cpf: cpf,
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: maskCapitalize(nome),
             }))
           );
         }
@@ -473,6 +557,37 @@ export default function TemplateOficios({ entity, ...props }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addEvento.isOpen, addLocalEvento.isOpen]);
 
+  useEffect(() => {
+    axios
+      .get(`/api/${entity}/comunicados/remetentes`)
+      .then((res) => {
+        if (res.status === 200) {
+          setEmailsRemetentesFromBd(
+            res.data.map(({ id, email, nome }) => ({
+              value: id,
+              id,
+              label: `${nome} - ${email}`,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+    axios
+      .get(`/api/${entity}/demandantes`)
+      .then((res) => {
+        if (res.status === 200) {
+          setDemandantesFromBd(
+            res.data.map(({ id, sigla, nome }) => ({
+              value: id,
+              id,
+              label: `${sigla} - ${nome}`,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   const cepInput = formLocalEvento.watch("cep");
   const filtroParticipantes = formAddEvento.watch("filtro");
   const nomeEventoForm = formAddEvento.watch("nome");
@@ -494,7 +609,6 @@ export default function TemplateOficios({ entity, ...props }) {
         status: "success",
         duration: 5000,
         isClosable: false,
-        position,
       });
     } catch (error) {
       setCepData(null);
@@ -507,7 +621,6 @@ export default function TemplateOficios({ entity, ...props }) {
         status: "warning",
         duration: 5000,
         isClosable: false,
-        position,
         containerStyle: {
           width: "300px",
         },
@@ -750,7 +863,7 @@ export default function TemplateOficios({ entity, ...props }) {
                   id="filtroDemandantes"
                   label="Filtrar por Demandantes"
                   placeholder="Selecione..."
-                  options={tiposEventoFromBd}
+                  options={demandantesFromBd}
                   formControl={formAddEvento}
                 />
               </Stack>
@@ -860,13 +973,36 @@ export default function TemplateOficios({ entity, ...props }) {
                 id="emailAlerts"
                 label="Notificar participantes por e-mail?"
                 formControl={formAddEvento}
+                defaultChecked={
+                  selectedRow && selectedRow?.comunicado[0]?.excluido === false
+                }
               />
               <Fade in={emailAlerts} unmountOnExit>
+                <Box mt={4} mb={2}>
+                  <SelectInputBox
+                    id="emailRemetente"
+                    formControl={formAddEvento}
+                    label="E-mail Rementente"
+                    colorScheme="brand1"
+                    options={emailsRemetentesFromBd}
+                    placeholder="Selecione..."
+                    defaultValue={
+                      selectedRow
+                        ? emailsRemetentesFromBd &&
+                          emailsRemetentesFromBd.filter(
+                            ({ id }) =>
+                              id ===
+                              selectedRow.comunicado[0]?.remetenteComunicado_Id
+                          )
+                        : null
+                    }
+                  />{" "}
+                </Box>
                 <EmailEditor
                   id="conteudoEmail"
                   title={nomeEvento ? nomeEvento : "Nome do Evento"}
                   formControl={formAddEvento}
-                  loadOnEditor={selectedRow?.conteudo}
+                  loadOnEditor={selectedRow?.comunicado[0]?.conteudoEmail}
                 />
               </Fade>
             </Box>
@@ -933,7 +1069,9 @@ export default function TemplateOficios({ entity, ...props }) {
                   formControl={formLocalEvento}
                   label="Logradouro"
                   isLoaded={!buscaCep.isOpen}
-                  value={(cepData && cepData.street) || selectedRow?.logradouro}
+                  defaultValue={
+                    (cepData && cepData.street) || selectedRow?.logradouro
+                  }
                 />
                 <InputBox
                   id="complemento"
@@ -945,7 +1083,7 @@ export default function TemplateOficios({ entity, ...props }) {
                   id="bairro"
                   formControl={formLocalEvento}
                   label="Bairro"
-                  value={
+                  defaultValue={
                     selectedRow?.bairro || (cepData && cepData.neighborhood)
                   }
                   isLoaded={!buscaCep.isOpen}
@@ -954,14 +1092,16 @@ export default function TemplateOficios({ entity, ...props }) {
                   id="cidade"
                   formControl={formLocalEvento}
                   label="Cidade"
-                  value={selectedRow?.cidade || (cepData && cepData.city)}
+                  defaultValue={
+                    selectedRow?.cidade || (cepData && cepData.city)
+                  }
                   isLoaded={!buscaCep.isOpen}
                 />
                 <InputBox
                   id="uf"
                   formControl={formLocalEvento}
                   label="UF"
-                  value={selectedRow?.uf || (cepData && cepData.state)}
+                  defaultValue={selectedRow?.uf || (cepData && cepData.state)}
                   isLoaded={!buscaCep.isOpen}
                 />
               </Stack>
@@ -1078,6 +1218,104 @@ export default function TemplateOficios({ entity, ...props }) {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {/* Gerar lista de presença modal */}
+      <AlertDialog
+        isOpen={downloadingFile.isOpen}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Gerar lista de presença
+            </AlertDialogHeader>
+
+            <AlertDialogBody display="flex" alignItems="center">
+              Aguarde, o download do arquivo comecará em breve...
+              <Box>
+                <Spinner color="brand1.500" size="lg" />
+              </Box>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      {/* Informar presença modal */}
+      <AlertDialog
+        isOpen={informarPresenca.overlayIsOpen}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" pb={0}>
+              Informar presença
+            </AlertDialogHeader>
+
+            <AlertDialogBody
+              display="flex"
+              alignItems="center"
+              flexDir="column"
+              justifyContent="space-between"
+            >
+              <Text pb={2}>
+                Informar lista de beneficiários presentes no evento abaixo:
+              </Text>
+              <Stack py={4} bg="gray.200" w="full" mb={4} rounded="md">
+                <Text textAlign="center">{selectedRow?.nome}</Text>
+                <Text textAlign="center">
+                  Realizado em:{" "}
+                  {DateTime.fromISO(selectedRow?.data).toLocaleString(
+                    DateTime.DATETIME_SHORT
+                  )}
+                  h
+                </Text>
+              </Stack>
+              <Stack
+                as={chakra.form}
+                onSubmit={informarPresenca.handleSubmit(
+                  onSubmitInformarPresenca
+                )}
+                w="full"
+              >
+                <ChakraTagInput
+                  id="benefAssoc"
+                  formControl={informarPresenca.control}
+                  placeholder="Matrículas ou CPFs separados por vírgula"
+                  mask={cpfMask}
+                />
+                <Flex alignSelf="flex-end" pb={4}>
+                  <HStack>
+                    <Button
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => {
+                        informarPresenca.closeOverlay();
+                        setSelectedRow(null);
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="submit"
+                      colorScheme="brand1"
+                      variant="outline"
+                      isDisabled={!informarPresenca.validation}
+                      isLoading={informarPresenca.isLoading}
+                      loadingText="Aguarde..."
+                    >
+                      Salvar
+                    </Button>
+                  </HStack>
+                </Flex>
+              </Stack>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 }
@@ -1105,5 +1343,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-TemplateOficios.auth = false;
-TemplateOficios.dashboard = true;
+Eventos.auth = true;
+Eventos.dashboard = true;

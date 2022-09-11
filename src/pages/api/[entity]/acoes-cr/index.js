@@ -140,6 +140,28 @@ const addAcaoCr = async (req, res) => {
       },
     });
 
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Ação CR",
+        descricao: `Criação da ação: ${query.nome}`,
+        beneficiario: {
+          connect: query.benefAssoc.map(({ id }) => ({ id })),
+        },
+        acoesCr: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Ação CR",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {
@@ -202,6 +224,28 @@ const modifyAcaoCr = async (req, res) => {
       },
     });
 
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Ação CR",
+        descricao: `Modificação da ação: ${query.nome}`,
+        beneficiario: {
+          connect: query.benefAssoc.map(({ id }) => ({ id })),
+        },
+        acoesCr: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Ação CR",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {
@@ -229,6 +273,29 @@ const deleteAcaoCr = async (req, res) => {
         id,
       },
     });
+
+    await prisma.ba_Historico.create({
+      data: {
+        // categoria: "Ação CR",
+        descricao: `Exclusão da ação: ${query.nome}`,
+        beneficiario: {
+          connect: query.benefAssoc.map(({ id }) => ({ id })),
+        },
+        acoesCr: {
+          connect: {
+            id: query.id,
+          },
+        },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Ação CR",
+            },
+          })
+        ).id,
+      },
+    });
+
     return res.status(200).json(query);
   } catch (error) {
     return res.status(500).json({ error: error });

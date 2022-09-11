@@ -55,7 +55,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
   const [selectedRow, setSelectedRow] = useState();
   const [escritoriosFromBd, setEscritoriosFromBd] = useState([]);
   const [municipiosFromBd, setMunicipiosFromBd] = useState([]);
-  const [cepData, setCepData] = useState();
+  const [cepData, setCepData] = useState(null);
   const [ibgeData, setIbgeData] = useState();
   const addEscritorioRegional = useDisclosure();
   const formSubmit = useDisclosure();
@@ -176,7 +176,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
             setSelectedRow(null);
             formAddEscritorio.reset({});
             toast({
-              title: "Escritório adicionado com sucesso",
+              title: "Escritório atualizado com sucesso",
               status: "success",
               duration: 5000,
               isClosable: false,
@@ -328,7 +328,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
     gerenciarEscritorio.isOpen,
     excluirEscritorio.isOpen,
   ]);
-
+  console.log(selectedRow);
   const cepInput = formAddEscritorio.watch("cep");
 
   const consultaEndereco = async () => {
@@ -410,6 +410,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
       selectedRow &&
       ibgeData
         .map((municipIbge) => {
+          console.log(413, municipIbge);
           const check = municipiosFromBd.find(
             (municip) =>
               municip.idIBGE === municipIbge.value &&
@@ -417,12 +418,20 @@ export default function EscritoriosRegionais({ entity, ...props }) {
           );
           if (check && check?.escritorio_RegionalId !== selectedRow?.id) {
             return {
-              ...municipIbge,
+              value: municipiosFromBd.find(
+                ({ idIBGE }) => idIBGE === municipIbge.value
+              ).id,
               label: `${municipIbge.label} - ${check?.escritorioRegional?.nome}`,
               isDisabled: true,
             };
           }
-          return { ...municipIbge, isDisabled: false };
+          return {
+            value: municipiosFromBd.find(
+              ({ idIBGE }) => idIBGE === municipIbge.value
+            ).id,
+            label: municipIbge.label,
+            isDisabled: false,
+          };
         })
         .sort(dynamicSort("label")),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -519,7 +528,9 @@ export default function EscritoriosRegionais({ entity, ...props }) {
                   label="Logradouro"
                   formControl={formAddEscritorio}
                   isLoaded={!buscaCep.isOpen}
-                  value={(cepData && cepData.street) || selectedRow?.logradouro}
+                  defaultValue={
+                    selectedRow?.logradouro || (cepData && cepData.street)
+                  }
                 />
                 <InputBox
                   id="complemento"
@@ -532,7 +543,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
                   id="bairro"
                   label="Bairro"
                   formControl={formAddEscritorio}
-                  value={
+                  defaultValue={
                     selectedRow?.bairro || (cepData && cepData.neighborhood)
                   }
                   isLoaded={!buscaCep.isOpen}
@@ -541,15 +552,16 @@ export default function EscritoriosRegionais({ entity, ...props }) {
                   id="cidade"
                   label="Cidade"
                   formControl={formAddEscritorio}
-                  value={selectedRow?.cidade || (cepData && cepData.city)}
+                  defaultValue={
+                    selectedRow?.cidade || (cepData && cepData.city)
+                  }
                   isLoaded={!buscaCep.isOpen}
                 />
                 <InputBox
                   id="uf"
                   label="UF"
                   formControl={formAddEscritorio}
-                  defaultValue={selectedRow?.nome}
-                  value={selectedRow?.uf || (cepData && cepData.state)}
+                  defaultValue={selectedRow?.uf || (cepData && cepData.state)}
                   isLoaded={!buscaCep.isOpen}
                 />
               </Stack>
@@ -620,7 +632,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
                 selectedRow &&
                 municipFiltered.filter((mun) =>
                   selectedRow.municipios
-                    .map((sel) => sel.idIBGE)
+                    .map((sel) => sel.id)
                     .includes(mun.value)
                 )
               }
@@ -740,5 +752,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-EscritoriosRegionais.auth = false;
+EscritoriosRegionais.auth = true;
 EscritoriosRegionais.dashboard = true;

@@ -163,7 +163,7 @@ export function EmailEditor({
 
     // <Box>
     <>
-      <Box p={2} h="full">
+      <Box p={0.5} h="full">
         <FormControl id={id} isInvalid={errors[id]} w="100%" h="100%">
           <Flex
             justifyContent="space-between"

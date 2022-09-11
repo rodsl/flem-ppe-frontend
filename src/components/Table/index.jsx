@@ -27,7 +27,7 @@ import { FilterInput } from "components/Table/FilterInput";
    * @returns {Component} componente estilizado.
    * 
    */
-export function Table({ columns, data, updateMyData }) {
+export function Table({ columns, data, updateMyData, setState }) {
   const defaultColumn = useMemo(
     () => ({
       Filter: DefaultColumnFilter,
@@ -84,6 +84,7 @@ export function Table({ columns, data, updateMyData }) {
     }),
     []
   );
+
   const {
     getTableProps,
     getTableBodyProps,

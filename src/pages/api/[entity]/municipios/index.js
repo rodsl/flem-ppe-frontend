@@ -40,7 +40,8 @@ const getMunicipios = async (req, res) => {
   const { entity } = req.query;
   try {
     const table = `${entity}_Municipios`;
-    const query = await prisma[table].findMany({
+    const query = await prisma.ba_Municipios.findMany({
+    // const query = await prisma[table].findMany({
       orderBy: [
         {
           nome: "asc",
@@ -51,6 +52,10 @@ const getMunicipios = async (req, res) => {
           equals: false,
         },
       },
+      include: {
+        territorioIdentidade: true,
+        escritorioRegional: true
+      }
     });
     return res.status(200).json(query);
   } catch (error) {
