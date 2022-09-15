@@ -130,7 +130,7 @@ export default function TipoHistorico({ entity, ...props }) {
             formTipoHistorico.closeOverlay();
             setSelectedRow(null);
             toast({
-              title: "Tipo atualizado com sucesso",
+              title: "Tipo de Histórico atualizado com sucesso",
               status: "success",
               duration: 5000,
               isClosable: false,
@@ -143,7 +143,7 @@ export default function TipoHistorico({ entity, ...props }) {
           if (error.response.status === 409) {
             formSubmit.onClose();
             toast({
-              title: "Tipo já existe",
+              title: "Tipo de Histórico já existe",
               status: "error",
               duration: 5000,
               isClosable: false,
@@ -162,7 +162,7 @@ export default function TipoHistorico({ entity, ...props }) {
           formTipoHistorico.closeOverlay();
           setSelectedRow(null);
           toast({
-            title: "Tipo adicionado com sucesso",
+            title: "Tipo de Histórico adicionado com sucesso",
             status: "success",
             duration: 5000,
             isClosable: false,
@@ -174,7 +174,7 @@ export default function TipoHistorico({ entity, ...props }) {
         console.log(error);
         if (error.response.status === 409) {
           toast({
-            title: "Tipo já existe",
+            title: "Tipo de Histórico já existe",
             status: "error",
             duration: 5000,
             isClosable: false,
@@ -309,7 +309,7 @@ export default function TipoHistorico({ entity, ...props }) {
           <Divider />
           <ModalBody pb={6}>
             <VStack my={3} spacing={6}>
-              <Heading size="md">Deseja excluir a seguinte tipo?</Heading>
+              <Heading size="md">Deseja excluir o seguinte tipo de histórico?</Heading>
               <Text fontSize="xl" align="center">
                 {selectedRow?.nome}
               </Text>
