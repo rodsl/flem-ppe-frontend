@@ -20,3 +20,8 @@ export const filesAPIUpload = axiosClient.create({
   },
   timeout: 30000,
 });
+
+export const mailService = axiosClient.create({
+  baseURL: `${process.env.NEXT_API_MAIL_SENDER}/api/${process.env.NEXT_PUBLIC_APP_SOURCE}/`,
+  timeout: 30000,
+});

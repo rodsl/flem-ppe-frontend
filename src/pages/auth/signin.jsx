@@ -72,7 +72,7 @@ export default function Signin({ csrfToken, ...props }) {
   return (
     <>
       <Head>
-        <title>Login - Portal PPE</title>
+        <title>Portal PPE - Login</title>
       </Head>
       <Box
         bg={mode(

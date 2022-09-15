@@ -444,7 +444,7 @@ export default function AcoesCR({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Ações CR</Heading>
+          <Heading fontSize="1.4rem">Ações CR</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"

@@ -75,8 +75,12 @@ const addComunicado = async (req, res) => {
   const { entity } = req.query;
   const { emailRemetente, assunto, conteudoEmail, benefAssoc } = req.body;
 
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Comunicados`;
@@ -150,8 +154,12 @@ const addComunicado = async (req, res) => {
 const modifyComunicado = async (req, res) => {
   const { entity } = req.query;
   const { id, emailRemetente, assunto, conteudoEmail, benefAssoc } = req.body;
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Comunicados`;
@@ -182,6 +190,7 @@ const modifyComunicado = async (req, res) => {
           set: benefToConnectComunicado.map(({ id }) => ({ id })),
         },
         remetenteComunicado_Id: emailRemetente,
+        anexosId: null,
       },
       where: {
         id,

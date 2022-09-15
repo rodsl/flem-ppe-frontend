@@ -60,8 +60,12 @@ const postPresencaBenefEvento = async (req, res) => {
   const { entity } = req.query;
   const { benefAssoc, eventoId } = req.body;
 
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Eventos_Lista_Presenca`;

@@ -231,7 +231,7 @@ export default function Demandantes({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Demandantes</Heading>
+          <Heading fontSize="1.4rem">Demandantes</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"

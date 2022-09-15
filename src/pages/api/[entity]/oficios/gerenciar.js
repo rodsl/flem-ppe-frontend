@@ -83,8 +83,12 @@ const postOficio = async (req, res) => {
     anexos = [],
   } = req.body;
 
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Oficios`;
@@ -166,8 +170,12 @@ const putOficio = async (req, res) => {
     conteudoEmail,
     benefAssoc = [],
   } = req.body;
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Oficios`;

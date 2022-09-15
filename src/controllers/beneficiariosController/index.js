@@ -36,9 +36,7 @@ export async function benefLookupTeste(entity, sheet) {
   });
   const urlAPIQuery = `${
     process.env.NEXT_PUBLIC_API_PPE_BD_LEGADO
-  }/${entity}/beneficiarios?condition=OR&matriculaSAEB=["${matriculas.join(
-    '","'
-  )}"]&cpf=["${cpfs.join('","')}"]`;
+  }/${entity}/beneficiarios?condition=OR${matriculas.length ? `&matriculaSAEB=["${matriculas.join('","')}"]` : ""}${cpfs.length ? `&cpf=["${cpfs.join('","')}"]` : ""}`;
 
   const respQuery = await axios.get(urlAPIQuery);
   return await Promise.all(
@@ -49,7 +47,6 @@ export async function benefLookupTeste(entity, sheet) {
           if (entity === "ba") {
             // VERIFICA SE A MATRÍCULA JÁ EXISTE NO BD
             if (resp.matriculaSAEB.localeCompare(item.matricula) === 0) {
-
               /**
                * VERIFICA SE O NOME DO BENEFICIÁRIO É IGUAL AO QUE CONSTA NO BD.
                * EM CASOS ONDE HOUVE UMA MUDANÇA DE NOME (EX. CASAMENTOS E DIVÓRCIOS),
@@ -224,7 +221,6 @@ export async function benefValidateTeste(entity, sheet) {
     return await Promise.all(
       sheet.map(async (item) => {
         if (!item.found || item.update) {
-
           //VERIFICA DEMANDANTE PELA SIGLA OU PELO SEU NOME. DEMANDANTES SEM SIGLA NÃO SÃO ACEITOS.
           for (let i = 0; i < listaDemand.length; i++) {
             const itemSiglaListaDemand = listaDemand[i].sigla;

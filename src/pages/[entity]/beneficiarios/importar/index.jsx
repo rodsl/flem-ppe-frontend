@@ -87,7 +87,7 @@ export default function Importar({ entity, ...props }) {
       })
       .then(({ status, data }) => {
         setSheet(data.output2);
-        console.log(data.output2)
+        console.log(data.output2);
         setFileDetails(data.fileDetails);
       })
       .catch((err) => console.log(err.response))
@@ -516,7 +516,7 @@ export default function Importar({ entity, ...props }) {
         .filter((columnHeader) => columnHeader.accessor === "matricula")
         .map((columnHeader) => ({
           ...columnHeader,
-          Cell: (props) => <CellInput {...props}  />,
+          Cell: (props) => <CellInput {...props} />,
         }));
 
     const columnHeadersCustomCell = demandante &&
@@ -563,7 +563,7 @@ export default function Importar({ entity, ...props }) {
   );
 
   const tableDataIgnore = useMemo(
-    () => rowsDataIgnore.length && rowsDataIgnore || [],
+    () => (rowsDataIgnore.length && rowsDataIgnore) || [],
     [rowsDataIgnore]
   );
 
@@ -609,7 +609,14 @@ export default function Importar({ entity, ...props }) {
         setRowsData(data.filter(({ update, found }) => !found && !update));
         setRowsDataUpdate(data.filter(({ update, found }) => found && update));
         setRowsDataIgnore(data.filter(({ found, update }) => found && !update));
-        setTableError(JSON.stringify(!data.filter(({ found, update }) => found && !update)).includes("*") || data.filter(({ found, update }) => found && !update).filter(({matricula}) => matricula === "").length);
+        setTableError(
+          JSON.stringify(
+            !data.filter(({ found, update }) => found && !update)
+          ).includes("*") ||
+            data
+              .filter(({ found, update }) => found && !update)
+              .filter(({ matricula }) => matricula === "").length
+        );
       })
       .catch((err) => console.log(err))
       .finally(() => {
@@ -689,7 +696,7 @@ export default function Importar({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Importar Beneficiários</Heading>
+          <Heading fontSize="1.4rem">Importar Beneficiários</Heading>
           <HStack spacing={2}>
             <Button
               colorScheme="brand1"
@@ -740,7 +747,6 @@ export default function Importar({ entity, ...props }) {
                 columns={columns}
                 data={tableData}
                 updateMyData={updateMyData}
-                setState={setRowsData}
               />
             </Stack>
           )}

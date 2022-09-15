@@ -543,7 +543,7 @@ export default function UnidadeLotacao({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={!fetchTableData.isOpen}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Unidades de Lotação</Heading>
+          <Heading fontSize="1.4rem">Unidades de Lotação</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -566,7 +566,11 @@ export default function UnidadeLotacao({ entity, ...props }) {
           setCepData(null);
         }}
         isOpen={formAddUnidade.overlayIsOpen}
-        header={selectedRow ? "Editar Unidade" : "Adicionar Unidade"}
+        header={
+          selectedRow
+            ? "Editar Unidade de Lotação"
+            : "Adicionar Unidade de Lotação"
+        }
         closeButton
       >
         <chakra.form onSubmit={formAddUnidade.handleSubmit(onSubmitMaterial)}>

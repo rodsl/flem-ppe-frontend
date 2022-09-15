@@ -304,7 +304,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Situações de Vaga</Heading>
+          <Heading fontSize="1.4rem">Situações de Vaga</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"

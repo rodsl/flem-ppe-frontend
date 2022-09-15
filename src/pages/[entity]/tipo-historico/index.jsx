@@ -236,7 +236,7 @@ export default function TipoHistorico({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={!fetchTableData.isOpen}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Tipos de Histórico</Heading>
+          <Heading fontSize="1.4rem">Tipos de Histórico</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"

@@ -202,7 +202,7 @@ export default function ColaboradoresCR({ entity }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={!loadingPageData}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Colaboradores CR</Heading>
+          <Heading fontSize="1.4rem">Colaboradores CR</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"

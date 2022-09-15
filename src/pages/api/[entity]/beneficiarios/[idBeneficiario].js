@@ -127,6 +127,7 @@ const putBeneficiarios = async (req, res) => {
     situacaoVaga_Id,
     publicadoDiarioOficial,
     vaga_municipio_Id,
+    unidadeLotacao_Id,
     // Anexos
     anexos,
     descricaoDocumento,
@@ -352,7 +353,29 @@ const putBeneficiarios = async (req, res) => {
                 data: contatosToCreate,
               },
             },
-            documentos: {},
+            vaga: {
+              update: {
+                data: {
+                  demandante_Id,
+                  situacaoVaga_Id,
+                  publicadoDiarioOficial,
+                  municipio_Id: vaga_municipio_Id,
+                  unidadeLotacao_Id,
+                },
+                where: {
+                  id: (
+                    await prisma.ba_Vaga.findFirst({
+                      where: {
+                        beneficiario_Id: idBeneficiario,
+                      },
+                      orderBy: {
+                        createdAt: "desc",
+                      },
+                    })
+                  ).id,
+                },
+              },
+            },
           },
           where: {
             id: idBeneficiario,

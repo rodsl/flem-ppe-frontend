@@ -2211,7 +2211,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   const formVaga = [
     {
       id: "demandante_Id",
-      label: "Demandante SEC",
+      label: "Demandante",
       placeholder: "Selecione...",
       formControl,
       type: "select",
@@ -2220,17 +2220,17 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
         ({ value }) => vagaInfo?.demandante_Id === value
       )?.value,
     },
-    {
-      id: "formacao_Id",
-      label: "Formação",
-      placeholder: "Selecione...",
-      formControl,
-      type: "select",
-      options: formacoesFromBd,
-      defaultValue: formacoesFromBd.find(
-        ({ value }) => data?.formacao_Id === value
-      )?.value,
-    },
+    // {
+    //   id: "formacao_Id",
+    //   label: "Formação",
+    //   placeholder: "Selecione...",
+    //   formControl,
+    //   type: "select",
+    //   options: formacoesFromBd,
+    //   defaultValue: formacoesFromBd.find(
+    //     ({ value }) => data?.formacao_Id === value
+    //   )?.value,
+    // },
     {
       id: "situacaoVaga_Id",
       label: "Situação",

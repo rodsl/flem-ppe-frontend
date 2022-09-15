@@ -7,6 +7,7 @@ const { demandantesSeed } = require("./demandantes");
 const { municSeed } = require("./municipios");
 const { situacoesVagaSeed } = require("./situacoesVaga");
 const { tiposContatoSeed } = require("./tiposContato");
+const { editorParametrosSeed } = require("./editorParametros");
 
 module.exports = {
   tamanhoUniformeSeed,
@@ -17,5 +18,6 @@ module.exports = {
   demandantesSeed,
   municSeed,
   situacoesVagaSeed,
-  tiposContatoSeed
+  tiposContatoSeed,
+  editorParametrosSeed
 };
