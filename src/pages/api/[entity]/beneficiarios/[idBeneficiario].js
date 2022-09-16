@@ -1,6 +1,7 @@
 import { allowCors } from "services/apiAllowCors";
 import { filesAPIService } from "services/apiService";
 import { prisma } from "services/prisma/prismaClient";
+import _ from "lodash";
 
 const handler = async (req, res) => {
   switch (req.method) {
@@ -72,7 +73,11 @@ const getBeneficiario = async (req, res) => {
           },
         },
         tamanhoUniforme: true,
-        formacao: true,
+        formacao: {
+          include: {
+            eixo: true,
+          },
+        },
         pendencias: true,
         historico: {
           include: {
@@ -113,7 +118,9 @@ const putBeneficiarios = async (req, res) => {
     superiorAnoInicio,
     superiorAnoConclusao,
     email,
+    obsEmail = [],
     celular,
+    obsCelular = [],
     dataEntregaMaterial,
     idMaterial,
     idTamanho,
@@ -144,8 +151,9 @@ const putBeneficiarios = async (req, res) => {
         arr.push(
           ...email
             .filter((con) => con)
-            .map((email) => ({
+            .map((email, idx) => ({
               contato: email,
+              observacao: _.isEmpty(obsEmail[idx]) ? null : obsEmail[idx],
               tipoContato_Id: "email",
             }))
         );
@@ -154,8 +162,9 @@ const putBeneficiarios = async (req, res) => {
         arr.push(
           ...celular
             .filter((con) => con)
-            .map((celular) => ({
+            .map((celular, idx) => ({
               contato: celular,
+              observacao: _.isEmpty(obsCelular[idx]) ? null : obsCelular[idx],
               tipoContato_Id: "celular",
             }))
         );
@@ -255,31 +264,41 @@ const putBeneficiarios = async (req, res) => {
       return { create: pendenciasToCreate, update: pendenciasToUpdate };
     });
 
-    const contatosToCreate = await prisma.$transaction(async (prisma) => {
-      const getContatos = await prisma.ba_Contatos_Beneficiarios.findMany({
-        where: {
-          AND: [
-            {
-              contato: {
-                in: listaContatos().map(({ contato }) => contato),
+    const [contatosToCreate, contatosToUpdate] = await prisma.$transaction(
+      async (prisma) => {
+        const getContatos = await prisma.ba_Contatos_Beneficiarios.findMany({
+          where: {
+            AND: [
+              {
+                contato: {
+                  in: listaContatos().map(({ contato }) => contato),
+                },
               },
-            },
-            {
-              benefAssoc_Id: idBeneficiario,
-            },
-          ],
-        },
-      });
+              {
+                benefAssoc_Id: idBeneficiario,
+              },
+            ],
+          },
+        });
 
-      const contatosToReturn = listaContatos().filter(({ contato }) => {
-        if (getContatos.length) {
-          return !getContatos.map(({ contato }) => contato).includes(contato);
-        } else {
-          return true;
-        }
-      });
-      return contatosToReturn;
-    });
+        const contatosCreate = listaContatos().filter(({ contato }) => {
+          if (getContatos.length) {
+            return !getContatos.map(({ contato }) => contato).includes(contato);
+          } else {
+            return true;
+          }
+        });
+
+        const contatosUpdate = listaContatos().filter(({ contato }) => {
+          if (getContatos.length) {
+            return getContatos.map(({ contato }) => contato).includes(contato);
+          } else {
+            return true;
+          }
+        });
+        return [contatosCreate, contatosUpdate];
+      }
+    );
 
     const [queryDocumento, queryMaterial, queryHistorico] =
       await prisma.$transaction([
@@ -352,6 +371,12 @@ const putBeneficiarios = async (req, res) => {
               createMany: {
                 data: contatosToCreate,
               },
+              updateMany: contatosToUpdate.map((data) => ({
+                data,
+                where: {
+                  contato: data.contato,
+                },
+              })),
             },
             vaga: {
               update: {

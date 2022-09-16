@@ -189,6 +189,7 @@ model Ba_Contatos_Acoes_Cr {
 model Ba_Contatos_Beneficiarios {
   id             String            @id @default(cuid())
   contato        String
+  observacao     String?
   excluido       Boolean           @default(false)
   tipoContato_Id String
   benefAssoc_Id  String

@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
+import _ from "lodash";
 
 export const FormBox = ({
   id,
@@ -35,11 +36,13 @@ export const FormBox = ({
   customInputProps,
   inlineForm,
   readOnly = false,
+  onChange,
   ...rest
 }) => {
   id = readOnly ? `${id}_readOnly` : id;
   const [newId, idx] = id.split(".");
   const [invalid, setInvalid] = useState(false);
+  
   const handleOnChange = (e) => {
     if (mask) {
       setValue(id, mask(e.target.value));
@@ -47,6 +50,10 @@ export const FormBox = ({
       setValue(id, e.target.value);
     }
     trigger(id);
+
+    if (_.isFunction(onChange)) {
+      onChange(e);
+    }
   };
 
   useEffect(() => {

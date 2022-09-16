@@ -9,6 +9,7 @@ import {
   HStack,
   Icon,
   IconButton,
+  SimpleGrid,
   Spinner,
   Stack,
   Tab,
@@ -669,58 +670,82 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
     },
   ];
 
-  const formEmail = emailQtd.map((obj, idx, arr) => ({
-    id: `email.${idx}`,
-    formControl,
-    placeholder: "email@exemplo.com",
-    defaultValue: obj.contato,
-    inputRightElement: (
-      <IconButton
-        colorScheme="brand1"
-        size="sm"
-        variant="outline"
-        hidden={!unlockEdit}
-        onClick={() => {
-          if (idx === 0 && arr.length >= 1) {
-            setEmailQtd((prev) => [...prev, emailQtd.length + 1]);
-          } else {
-            setEmailQtd((prev) => prev.filter((obj, idx2) => idx2 !== idx));
-            formControl.unregister(`email`);
-          }
-        }}
-        isLoading={buscaCep}
-      >
-        {idx === 0 ? arr.length >= 1 && <FiPlus /> : <FiMinus />}
-      </IconButton>
-    ),
-  }));
+  const formEmail = new Array().concat(
+    ...emailQtd.map((obj, idx, arr) => [
+      {
+        id: `email.${idx}`,
+        formControl,
+        placeholder: "email@exemplo.com",
+        defaultValue: obj.contato,
+      },
+      {
+        id: `obsEmail.${idx}`,
+        formControl,
+        placeholder: "Observação",
+        defaultValue: obj.observacao,
+        inputRightElement: (
+          <IconButton
+            colorScheme="brand1"
+            size="sm"
+            variant="outline"
+            hidden={!unlockEdit}
+            onClick={() => {
+              if (idx === 0 && arr.length >= 1) {
+                setEmailQtd((prev) => [...prev, emailQtd.length + 1]);
+              } else {
+                setEmailQtd((prev) => prev.filter((obj, idx2) => idx2 !== idx));
+                formControl.unregister(`email`);
+                formControl.unregister(`obsEmail`);
+              }
+            }}
+            isLoading={buscaCep}
+          >
+            {idx === 0 ? arr.length >= 1 && <FiPlus /> : <FiMinus />}
+          </IconButton>
+        ),
+      },
+    ])
+  );
 
-  const formTelefone = telefoneQtd.map((obj, idx, arr) => ({
-    id: `celular.${idx}`,
-    formControl,
-    placeholder: "(11) 98765-4321",
-    mask: celularMask,
-    defaultValue: obj.contato,
-    inputRightElement: (
-      <IconButton
-        colorScheme="brand1"
-        size="sm"
-        variant="outline"
-        hidden={!unlockEdit}
-        onClick={() => {
-          if (idx === 0 && arr.length >= 1) {
-            setTelefoneQtd((prev) => [...prev, telefoneQtd.length + 1]);
-          } else {
-            setTelefoneQtd((prev) => prev.filter((obj, idx2) => idx2 !== idx));
-            formControl.unregister(`celular`);
-          }
-        }}
-        isLoading={buscaCep}
-      >
-        {idx === 0 ? arr.length >= 1 && <FiPlus /> : <FiMinus />}
-      </IconButton>
-    ),
-  }));
+  const formTelefone = new Array().concat(
+    ...telefoneQtd.map((obj, idx, arr) => [
+      {
+        id: `celular.${idx}`,
+        formControl,
+        placeholder: "(11) 98765-4321",
+        mask: celularMask,
+        defaultValue: obj.contato,
+      },
+      {
+        id: `obsCelular.${idx}`,
+        formControl,
+        placeholder: "Observação",
+        defaultValue: obj.observacao,
+        inputRightElement: (
+          <IconButton
+            colorScheme="brand1"
+            size="sm"
+            variant="outline"
+            hidden={!unlockEdit}
+            onClick={() => {
+              if (idx === 0 && arr.length >= 1) {
+                setTelefoneQtd((prev) => [...prev, telefoneQtd.length + 1]);
+              } else {
+                setTelefoneQtd((prev) =>
+                  prev.filter((obj, idx2) => idx2 !== idx)
+                );
+                formControl.unregister(`celular`);
+                formControl.unregister(`obsCelular`);
+              }
+            }}
+            isLoading={buscaCep}
+          >
+            {idx === 0 ? arr.length >= 1 && <FiPlus /> : <FiMinus />}
+          </IconButton>
+        ),
+      },
+    ])
+  );
 
   const consultaEndereco = async () => {
     const cep = formControl.getValues("cep");
@@ -797,51 +822,51 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
         <Heading color="brand1.700" size="md" mb={4}>
           Contatos
         </Heading>
-        <Heading color="brand1.700" size="sm" mt={6}>
-          Telefone / Celular
-        </Heading>
-        <FormMaker inlineForm unlockEdit={unlockEdit} data={data}>
-          {formTelefone}
-        </FormMaker>
-        <Heading color="brand1.700" size="sm" mt={6}>
-          E-mail
-        </Heading>
-        <FormMaker inlineForm unlockEdit={unlockEdit} data={data}>
-          {formEmail}
-        </FormMaker>
+        <SimpleGrid columns={2}>
+          <Heading color="brand1.700" size="sm" mt={6}>
+            Telefone / Celular
+          </Heading>
+          <Heading color="brand1.700" size="sm" mt={6}>
+            Observação
+          </Heading>
+        </SimpleGrid>
+        <SimpleGrid columns={2}>
+          <FormMaker inlineForm unlockEdit={unlockEdit} data={data}>
+            {formTelefone}
+          </FormMaker>
+        </SimpleGrid>
+        <SimpleGrid columns={2}>
+          <Heading color="brand1.700" size="sm" mt={6}>
+            E-mail
+          </Heading>
+          <Heading color="brand1.700" size="sm" mt={6}>
+            Observação
+          </Heading>
+        </SimpleGrid>
+        <SimpleGrid columns={2}>
+          <FormMaker inlineForm unlockEdit={unlockEdit} data={data}>
+            {formEmail}
+          </FormMaker>
+        </SimpleGrid>
       </Box>
     </>
   );
 };
 
 const Formacao = ({ data, entity, formControl, unlockEdit }) => {
-  const [eixosFromBd, setEixosFromBd] = useState(null);
-  const [formacoesFromBd, setFormacoesFromBd] = useState(null);
+  const [formacoesFromBd, setFormacoesFromBd] = useState([]);
+  const [formacoesOptions, setFormacoesOptions] = useState([]);
   const [loadingFormacoes, setLoadingFormacoes] = useBoolean(false);
-
-  const getEixos = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/formacoes/eixos`);
-    const eixosOptions = data.map(({ id, nome }) => ({
-      value: id,
-      label: nome,
-    }));
-    setEixosFromBd(eixosOptions);
-  });
 
   const getFormacoes = useCallback(async () => {
     setLoadingFormacoes.on();
     const { data } = await axios.get(`/api/${entity}/formacoes`);
-    const formacoesOptions = data
-      .filter(
-        ({ eixo_FormacaoId }) =>
-          eixo_FormacaoId === formControl.getValues("eixoFormacao_Id")
-      )
-      .map(({ id, nome }) => ({
-        value: id,
-        label: nome,
-      }));
-
-    setFormacoesFromBd(formacoesOptions);
+    const formacoesOptions = data.map(({ id, nome }) => ({
+      value: id,
+      label: nome,
+    }));
+    setFormacoesFromBd(data);
+    setFormacoesOptions(formacoesOptions);
     setLoadingFormacoes.off();
   });
 
@@ -857,7 +882,6 @@ const Formacao = ({ data, entity, formControl, unlockEdit }) => {
       id: "escolaMunicipio",
       label: "Município da instituição de ensino",
       formControl,
-      // required: "Obrigatório",
     },
     {
       id: "escolaConclusao",
@@ -869,9 +893,8 @@ const Formacao = ({ data, entity, formControl, unlockEdit }) => {
       label: "Eixo de Formação",
       placeholder: "Selecione...",
       formControl,
-      type: "select",
-      options: eixosFromBd,
-      defaultValue: data?.formacao.eixo_FormacaoId,
+      defaultValue: data?.formacao?.eixo?.nome,
+      disabled: true,
     },
     {
       id: "formacao_Id",
@@ -879,8 +902,15 @@ const Formacao = ({ data, entity, formControl, unlockEdit }) => {
       placeholder: loadingFormacoes ? "Carregando..." : "Selecione...",
       formControl,
       type: "select",
-      options: formacoesFromBd,
-      // required: "Obrigatório",
+      options: formacoesOptions,
+      defaultValue: formacoesOptions.find(
+        ({ value }) => value === data?.formacao.id
+      )?.value,
+      onChange: (e) =>
+        formControl.setValue(
+          "eixoFormacao_Id",
+          formacoesFromBd.find(({ id }) => id === e.target.value).eixo.nome
+        ),
     },
     {
       id: "anamnese",
@@ -1135,12 +1165,8 @@ const Formacao = ({ data, entity, formControl, unlockEdit }) => {
   ];
 
   useEffect(() => {
-    getEixos();
-  }, []);
-
-  useEffect(() => {
     getFormacoes();
-  }, [formControl.getValues("eixoFormacao_Id"), data]);
+  }, [data]);
 
   useEffect(() => {
     if (formControl.getValues("superiorConcluido") === "S") {
