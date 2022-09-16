@@ -183,7 +183,7 @@ export default function Beneficiarios({ entity, ...props }) {
       .then(({ data }) => {
         const rows = data.map(({ vaga, ...benef }) => ({
           ...benef,
-          vaga: vaga.reverse().pop(),
+          vaga: vaga.shift(),
         }));
         setBenefFromBd(rows);
         setTableData(rows);
