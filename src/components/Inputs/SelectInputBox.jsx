@@ -118,6 +118,7 @@ export function SelectInputBox({
               noOptionsMessage={() => "Sem opções"}
               closeMenuOnSelect={!isMulti}
               chakraStyles={chakraStyles}
+              
             />
 
             {inputRightElement && (

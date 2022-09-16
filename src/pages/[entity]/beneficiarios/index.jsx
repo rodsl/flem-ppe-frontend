@@ -3,9 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
+  ButtonGroup,
   chakra,
   Flex,
   Heading,
+  HStack,
   IconButton,
   Modal,
   ModalBody,
@@ -15,17 +17,22 @@ import {
   ModalOverlay,
   SimpleGrid,
   Stack,
+  Tooltip,
+  useBoolean,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Table } from "components/Table";
-import { FiEye, FiPlus } from "react-icons/fi";
+import { FiEye, FiFilter, FiPlus, FiTrash2 } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { axios, filesAPIUpload } from "services/apiService";
 import { Dropzone } from "components/Dropzone";
 import { useCustomForm } from "hooks";
+import { Overlay } from "components/Overlay";
+import { SelectInputBox } from "components/Inputs/SelectInputBox";
+import _ from "lodash";
 
 export default function Beneficiarios({ entity, ...props }) {
-  const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
+  const fetchTableData = useDisclosure();
   const { isOpen, onToggle } = useDisclosure();
   const router = useRouter();
   const { asPath } = router;
@@ -33,7 +40,14 @@ export default function Beneficiarios({ entity, ...props }) {
   const [controller, setController] = useState(null);
   const formUpload = useCustomForm();
   const [benefFromBd, setBenefFromBd] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [escritoriosFromBd, setEscritoriosFromBd] = useState([]);
+  const [municipiosFromBd, setMunicipiosFromBd] = useState([]);
+  const [demandantesFromBd, setDemandantesFromBd] = useState([]);
+  const [situacoesFromBd, setSituacoesFromBd] = useState([]);
+  const [formacoesFromBd, setFormacoesFromBd] = useState([]);
   const [tableRowsCount, setTableRowsCount] = useState(null);
+  const [filtroAtivo, setFiltroAtivo] = useBoolean();
 
   const onSubmit = async (data) => {
     formUpload.setLoading();
@@ -44,10 +58,6 @@ export default function Beneficiarios({ entity, ...props }) {
     const config = {
       signal: controller.signal,
       onUploadProgress: (event) => {
-        console.log(
-          `Current progress:`,
-          Math.round((event.loaded * 100) / event.total)
-        );
         setUploadProgress(Math.round((event.loaded * 100) / event.total));
       },
     };
@@ -157,50 +167,256 @@ export default function Beneficiarios({ entity, ...props }) {
     []
   );
 
-  const data = useMemo(() => benefFromBd, [benefFromBd]);
+  const data = useMemo(() => tableData, [tableData]);
 
   useEffect(() => {
     if (entity === null) {
       router.push("/ba/dashboard");
-    } else {
-      setTimeout(onLoad, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asPath]);
 
   useEffect(() => {
-    axios.get(`/api/${entity}/beneficiarios`).then(({ data }) => {
-      setBenefFromBd(
-        data.map(({ vaga, ...benef }) => ({
+    fetchTableData.onOpen();
+    axios
+      .get(`/api/${entity}/beneficiarios`)
+      .then(({ data }) => {
+        const rows = data.map(({ vaga, ...benef }) => ({
           ...benef,
           vaga: vaga.reverse().pop(),
-        }))
-      );
-    });
+        }));
+        setBenefFromBd(rows);
+        setTableData(rows);
+      })
+      .finally(fetchTableData.onClose);
   }, []);
 
   useEffect(() => {
     setController(new AbortController());
   }, []);
 
+  const filtroAvancadoForm = useCustomForm();
+
+  const filtroAvancadoFormSubmit = async (formData, e) => {
+    e.preventDefault();
+    const {
+      escritoriosRegionais = [],
+      municipios = [],
+      demandantes = [],
+      situacaoBenef = [],
+      formacoes = [],
+    } = formData;
+
+    const filteredRows = benefFromBd
+      .filter(
+        ({
+          vaga: {
+            municipio: { escritorio_RegionalId },
+          },
+        }) =>
+          _.isEmpty(escritoriosRegionais)
+            ? true
+            : escritoriosRegionais
+                .map(({ value }) => value)
+                .includes(escritorio_RegionalId)
+      )
+
+      .filter(({ vaga: { municipio_Id } }) =>
+        _.isEmpty(municipios)
+          ? true
+          : municipios.map(({ value }) => value).includes(municipio_Id)
+      )
+
+      .filter(({ vaga: { demandante_Id } }) =>
+        _.isEmpty(demandantes)
+          ? true
+          : demandantes.map(({ value }) => value).includes(demandante_Id)
+      )
+      .filter(({ vaga: { situacaoVaga_Id } }) =>
+        _.isEmpty(situacaoBenef)
+          ? true
+          : situacaoBenef.map(({ value }) => value).includes(situacaoVaga_Id)
+      )
+      .filter(({ formacao_Id }) =>
+        _.isEmpty(formacoes)
+          ? true
+          : formacoes.map(({ value }) => value).includes(formacao_Id)
+      );
+
+    setTableData(filteredRows);
+    if (
+      _.isEmpty(escritoriosRegionais) &&
+      _.isEmpty(municipios) &&
+      _.isEmpty(demandantes) &&
+      _.isEmpty(situacaoBenef) &&
+      _.isEmpty(formacoes)
+    ) {
+      setFiltroAtivo.off();
+    } else {
+      setFiltroAtivo.on();
+    }
+    return filtroAvancadoForm.closeOverlay();
+  };
+
+  const limparFiltroAvancado = () => {
+    setTableData(benefFromBd);
+    return setFiltroAtivo.off();
+  };
+
+  const escritoriosRegionais = filtroAvancadoForm.control.watch(
+    "escritoriosRegionais"
+  );
+  const municipios = filtroAvancadoForm.control.watch("municipios");
+
+  useEffect(() => {
+    axios
+      .get(`/api/${entity}/escritorios-regionais`)
+      .then((res) => {
+        if (res.status === 200) {
+          setEscritoriosFromBd(
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: nome,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+    filtroAvancadoForm.control.control._fields.municipios?._f.ref.clearValue();
+  }, [escritoriosRegionais]);
+
+  useEffect(() => {
+    axios
+      .get(
+        `/api/${entity}/municipios`,
+        _.isEmpty(escritoriosRegionais)
+          ? {}
+          : {
+              params: {
+                escritorioRegional_Id: JSON.stringify(
+                  escritoriosRegionais?.map(({ value }) => value)
+                ),
+              },
+            }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setMunicipiosFromBd(
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: nome,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  }, [escritoriosRegionais, municipios]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/${entity}/demandantes`, {
+        params: {
+          municipio_Id: _.isEmpty(municipios)
+            ? null
+            : JSON.stringify(municipios?.map(({ value }) => value)),
+          escritorioRegional_Id: _.isEmpty(escritoriosRegionais)
+            ? null
+            : JSON.stringify(escritoriosRegionais?.map(({ value }) => value)),
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setDemandantesFromBd(
+            res.data.map(({ id, nome, sigla }) => ({
+              value: id,
+              label: `${sigla} - ${nome}`,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+    filtroAvancadoForm.control.control._fields.demandantes?._f.ref.clearValue();
+  }, [municipios]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/${entity}/situacoes-vaga`)
+      .then((res) => {
+        if (res.status === 200) {
+          setSituacoesFromBd(
+            res.data.map(
+              ({ id, nome, tipoSituacao: { nome: tipoSituacao } }) => ({
+                value: id,
+                label: `${tipoSituacao} - ${nome}`,
+              })
+            )
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  }, [filtroAvancadoForm.control.watch("")]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/${entity}/formacoes`)
+      .then((res) => {
+        if (res.status === 200) {
+          setFormacoesFromBd(
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: nome,
+            }))
+          );
+        }
+      })
+      .catch((error) => console.log(error));
+  }, [filtroAvancadoForm.control.watch("")]);
+
   return (
     <>
-      <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
+      <AnimatePresenceWrapper router={router} isLoaded={!fetchTableData.isOpen}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
           <Box>
             <Heading fontSize="1.4rem">Beneficiários</Heading>
             <Heading size="xs" color="gray.500" mt={1}>
-              {tableRowsCount && `${tableRowsCount} registros encontrados`} 
+              {tableRowsCount && tableRowsCount.length === 1
+                ? `${tableRowsCount} registro encontrado`
+                : `${tableRowsCount} registros encontrados`}
             </Heading>
           </Box>
-          <Button
-            colorScheme="brand1"
-            shadow="md"
-            leftIcon={<FiPlus />}
-            onClick={onToggle}
-          >
-            Importar
-          </Button>
+          <HStack>
+            <Button
+              colorScheme="brand1"
+              shadow="md"
+              leftIcon={<FiPlus />}
+              onClick={onToggle}
+            >
+              Importar
+            </Button>
+            <ButtonGroup isAttached={filtroAtivo}>
+              <Button
+                colorScheme="brand1"
+                shadow="md"
+                leftIcon={
+                  <FiFilter fill={filtroAtivo ? "currentColor" : "none"} />
+                }
+                onClick={filtroAvancadoForm.openOverlay}
+                variant={filtroAtivo ? "solid" : "outline"}
+              >
+                Filtro Avançado {filtroAtivo && "Ativo"}
+              </Button>
+
+              <Tooltip label="Limpar Filtro" hidden={!filtroAtivo}>
+                <IconButton
+                  variant="solid"
+                  colorScheme="red"
+                  hidden={!filtroAtivo}
+                  icon={<FiTrash2 />}
+                  onClick={limparFiltroAvancado}
+                />
+              </Tooltip>
+            </ButtonGroup>
+          </HStack>
         </Flex>
         <SimpleGrid>
           <Table
@@ -252,6 +468,69 @@ export default function Beneficiarios({ entity, ...props }) {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {/* Filtro Avançado Overlay */}
+      <Overlay
+        closeOnOverlayClick={true}
+        isOpen={filtroAvancadoForm.overlayIsOpen}
+        onClose={filtroAvancadoForm.closeOverlay}
+        header="Filtro Avançado"
+        closeButton
+      >
+        <Heading size="md" mb={4}>
+          Selecionar filtros:
+        </Heading>
+        <Stack
+          as={chakra.form}
+          onSubmit={filtroAvancadoForm.handleSubmit(filtroAvancadoFormSubmit)}
+        >
+          <SelectInputBox
+            id="escritoriosRegionais"
+            label="Escritórios Regionais"
+            formControl={filtroAvancadoForm.control}
+            options={escritoriosFromBd}
+            isMulti
+            required={false}
+          />
+          <SelectInputBox
+            id="municipios"
+            label="Municípios"
+            formControl={filtroAvancadoForm.control}
+            options={municipiosFromBd}
+            isMulti
+            required={false}
+          />
+          <SelectInputBox
+            id="demandantes"
+            label="Demandantes"
+            formControl={filtroAvancadoForm.control}
+            options={demandantesFromBd}
+            isMulti
+            required={false}
+          />
+          <SelectInputBox
+            id="situacaoBenef"
+            label="Situação"
+            formControl={filtroAvancadoForm.control}
+            options={situacoesFromBd}
+            isMulti
+            required={false}
+          />
+          <SelectInputBox
+            id="formacoes"
+            label="Formações"
+            formControl={filtroAvancadoForm.control}
+            options={formacoesFromBd}
+            isMulti
+            required={false}
+          />
+          <HStack justifyContent="flex-end" pt={4}>
+            <Button type="submit" colorScheme="brand1">
+              Filtrar
+            </Button>
+          </HStack>
+        </Stack>
+      </Overlay>
     </>
   );
 }
