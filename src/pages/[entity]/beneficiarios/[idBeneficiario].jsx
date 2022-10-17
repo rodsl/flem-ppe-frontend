@@ -73,6 +73,7 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
     formDadosBeneficiario.setLoading();
     e.preventDefault();
     const anexos = new FormData();
+    
     formData.dataNasc = DateTime.fromSQL(formData.dataNasc)
       .setLocale("pt-BR")
       .toISO();
@@ -2211,7 +2212,9 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
     const { data } = await axios.get(`/api/${entity}/situacoes-vaga`);
     const unidadesOptions = data.map(({ id, nome, tipoSituacao }) => ({
       value: id,
-      label: `${tipoSituacao.nome} - ${nome}`,
+      label:
+        tipoSituacao.nome === nome ? nome : `${tipoSituacao.nome} - ${nome}`,
+      disabled: ["Contratado", "Desligado"].includes(tipoSituacao.nome),
     }));
     setSituacoesVagaFromBd(unidadesOptions);
   });
@@ -2267,6 +2270,11 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       defaultValue: situacoesVagaFromBd.find(
         ({ value }) => vagaInfo?.situacaoVaga_Id === value
       )?.value,
+      disabled: ["Contratado - Ativo", "Desligado - Desligado"].includes(
+        situacoesVagaFromBd.find(
+          ({ value }) => vagaInfo?.situacaoVaga_Id === value
+        )?.label
+      ),
     },
     {
       id: "escritorioRegional",

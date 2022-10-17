@@ -367,7 +367,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
                   }
                 />
               </Box>
-              <Box alignSelf="flex-start">
+              {/* <Box alignSelf="flex-start">
                 <Button
                   p={2}
                   mt={8}
@@ -377,7 +377,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
                 >
                   <Icon as={FiPlus} boxSize={6} />
                 </Button>
-              </Box>
+              </Box> */}
             </HStack>
             <InputBox
               id="situacao"

@@ -6,6 +6,7 @@ import {
   FiList,
   FiMapPin,
   FiPackage,
+  FiSliders,
   FiUsers,
 } from "react-icons/fi";
 import {
@@ -66,11 +67,11 @@ export const sidebarData = [
         icon: HiOutlineOfficeBuilding,
         href: "/escritorios-regionais",
       },
-      // {
-      //   title: "Monitores",
-      //   icon: HiOutlineUserGroup,
-      //   href: "/monitores",
-      // },
+      {
+        title: "Monitores",
+        icon: HiOutlineUserGroup,
+        href: "/monitores",
+      },
       {
         title: "Materiais",
         icon: FiPackage,
@@ -142,6 +143,11 @@ export const sidebarData = [
         title: "Fila de Ações CR",
         icon: FiCalendar,
         href: "/fila-acoes",
+      },
+      {
+        title: "Monitoramento",
+        icon: FiSliders,
+        href: "/monitoramento",
       },
     ],
   },
