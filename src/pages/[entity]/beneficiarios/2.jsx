@@ -33,7 +33,6 @@ function Table({ columns, data }) {
     column: { filterValue, Header, preFilteredRows, setFilter, ...rest },
   }) {
     const count = preFilteredRows.length;
-    console.log(rest.Header);
     return (
       <>
         <FilterInput

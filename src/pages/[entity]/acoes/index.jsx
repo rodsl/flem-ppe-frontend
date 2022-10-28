@@ -401,14 +401,13 @@ export default function AcoesCR({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/funcionarios`)
+      .get(`/api/${entity}/colaboradores-cr`)
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromBd(
-            res.data.map(({ matriculaFlem, nome, cpf }) => ({
-              value: matriculaFlem,
-              label: `${matriculaFlem} - ` + maskCapitalize(nome),
-              cpf: cpf,
+            res.data.map(({ id, nome }) => ({
+              value: id,
+              label: maskCapitalize(nome),
             }))
           );
         }
@@ -445,7 +444,7 @@ export default function AcoesCR({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Ações CR</Heading>
+          <Heading fontSize="1.4rem">Ações CR</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -718,5 +717,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-AcoesCR.auth = false;
+AcoesCR.auth = true;
 AcoesCR.dashboard = true;

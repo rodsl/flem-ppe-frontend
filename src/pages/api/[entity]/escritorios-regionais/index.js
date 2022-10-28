@@ -66,7 +66,6 @@ const getEscritoriosRegionais = async (req, res) => {
         municipios: true,
       },
     });
-    console.log(query);
     return res.status(200).json(query);
   } catch (error) {
     console.log(error);

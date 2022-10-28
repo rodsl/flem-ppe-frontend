@@ -62,7 +62,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
       },
       {
         Header: "Tipo",
-        accessor: "tipoSituacaoVaga.nome",
+        accessor: "tipoSituacao.nome",
         Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
         Footer: false,
       },
@@ -304,7 +304,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Situações de Vaga</Heading>
+          <Heading fontSize="1.4rem">Situações de Vaga</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -362,7 +362,7 @@ export default function SituacoesDeVaga({ entity, ...props }) {
                   defaultValue={
                     selectedRow &&
                     tiposSituacoesFromBd.filter(
-                      (tipo) => tipo.value === selectedRow.tipoSituacaoVaga.id
+                      (tipo) => tipo.value === selectedRow.tipoSituacao.id
                     )
                   }
                 />
@@ -528,5 +528,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-SituacoesDeVaga.auth = false;
+SituacoesDeVaga.auth = true;
 SituacoesDeVaga.dashboard = true;

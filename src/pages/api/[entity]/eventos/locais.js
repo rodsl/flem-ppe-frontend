@@ -30,9 +30,7 @@ const handler = async (req, res) => {
       break;
 
     default:
-      res
-        .status(405)
-        .send({ message: "Only GET or POST requests allowed" });
+      res.status(405).send({ message: "Only GET or POST requests allowed" });
       break;
   }
 };
@@ -64,7 +62,7 @@ const getLocaisEventos = async (req, res) => {
 const addLocalEvento = async (req, res) => {
   const { entity } = req.query;
   const { nome, cep, logradouro, complemento, bairro, cidade, uf } = req.body;
-  console.log(req.body);
+
   try {
     const table = `${entity}_Locais_Eventos`;
     const query = await prisma[table].upsert({
@@ -91,7 +89,7 @@ const addLocalEvento = async (req, res) => {
         nome,
       },
     });
-    return res.status(409).json(query);
+    return res.status(200).json(query);
   } catch (error) {
     switch (error.code) {
       case "P2002":

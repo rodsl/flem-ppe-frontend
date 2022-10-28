@@ -297,7 +297,7 @@ export default function Formacoes({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Formações</Heading>
+          <Heading fontSize="1.4rem">Formações</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -462,7 +462,7 @@ export default function Formacoes({ entity, ...props }) {
           <Divider />
           <ModalBody pb={6}>
             <VStack my={3} spacing={6}>
-              <Heading size="md">Deseja excluir o seguinte template?</Heading>
+              <Heading size="md">Deseja excluir a seguinte formação?</Heading>
               <Text fontSize="xl" align="center">
                 {selectedRow?.nome}
               </Text>
@@ -521,5 +521,5 @@ export async function getServerSideProps(context) {
   };
 }
 
-Formacoes.auth = false;
+Formacoes.auth = true;
 Formacoes.dashboard = true;
