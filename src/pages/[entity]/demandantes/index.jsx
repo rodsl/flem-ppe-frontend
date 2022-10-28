@@ -32,7 +32,7 @@ import { Overlay } from "components/Overlay";
 import { InputBox } from "components/Inputs/InputBox";
 import { useForm, useFormState } from "react-hook-form";
 import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { axios } from "services/apiService";
+import { axios, getBackendRoute } from "services/apiService";
 
 export default function Demandantes({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
@@ -115,7 +115,7 @@ export default function Demandantes({ entity, ...props }) {
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
-        .put(`/api/${entity}/demandantes`, formData)
+        .put(getBackendRoute(entity, "demandantes"), formData)
         .then((res) => {
           if (res.status === 200) {
             demandanteFormSubmit.onClose();
@@ -132,6 +132,7 @@ export default function Demandantes({ entity, ...props }) {
           }
         })
         .catch((error) => {
+          console.log("ERROR:", error.response.data);
           if (error.response.status === 409) {
             demandanteFormSubmit.onClose();
             toast({
@@ -142,12 +143,12 @@ export default function Demandantes({ entity, ...props }) {
               position,
             });
           } else {
-            throw new Error(error);
+            throw new Error(error.response.data.message);
           }
         });
     }
     axios
-      .post(`/api/${entity}/demandantes`, formData)
+      .post(getBackendRoute(entity, "demandantes"), formData)
       .then((res) => {
         if (res.status === 200) {
           demandanteFormSubmit.onClose();
@@ -164,6 +165,7 @@ export default function Demandantes({ entity, ...props }) {
         }
       })
       .catch((error) => {
+        console.log("ERROR:", error.response.data);
         if (error.response.status === 409) {
           demandanteFormSubmit.onClose();
           toast({
@@ -174,7 +176,7 @@ export default function Demandantes({ entity, ...props }) {
             position,
           });
         } else {
-          throw new Error(error);
+          throw new Error(error.response.data);
         }
       });
   };
@@ -182,7 +184,7 @@ export default function Demandantes({ entity, ...props }) {
   const deleteDemandante = (formData) => {
     demandanteFormSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/demandantes`, {
+      .delete(getBackendRoute(entity, "demandantes"), {
         params: {
           id: formData.id,
         },
@@ -216,7 +218,7 @@ export default function Demandantes({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/demandantes`)
+      .get(getBackendRoute(entity, "demandantes"))
       .then((res) => {
         if (res.status === 200) {
           setDemandantesFromBd(res.data);

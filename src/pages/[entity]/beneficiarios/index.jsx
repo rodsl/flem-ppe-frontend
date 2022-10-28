@@ -1,28 +1,28 @@
+import {
+    Box,
+    Button,
+    chakra,
+    Flex,
+    Heading,
+    IconButton,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    SimpleGrid,
+    Stack,
+    useDisclosure
+} from "@chakra-ui/react";
+import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { Dropzone } from "components/Dropzone";
+import { Table } from "components/Table";
+import { useCustomForm } from "hooks";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Button,
-  chakra,
-  Flex,
-  Heading,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
-  Stack,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { Table } from "components/Table";
-import { FiEye, FiMoreHorizontal, FiPlus } from "react-icons/fi";
-import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { axios, filesAPIUpload } from "services/apiService";
-import { Dropzone } from "components/Dropzone";
-import { useCustomForm } from "hooks";
+import { FiEye, FiPlus } from "react-icons/fi";
+import { axios, filesAPIUpload, getBackendRoute } from "services/apiService";
 
 export default function Beneficiarios({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
@@ -71,89 +71,90 @@ export default function Beneficiarios({ entity, ...props }) {
       .finally(formUpload.setLoaded);
   };
 
-  const onSubmit3 = async (formData, e) => {
-    e.preventDefault();
-    formAddOficio.setLoading();
+  // const onSubmit3 = async (formData, e) => {
+  //   e.preventDefault();
+  //   formAddOficio.setLoading();
 
-    const anexos = new FormData();
-    formData.anexos.map((file, idx) => anexos.append(`files`, file));
+  //   const anexos = new FormData();
+  //   formData.anexos.map((file, idx) => anexos.append(`files`, file));
 
-    const fileUpload = async (data, params) => {
-      const config = {
-        headers: { "Content-Type": "multipart/form-data" },
-        signal: controller.signal,
-        onUploadProgress: (event) => {
-          setUploadProgress(Math.round((event.loaded * 100) / event.total));
-        },
-        params,
-      };
-      const response = await axios.post(`/api/upload`, data, config);
-      return response;
-    };
+  //   const fileUpload = async (data, params) => {
+  //     const config = {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //       signal: controller.signal,
+  //       onUploadProgress: (event) => {
+  //         setUploadProgress(Math.round((event.loaded * 100) / event.total));
+  //       },
+  //       params,
+  //     };
+  //     const response = await axios.post(`/api/upload`, data, config);
+  //     return response;
+  //   };
 
-    if (selectedRow) {
-      return axios
-        .put(`/api/${entity}/oficios/gerenciar`, formData, {
-          params: { id: selectedRow.id },
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            fileUpload(anexos, { referencesTo: res.data.id }).then(
-              async (res) => {
-                await axios.put(
-                  `/api/${entity}/oficios/anexos`,
-                  { anexosId: res.data.files },
-                  { params: { id: res.data.referencesTo } }
-                );
-                setSelectedRow(null);
-                formAddOficio.setLoaded();
-                formAddOficio.closeOverlay();
-                toast({
-                  title: "Ofício adicionado com sucesso",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: false,
-                  position,
-                });
-              }
-            );
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 409) {
-            formAddOficio.setLoaded();
-            toast({
-              title: "Ofício já existe",
-              status: "error",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          } else {
-            throw new Error(error.response.data);
-          }
-        });
-    }
+  //   if (selectedRow) {
+  //     return axios
+  //       .put(`/api/${entity}/oficios/gerenciar`, formData, {
+  //         params: { id: selectedRow.id },
+  //       })
+  //       .then((res) => {
+  //         if (res.status === 200) {
+  //           fileUpload(anexos, { referencesTo: res.data.id }).then(
+  //             async (res) => {
+  //               await axios.put(
+  //                 `/api/${entity}/oficios/anexos`,
+  //                 { anexosId: res.data.files },
+  //                 { params: { id: res.data.referencesTo } }
+  //               );
+  //               setSelectedRow(null);
+  //               formAddOficio.setLoaded();
+  //               formAddOficio.closeOverlay();
+  //               toast({
+  //                 title: "Ofício adicionado com sucesso",
+  //                 status: "success",
+  //                 duration: 5000,
+  //                 isClosable: false,
+  //                 position,
+  //               });
+  //             }
+  //           );
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         if (error.response.status === 409) {
+  //           formAddOficio.setLoaded();
+  //           toast({
+  //             title: "Ofício já existe",
+  //             status: "error",
+  //             duration: 5000,
+  //             isClosable: false,
+  //             position,
+  //           });
+  //         } else {
+  //           throw new Error(error.response.data);
+  //         }
+  //       });
+  //   }
 
-    axios
-      .post(`/api/${entity}/oficios/gerenciar`, formData)
-      .then((res) => {
-        if (res.status === 200) {
-          fileUpload(anexos, { referencesTo: res.data.id }).then(
-            async (res) => {
-              await axios.put(
-                `/api/${entity}/oficios/anexos`,
-                { anexosId: res.data.files },
-                { params: { id: res.data.referencesTo } }
-              );
-            }
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  //   axios
+  //     .post(`/api/${entity}/oficios/gerenciar`, formData)
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         fileUpload(anexos, { referencesTo: res.data.id }).then(
+  //           async (res) => {
+  //             await axios.put(
+  //               `/api/${entity}/oficios/anexos`,
+  //               { anexosId: res.data.files },
+  //               { params: { id: res.data.referencesTo } }
+  //             );
+  //           }
+  //         );
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+
 
   const columns = useMemo(
     () => [
@@ -179,7 +180,8 @@ export default function Beneficiarios({ entity, ...props }) {
             original: { vaga: vagas },
           },
         }) => {
-          const vaga = vagas.reverse()[0];
+          const vaga = vagas[0];
+          //const vaga = vagas.reverse()[0];
           return (
             <Box minW={200}>
               {vaga && `${vaga.demandante.sigla} - ${vaga.demandante.nome}`}
@@ -205,7 +207,8 @@ export default function Beneficiarios({ entity, ...props }) {
             original: { vaga: vagas },
           },
         }) => {
-          const vaga = vagas.reverse()[0];
+          //const vaga = vagas.reverse()[0];
+          const vaga = vagas[0];
           return <Box minW={200}>{vaga && vaga?.municipio?.nome}</Box>;
         },
         Footer: false,
@@ -217,7 +220,8 @@ export default function Beneficiarios({ entity, ...props }) {
             original: { vaga: vagas },
           },
         }) => {
-          const vaga = vagas.reverse()[0];
+          //const vaga = vagas.reverse()[0];
+          const vaga = vagas[0];
           return (
             <Box minW={200}>
               {vaga &&
@@ -234,7 +238,8 @@ export default function Beneficiarios({ entity, ...props }) {
             original: { vaga: vagas },
           },
         }) => {
-          const vaga = vagas.reverse()[0];
+          const vaga = vagas[0];
+          //const vaga = vagas.reverse()[0];
           return (
             <Box minW={200}>
               {vaga && vaga?.municipio?.escritorioRegional?.nome}
@@ -279,7 +284,7 @@ export default function Beneficiarios({ entity, ...props }) {
   }, [asPath]);
 
   useEffect(() => {
-    axios.get(`/api/${entity}/beneficiarios`).then(({ data }) => {
+    axios.get(getBackendRoute(entity, "beneficiarios")).then(({ data }) => {
       setBenefFromBd(data);
     });
     // .then(({ data }) => setBenefFromBd(data));

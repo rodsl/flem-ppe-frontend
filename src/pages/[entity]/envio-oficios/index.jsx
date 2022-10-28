@@ -1,33 +1,45 @@
 import {
   Box,
   Button,
+  Center,
   chakra,
+  Divider,
+  Fade,
   Flex,
   Heading,
   HStack,
   Icon,
   IconButton,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-  Divider,
+  Modal,
   ModalBody,
-  ModalOverlay,
   ModalContent,
   ModalHeader,
-  Modal,
-  Fade,
-  useToast,
-  useBreakpointValue,
+  ModalOverlay,
   ScaleFade,
   Spinner,
-  Center,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { Dropzone } from "components/Dropzone";
+import { EmailEditor } from "components/EmailEditor";
+import { InputBox } from "components/Inputs/InputBox";
+import { SelectInputBox } from "components/Inputs/SelectInputBox";
+import ChakraTagInput from "components/Inputs/TagInput";
+import { MenuIconButton } from "components/Menus/MenuIconButton";
+import { Overlay } from "components/Overlay";
+import { Table } from "components/Table";
+import { TextViewer } from "components/TextViewer";
+import { useCustomForm } from "hooks/useCustomForm";
+import { DateTime } from "luxon";
+import { cpfMask } from "masks-br";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
-import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import {
   FiEdit,
   FiEye,
@@ -35,20 +47,8 @@ import {
   FiSend,
   FiTrash2,
 } from "react-icons/fi";
-import { Table } from "components/Table";
-import { Overlay } from "components/Overlay";
-import { InputBox } from "components/Inputs/InputBox";
-import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { axios, filesAPIUpload } from "services/apiService";
-import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { EmailEditor } from "components/EmailEditor";
-import ChakraTagInput from "components/Inputs/TagInput";
-import { cpfMask } from "masks-br";
-import { useCustomForm } from "hooks/useCustomForm";
-import { TextViewer } from "components/TextViewer";
+import { axios, filesAPIUpload, getBackendRoute } from "services/apiService";
 import { maskCapitalize } from "utils/maskCapitalize";
-import { DateTime } from "luxon";
-import { Dropzone } from "components/Dropzone";
 
 export default function EnvioOficios({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
@@ -262,54 +262,74 @@ export default function EnvioOficios({ entity, ...props }) {
     }
 
     axios
-      .post(`/api/${entity}/oficios/gerenciar`, formData)
-      .then((res) => {
-        if (res.status === 200) {
-          fileUpload(anexos, { referenceObjId: res.data.id }).then(
-            async (res) => {
-              await axios.put(
-                `/api/${entity}/oficios/anexos`,
-                { anexosId: res.data },
-                { params: { id: res.data[0].referenceObjId } }
-              );
-              formAddOficio.setLoaded();
-              formAddOficio.closeOverlay();
-              setSelectedRow(null);
-              toast({
-                title: "Ofício adicionado com sucesso",
-                status: "success",
-                duration: 5000,
-                isClosable: false,
-                position,
-              });
-            }
-          );
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 409) {
-          formAddOficio.setLoaded();
-          toast({
-            title: "Ofício já existe",
-            status: "error",
-            duration: 5000,
-            isClosable: false,
-            position,
-          });
-        } else {
-          throw new Error(error);
-        }
-      });
+      //.post(`/api/${entity}/oficios/gerenciar`, formData)
+      .post(getBackendRoute(entity, "oficios/gerenciar"),
+      formData)
+        .then((res) => {
+          if (res.status === 200) {
+            fileUpload(anexos, { referenceObjId: res.data.id }).then(
+              async (res) => {
+                // await axios.put(
+                //   `/api/${entity}/oficios/anexos`,
+                //   { anexosId: res.data },
+                //   { params: { id: res.data[0].referenceObjId } }
+                // );
+                await axios.put(
+                  getBackendRoute(entity, "oficios/anexos"),
+                  {
+                    params: {
+                      id: res.data[0].referenceObjId,
+                    },
+                  },
+                  { anexosId: res.data }
+                );
+                formAddOficio.setLoaded();
+                formAddOficio.closeOverlay();
+                setSelectedRow(null);
+                toast({
+                  title: "Ofício adicionado com sucesso",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: false,
+                  position,
+                });
+              }
+            );
+          }
+        })
+        .catch((error) => {
+          if (error.response.status === 409) {
+            formAddOficio.setLoaded();
+            toast({
+              title: "Ofício já existe",
+              status: "error",
+              duration: 5000,
+              isClosable: false,
+              position,
+            });
+          } else {
+            throw new Error(error);
+          }
+        });
   };
 
   const deleteOficio = (formData) => {
     excluirOficioSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/oficios/gerenciar`, {
-        params: {
-          id: formData.id,
+      // .delete(`/api/${entity}/oficios/gerenciar`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(
+        getBackendRoute(entity, "oficios/gerenciar"),
+        {
+          params: {
+            id: formData.id,
+          },
         },
-      })
+        { anexosId: res.data }
+      )
       .then((res) => {
         if (res.status === 200) {
           excluirOficioModal.onClose();
@@ -323,7 +343,11 @@ export default function EnvioOficios({ entity, ...props }) {
   const onSubmitEnviarOficio = (formData) => {
     enviarOficioSubmit.onOpen();
     axios
-      .post(`/api/${entity}/oficios/enviar`, formData)
+      //.post(`/api/${entity}/oficios/enviar`, formData)
+      .post(
+        getBackendRoute(entity, "oficios/enviar"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           enviarOficioSubmit.onClose();
@@ -356,7 +380,8 @@ export default function EnvioOficios({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/oficios/gerenciar`)
+      //.get(`/api/${entity}/oficios/gerenciar`)
+      .get(getBackendRoute(entity, "oficios/gerenciar"))
       .then((res) => {
         if (res.status === 200) {
           setOficiosFromBd(
@@ -378,7 +403,8 @@ export default function EnvioOficios({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/oficios`)
+      //.get(`/api/${entity}/oficios`)
+      .get(getBackendRoute(entity, "oficios"))
       .then((res) => {
         if (res.status === 200) {
           const templatesOptions = res.data.map((template) => ({
@@ -396,7 +422,8 @@ export default function EnvioOficios({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/comunicados/remetentes`)
+      //.get(`/api/${entity}/comunicados/remetentes`)
+      .get(getBackendRoute(entity, "comunicados/remetentes"))
       .then((res) => {
         if (res.status === 200) {
           setEmailsRemetentesFromBd(

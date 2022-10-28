@@ -1,4 +1,3 @@
-import { axios } from "services/apiService";
 import { prisma } from "services/prisma/prismaClient";
 
 const allowCors = (fn) => async (req, res) => {
@@ -43,6 +42,7 @@ const handler = async (req, res) => {
       break;
   }
 };
+
 
 const getOficios = async (req, res) => {
   const { entity } = req.query;

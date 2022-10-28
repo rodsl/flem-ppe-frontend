@@ -1,4 +1,4 @@
-# Install dependencies only when needed
+
 FROM --platform=linux/amd64 node:16-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY jsconfig.json ./
 RUN yarn install --frozen-lockfile
 RUN yarn prisma generate
 
-# Rebuild the source code only when needed
+
 FROM --platform=linux/amd64 node:16-alpine AS builder
 
 WORKDIR /app
@@ -20,7 +20,6 @@ COPY . .
 
 RUN yarn build
 
-# Production image, copy all the files and run next
 FROM --platform=linux/amd64 node:16-alpine AS runner
 WORKDIR /app
 
@@ -46,8 +45,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder  /app/prisma /app/prisma
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+
 COPY --from=builder --chown=nextappuser:nextappgroup /app/.next/standalone ./
 COPY --from=builder --chown=nextappuser:nextappgroup /app/.next/static ./.next/static
 

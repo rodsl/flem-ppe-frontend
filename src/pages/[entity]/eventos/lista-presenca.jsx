@@ -66,7 +66,13 @@ export default function TemplateOficios({ entity, ...props }) {
   useEffect(() => {
     if (idEvento) {
       axios
-        .get(`/api/${entity}/eventos`, { params: { idEvento } })
+        //.get(`/api/${entity}/eventos`, { params: { idEvento } })
+        .get(getBackendRoute(entity, "eventos"), {
+          params: {
+            id: idEvento,
+          },
+        })
+  
         .then((res) => {
           if (res.status === 200) {
             console.log(res.data);

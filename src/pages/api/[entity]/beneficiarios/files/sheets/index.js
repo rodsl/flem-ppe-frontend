@@ -153,11 +153,17 @@ handler.get(async (req, res) => {
         .status(400)
         .json({ ok: false, message: "invalid file columns" });
     }
-    // PRIMEIRA VALIDAÇÃO - VERIFICA NO BANCO BENEFICIÁRIOS JÁ LISTADOS, MARCA BENEFICIÁRIOS ENCONTRADOS, ATIVOS E INATIVOS
-    const output1 = await benefLookupTeste(entity, sheet);
-    // SEGUNDA VALIDAÇÃO - CONFERE CAMPOS SE COMUNICANDO COM API E BD E OS FORMATA
-    const output2 = await benefValidateTeste(entity, output1);
 
+    console.log(158);
+    // PRIMEIRA VALIDAÇÃO - VERIFICA NO BANCO BENEFICIÁRIOS JÁ LISTADOS, MARCA BENEFICIÁRIOS ENCONTRADOS, ATIVOS E INATIVOS
+    //const lookup = await benefLookupTeste(entity, sheet);
+    console.log(159);
+    const lookup = await axios.post(`${process.env.NEXT_PUBLIC_URL_PORTAL_PPE_BACKEND}/${entity}/beneficiarios/files/upload`, sheet)
+    
+    console.log(lookup);
+    // SEGUNDA VALIDAÇÃO - CONFERE CAMPOS SE COMUNICANDO COM API E BD E OS FORMATA
+    const output2 = await benefValidateTeste(entity, lookup);
+    console.log(166);
     // RETORNO
     return res.status(200).json({ ok: true, fileDetails, output2 });
   } catch (error) {

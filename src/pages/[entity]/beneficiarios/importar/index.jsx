@@ -1,52 +1,53 @@
-import {
-  Box,
-  Button,
-  chakra,
-  Flex,
-  Heading,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
-  useDisclosure,
-  Stack,
-  Text,
-  HStack,
-  useBoolean,
-  useToast,
-  useBreakpointValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  Icon,
-  Divider,
-  ModalBody,
-  Tooltip,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { signIn, signOut, getSession, useSession } from "next-auth/react";
+import
+  {
+    Box,
+    Button,
+    chakra,
+    Divider,
+    Flex,
+    Heading,
+    HStack,
+    Icon,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
+    Stack,
+    Text,
+    Tooltip,
+    useBoolean,
+    useBreakpointValue,
+    useDisclosure,
+    useToast
+  } from "@chakra-ui/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import {
-  FiAlertCircle,
-  FiCheckCircle,
-  FiFileText,
-  FiInfo,
-} from "react-icons/fi";
-import { Table } from "components/Table";
-import { axios } from "services/apiService";
-import { DateTime } from "luxon";
-import { MaskedCellInput } from "components/Table/components/MaskedCellInput";
-import { celularMask, cpfMask } from "masks-br";
-import { CellInput } from "components/Table/components/CellInput";
-import { SelectCellInput } from "components/Table/components/SelectCellInput";
 import { FormMaker } from "components/Form";
+import { Table } from "components/Table";
+import { CellInput } from "components/Table/components/CellInput";
+import { MaskedCellInput } from "components/Table/components/MaskedCellInput";
+import { SelectCellInput } from "components/Table/components/SelectCellInput";
 import { useCustomForm } from "hooks";
-import { maskCapitalize, maskCPF } from "utils/masks";
+import { DateTime } from "luxon";
+import { celularMask, cpfMask } from "masks-br";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import
+  {
+    FiAlertCircle,
+    FiCheckCircle,
+    FiFileText,
+    FiInfo
+  } from "react-icons/fi";
+import { axios, getBackendRoute } from "services/apiService";
 
 export default function Importar({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure(false);
@@ -80,57 +81,90 @@ export default function Importar({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/beneficiarios/files/sheets`, {
+      .get(getBackendRoute(entity, "upload-sheets"), {
         params: {
           fileId,
         },
       })
       .then(({ status, data }) => {
-        setSheet(data.output2);
-        console.log(data.output2)
+        setSheet(data.output);
         setFileDetails(data.fileDetails);
       })
       .catch((err) => console.log(err.response))
       .finally(setTimeout(onLoad, 3000));
 
     axios
-      .get(`/api/${entity}/demandantes`)
-      .then(({ status, data }) => {
+      .get(getBackendRoute(entity, "populate/options"))
+      .then(({ data }) => {
         setListaDemandantes(
-          data.map(({ id, sigla, nome }) => ({
+          data.query.demandantes.map(({ id, sigla, nome }) => ({
             value: id,
             label: `${sigla} - ${nome}`,
           }))
         );
-      })
-      .catch((err) => console.log(err));
-    axios
-      .get(`/api/${entity}/municipios`)
-      .then(({ status, data }) => {
         setListaMunicipios(
-          data.map(({ id, nome }) => ({ value: id, label: nome }))
+          data.query.municipios.map(({ id, nome }) => ({
+            value: id,
+            label: nome,
+          }))
         );
-      })
-      .catch((err) => console.log(err));
-    axios
-      .get(`/api/${entity}/etnias`)
-      .then(({ status, data }) => {
         setListaEtnias(
-          data.map(({ id, etnia }) => ({ value: id, label: etnia }))
+          data.query.etnias.map(({ id, etnia }) => ({
+            value: id,
+            label: etnia,
+          }))
         );
-      })
-      .catch((err) => console.log(err));
-    axios
-      .get(`/api/${entity}/formacoes`)
-      .then(({ status, data }) => {
         setListaCursoFormacao(
-          data.map(({ id, nome }) => ({ value: id, label: nome }))
+          data.query.formacoes.map(({ id, nome }) => ({
+            value: id,
+            label: nome,
+          }))
         );
       })
       .catch((err) => console.log(err));
+    // axios
+    //   //.get(getBackendRoute("demandantes")
+    //   .get(`/api/${entity}/demandantes`)
+    //   .then(({ status, data }) => {
+    //     setListaDemandantes(
+    //       data.map(({ id, sigla, nome }) => ({
+    //         value: id,
+    //         label: `${sigla} - ${nome}`,
+    //       }))
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
+    // axios
+    //   //.get(getBackendRoute("municipios")
+    //   .get(`/api/${entity}/municipios`)
+    //   .then(({ status, data }) => {
+    //     setListaMunicipios(
+    //       data.map(({ id, nome }) => ({ value: id, label: nome }))
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
+    // axios
+    // //.get(getBackendRoute("etnias")
+    //   .get(`/api/${entity}/etnias`)
+    //   .then(({ status, data }) => {
+    //     setListaEtnias(
+    //       data.map(({ id, etnia }) => ({ value: id, label: etnia }))
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
+    // axios
+    // //.get(getBackendRoute("formacoes")
+    //   .get(`/api/${entity}/formacoes`)
+    //   .then(({ status, data }) => {
+    //     setListaCursoFormacao(
+    //       data.map(({ id, nome }) => ({ value: id, label: nome }))
+    //     );
+    //   })
+    //   .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
+    //console.log(sheet);
     const headers = sheet.length && Object.keys(sheet[0]);
     setColumnHeaders(
       headers &&
@@ -431,7 +465,7 @@ export default function Importar({ entity, ...props }) {
                               {Array.isArray(listaCursoFormacao) &&
                                 listaCursoFormacao.map(({ value, label }) => (
                                   <option
-                                    key={`mun-alun-${value}`}
+                                    key={`curso-id-${value}`}
                                     value={label}
                                   >
                                     {`${label.slice(0, 30)}${
@@ -516,7 +550,7 @@ export default function Importar({ entity, ...props }) {
         .filter((columnHeader) => columnHeader.accessor === "matricula")
         .map((columnHeader) => ({
           ...columnHeader,
-          Cell: (props) => <CellInput {...props}  />,
+          Cell: (props) => <CellInput {...props} />,
         }));
 
     const columnHeadersCustomCell = demandante &&
@@ -563,7 +597,7 @@ export default function Importar({ entity, ...props }) {
   );
 
   const tableDataIgnore = useMemo(
-    () => rowsDataIgnore.length && rowsDataIgnore || [],
+    () => (rowsDataIgnore.length && rowsDataIgnore) || [],
     [rowsDataIgnore]
   );
 
@@ -600,7 +634,7 @@ export default function Importar({ entity, ...props }) {
   const checkTableErrors = () => {
     setCheckingTableErrors.on();
     axios
-      .patch(`/api/${entity}/beneficiarios/files/sheets/validar-pendencias`, [
+      .patch(getBackendRoute(entity, "validar-pendencias"), [
         ...tableData,
         ...tableDataUpdate,
         ...tableDataIgnore,
@@ -609,7 +643,14 @@ export default function Importar({ entity, ...props }) {
         setRowsData(data.filter(({ update, found }) => !found && !update));
         setRowsDataUpdate(data.filter(({ update, found }) => found && update));
         setRowsDataIgnore(data.filter(({ found, update }) => found && !update));
-        setTableError(JSON.stringify(!data.filter(({ found, update }) => found && !update)).includes("*") || data.filter(({ found, update }) => found && !update).filter(({matricula}) => matricula === "").length);
+        setTableError(
+          JSON.stringify(
+            !data.filter(({ found, update }) => found && !update)
+          ).includes("*") ||
+            data
+              .filter(({ found, update }) => found && !update)
+              .filter(({ matricula }) => matricula === "").length
+        );
       })
       .catch((err) => console.log(err))
       .finally(() => {
@@ -626,10 +667,7 @@ export default function Importar({ entity, ...props }) {
     formData.fileDetails = fileDetails;
 
     try {
-      const response = await axios.post(
-        `/api/${entity}/beneficiarios/importar`,
-        formData
-      );
+      const response = await axios.post(getBackendRoute(entity, "beneficiarios/importar"), formData);
       if (response.status === 200) {
         toast({
           title: "Importação realizada com sucesso",
@@ -653,7 +691,6 @@ export default function Importar({ entity, ...props }) {
         isClosable: false,
         position,
       });
-      console.log(error);
     } finally {
       setSendingData.off();
     }
@@ -715,7 +752,7 @@ export default function Importar({ entity, ...props }) {
               isLoading={sendingData || checkingTableErrors}
               loadingText="Aguarde..."
               transition="all .2s ease-in-out"
-              isDisabled={!tableData.length}
+              isDisabled={!tableData.length && !tableDataUpdate.length}
               hidden={!columns.length}
             >
               {tableError ? "Verificar Pendências" : "Importar"}
@@ -857,14 +894,6 @@ export async function getServerSideProps(context) {
     params: { entity },
   } = context;
   const entities = ["ba", "to", "rj"];
-
-  // const posts = await api.getContentList({
-  //   referenceName: "posts",
-  //   languageCode: "en-us"
-  // });
-  // const page = posts.items.find((post) => {
-  //   return post.fields.slug === ctx.params.slug.join("/");
-  // });
 
   const entityCheck = entities.find((ent) => ent === entity || undefined);
 

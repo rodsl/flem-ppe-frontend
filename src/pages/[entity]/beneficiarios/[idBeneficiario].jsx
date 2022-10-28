@@ -22,11 +22,17 @@ import {
   useBreakpointValue,
   useNumberInput,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { FormMaker } from "components/Form";
+import { Overlay } from "components/Overlay";
 import { Table } from "components/Table";
+import download from "downloadjs";
+import { motion } from "framer-motion";
+import { useCustomForm } from "hooks";
+import { DateTime } from "luxon";
+import { celularMask, cepMask, cpfMask } from "masks-br";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FiAlertCircle,
   FiDownload,
@@ -35,15 +41,13 @@ import {
   FiPlus,
   FiUnlock,
 } from "react-icons/fi";
+import {
+  axios,
+  filesAPIService,
+  filesAPIUpload,
+  getBackendRoute,
+} from "services/apiService";
 import { variants } from "styles/transitions";
-import { celularMask, cepMask, cpfMask, rgMask } from "masks-br";
-import { axios, filesAPIService, filesAPIUpload } from "services/apiService";
-import { useCustomForm } from "hooks";
-import { useCallback } from "react";
-import { DateTime } from "luxon";
-import { Overlay } from "components/Overlay";
-import { FormMaker } from "components/Form";
-import download from "downloadjs";
 
 export default function Beneficiarios({ entity, idBeneficiario }) {
   const router = useRouter();
@@ -89,7 +93,15 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
       fileUpload(anexos).then((res) => {
         formData.anexos = res.data[0];
         axios
-          .put(`/api/${entity}/beneficiarios/${benefData.id}`, formData)
+          .put(
+            getBackendRoute(entity, `beneficiarios/${benefData.id}`),
+            {
+              params: {
+                id: benefData.id,
+              },
+            },
+            formData
+          )
           .then(({ data }) => console.log(data))
           .catch((err) => console.log(err))
           .finally(() => {
@@ -99,7 +111,15 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
       });
     } else {
       axios
-        .put(`/api/${entity}/beneficiarios/${benefData.id}`, formData)
+        .put(
+          getBackendRoute(entity, `beneficiarios/${benefData.id}`),
+          {
+            params: {
+              id: benefData.id,
+            },
+          },
+          formData
+        )
         .then(({ data }) => console.log(data))
         .catch((err) => console.log(err))
         .finally(() => {
@@ -229,7 +249,11 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
   useEffect(() => {
     setBenefDataReloading.on();
     axios
-      .get(`/api/${entity}/beneficiarios/${idBeneficiario}`)
+      .get(getBackendRoute(entity, "beneficiarios"), {
+        params: {
+          id: idBeneficiario,
+        },
+      })
       .then(({ data }) => {
         if (data) {
           setBenefData(data);
@@ -449,7 +473,7 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
   const [telefoneQtd, setTelefoneQtd] = useState([0]);
 
   const getEtnias = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/etnias`);
+    const { data } = await axios.get(getBackendRoute(entity, "etnias"));
     const etniasOptions = data.map(({ id, etnia }) => ({
       value: id,
       label: etnia,
@@ -458,7 +482,9 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
   });
 
   const getTamanhoUniforme = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/tamanho-uniforme`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "tamanhos-uniforme")
+    );
     const tamanhoOptions = data.map(({ id, tamanho }) => ({
       value: id,
       label: tamanho,
@@ -467,8 +493,9 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
   });
 
   const getTerritorioIdentidade = useCallback(async () => {
-    const { data: municipios } = await axios.get(`/api/${entity}/municipios`);
-
+    const { data: municipios } = await axios.get(
+      getBackendRoute(entity, "municipios")
+    );
     const municipioFiltered = municipios.find(
       ({ nome }) => nome === data?.municipio
     );
@@ -726,9 +753,11 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
     const cep = formControl.getValues("cep");
     try {
       setBuscaCep.on();
-      const { data } = await axios.get(
-        `https://brasilapi.com.br/api/cep/v2/${cep}`
-      );
+      const { data } = await axios.get(getBackendRoute(entity, "ext/cep"), {
+        params: {
+          cep: cep,
+        },
+      });
       setCepData(data);
     } catch (error) {
       setCepData({});
@@ -820,7 +849,9 @@ const Formacao = ({ data, entity, formControl, unlockEdit }) => {
   const [loadingFormacoes, setLoadingFormacoes] = useBoolean(false);
 
   const getEixos = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/formacoes/eixos`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "formacoes/eixos")
+    );
     const eixosOptions = data.map(({ id, nome }) => ({
       value: id,
       label: nome,
@@ -830,7 +861,7 @@ const Formacao = ({ data, entity, formControl, unlockEdit }) => {
 
   const getFormacoes = useCallback(async () => {
     setLoadingFormacoes.on();
-    const { data } = await axios.get(`/api/${entity}/formacoes`);
+    const { data } = await axios.get(getBackendRoute(entity, "formacoes"));
     const formacoesOptions = data
       .filter(
         ({ eixo_FormacaoId }) =>
@@ -1392,7 +1423,9 @@ const Pendencias = ({ data, formControl, entity, unlockEdit }) => {
   const [tiposPendenciasFromBd, setTiposPendenciasFromBd] = useState([]);
 
   const getPendenciasTipos = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/pendencias-tipos`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "pendencias/tipos")
+    );
     setTiposPendenciasFromBd(data);
   });
 
@@ -1474,7 +1507,9 @@ const Historico = ({
   const [openAddHistorico, setOpenAddHistorico] = useBoolean();
 
   const getTiposHistorico = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/tipo-historico`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "tipos-historico")
+    );
     const tiposOptions = data
       .filter(({ sigiloso }) => !sigiloso)
       .filter(({ nome }) => !["Documento", "Documento Sigiloso"].includes(nome))
@@ -1744,7 +1779,7 @@ const Materiais = ({
   );
 
   const getMateriais = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/materiais`);
+    const { data } = await axios.get(getBackendRoute(entity, "materiais"));
     const materiaisOptions = data.map(({ id, nome }) => ({
       value: id,
       label: nome,
@@ -1753,7 +1788,9 @@ const Materiais = ({
   });
 
   const getTamanhosUniforme = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/tamanho-uniforme`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "tamanhos-uniforme")
+    );
     const tamanhosOptions = data.map(({ id, tamanho }) => ({
       value: id,
       label: tamanho,
@@ -1840,7 +1877,9 @@ const InformacoesSigilosas = ({
   const [openAddDocumentoSigiloso, setOpenAddDocumentoSigiloso] = useBoolean();
 
   const getTiposHistorico = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/tipo-historico`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "tipos-historico")
+    );
     const tiposOptions = data
       .filter(({ sigiloso }) => sigiloso)
       .filter(({ nome }) => !["Documento"].includes(nome))
@@ -2146,7 +2185,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   const [vagaInfo, setVagaInfo] = useState([]);
 
   const getDemandantes = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/demandantes`);
+    const { data } = await axios.get(getBackendRoute(entity, "demandantes"));
     const demandantesOptions = data.map(({ id, sigla, nome }) => ({
       value: id,
       label: `${sigla} - ${nome}`,
@@ -2155,7 +2194,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   });
 
   const getFormacoes = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/formacoes`);
+    const { data } = await axios.get(getBackendRoute(entity, "formacoes"));
     const formacoesOptions = data.map(({ id, nome }) => ({
       value: id,
       label: nome,
@@ -2164,7 +2203,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   });
 
   const getMunicipios = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/municipios`);
+    const { data } = await axios.get(getBackendRoute(entity, "municipios"));
     const formacoesOptions = data.map(({ id, nome }) => ({
       value: id,
       label: nome,
@@ -2173,7 +2212,9 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   });
 
   const getUnidadesLotacao = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/unidades-lotacao`);
+    const { data } = await axios.get(
+      getBackendRoute(entity, "unidades-lotacao")
+    );
     const unidadesOptions = data.map(({ id, nome }) => ({
       value: id,
       label: nome,
@@ -2182,7 +2223,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   });
 
   const getSituacoesVaga = useCallback(async () => {
-    const { data } = await axios.get(`/api/${entity}/situacoes-vaga`);
+    const { data } = await axios.get(getBackendRoute(entity, "situacoes-vaga"));
     const unidadesOptions = data.map(({ id, nome, tipoSituacao }) => ({
       value: id,
       label: `${tipoSituacao.nome} - ${nome}`,
@@ -2196,7 +2237,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       const destino = `${vagaInfo?.municipio?.nome} - ${entity}`;
 
       const { data: response } = await axios.get(
-        `/api/${entity}/calcular-distancia`,
+        getBackendRoute(entity, "ext/distancia"),
         {
           params: {
             origem,
@@ -2370,7 +2411,8 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
   }, []);
 
   useEffect(() => {
-    const [ultimaVaga] = data.vaga.reverse();
+    //const [ultimaVaga] = data.vaga.reverse();
+    const [ultimaVaga] = data.vaga;
     setVagaInfo(ultimaVaga);
   }, [data.vaga]);
 

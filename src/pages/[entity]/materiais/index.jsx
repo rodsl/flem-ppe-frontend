@@ -135,7 +135,8 @@ export default function Cadastro({ entity, ...props }) {
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
-        .put(`/api/${entity}/materiais`, formData)
+        //.put(`/api/${entity}/materiais`, formData)
+        .put(getBackendRoute(entity, "materiais"), formData)
         .then((res) => {
           if (res.status === 200) {
             formSubmit.onClose();
@@ -168,7 +169,8 @@ export default function Cadastro({ entity, ...props }) {
         });
     }
     axios
-      .post(`/api/${entity}/materiais`, formData)
+      //.post(`/api/${entity}/materiais`, formData)
+      .get(getBackendRoute(entity, "materiais"), formData)
       .then((res) => {
         if (res.status === 200) {
           formSubmit.onClose();
@@ -204,7 +206,12 @@ export default function Cadastro({ entity, ...props }) {
   const deleteMaterial = (formData) => {
     formSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/materiais`, {
+      // .delete(`/api/${entity}/materiais`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "materiais"), {
         params: {
           id: formData.id,
         },
@@ -238,7 +245,8 @@ export default function Cadastro({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/materiais`)
+      //.get(`/api/${entity}/materiais`)
+      .get(getBackendRoute(entity, "materiais"))
       .then((res) => {
         if (res.status === 200) {
           setMateriaisFromBd(res.data);

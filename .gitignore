@@ -37,4 +37,7 @@ src/controllers/authController/authDb.js
 .env.development
 .env.production
 .env
-.env
+
+src\services\auth\authDb.js
+src\services\auth\authDb.js
+src/services/auth/authDb.js

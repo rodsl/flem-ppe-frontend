@@ -1,50 +1,50 @@
 import {
   Box,
   Button,
+  Center,
   chakra,
   Collapse,
+  Divider,
+  Fade,
   Flex,
   Heading,
   HStack,
   Icon,
   InputRightElement,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-  Divider,
+  Modal,
   ModalBody,
-  ModalOverlay,
   ModalContent,
   ModalHeader,
-  Modal,
-  Fade,
-  useBreakpointValue,
-  useToast,
+  ModalOverlay,
   ScaleFade,
-  Center,
   Spinner,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { InputBox } from "components/Inputs/InputBox";
+import { MaskedInputBox } from "components/Inputs/MaskedInputBox";
+import { SelectInputBox } from "components/Inputs/SelectInputBox";
+import { MenuIconButton } from "components/Menus/MenuIconButton";
+import { Overlay } from "components/Overlay";
+import { Table } from "components/Table";
+import { celularMask, cepMask } from "masks-br";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
-import { celularMask, cepMask } from "masks-br";
-import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { useForm, useFormState } from "react-hook-form";
 import {
   FiEdit,
   FiMoreHorizontal,
   FiPlus,
-  FiTrash2,
   FiTool,
+  FiTrash2,
 } from "react-icons/fi";
-import { Table } from "components/Table";
-import { Overlay } from "components/Overlay";
-import { InputBox } from "components/Inputs/InputBox";
-import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { useForm, useFormState } from "react-hook-form";
 import { axios } from "services/apiService";
-import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { MaskedInputBox } from "components/Inputs/MaskedInputBox";
 import { dynamicSort } from "utils/dynamicSort";
 
 export default function EscritoriosRegionais({ entity, ...props }) {
@@ -167,40 +167,44 @@ export default function EscritoriosRegionais({ entity, ...props }) {
     e.preventDefault();
     if (selectedRow) {
       formData.id = selectedRow.id;
-      return axios
-        .put(`/api/${entity}/escritorios-regionais`, formData)
-        .then((res) => {
-          if (res.status === 200) {
-            formSubmit.onClose();
-            addEscritorioRegional.onClose();
-            setSelectedRow(null);
-            formAddEscritorio.reset({});
-            toast({
-              title: "Escritório atualizado com sucesso",
-              status: "success",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 409) {
-            formSubmit.onClose();
-            toast({
-              title: "Escritório já existe",
-              status: "error",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          } else {
-            throw new Error(error);
-          }
-        });
+      return (
+        axios
+          //.put(`/api/${entity}/escritorios-regionais`, formData)
+          .put(getBackendRoute(entity, "escritorios-regionais"), formData)
+          .then((res) => {
+            if (res.status === 200) {
+              formSubmit.onClose();
+              addEscritorioRegional.onClose();
+              setSelectedRow(null);
+              formAddEscritorio.reset({});
+              toast({
+                title: "Escritório atualizado com sucesso",
+                status: "success",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            }
+          })
+          .catch((error) => {
+            if (error.response.status === 409) {
+              formSubmit.onClose();
+              toast({
+                title: "Escritório já existe",
+                status: "error",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            } else {
+              throw new Error(error);
+            }
+          })
+      );
     }
     axios
-      .post(`/api/${entity}/escritorios-regionais`, formData)
+      //.post(`/api/${entity}/escritorios-regionais`, formData)
+      .post(getBackendRoute(entity, "escritorios-regionais"), formData)
       .then((res) => {
         if (res.status === 200) {
           formSubmit.onClose();
@@ -237,7 +241,8 @@ export default function EscritoriosRegionais({ entity, ...props }) {
     gerenciarEscritorioFormSubmit.onOpen();
     formData.id = selectedRow.id;
     axios
-      .put(`/api/${entity}/escritorios-regionais/gerenciar`, formData)
+      //.put(`/api/${entity}/escritorios-regionais/gerenciar`, formData)
+      .put(getBackendRoute(entity, "escritorios-regionais/gerenciar"), formData)
       .then((res) => {
         if (res.status === 200) {
           gerenciarEscritorio.onClose();
@@ -272,7 +277,12 @@ export default function EscritoriosRegionais({ entity, ...props }) {
   const deleteEscritorioRegional = (formData) => {
     formSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/escritorios-regionais`, {
+      // .delete(`/api/${entity}/escritorios-regionais`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "escritorios-regionais"), {
         params: {
           id: formData.id,
         },
@@ -306,7 +316,8 @@ export default function EscritoriosRegionais({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/escritorios-regionais`)
+      //.get(`/api/${entity}/escritorios-regionais`)
+      .get(getBackendRoute(entity, "escritorios-regionais"))
       .then((res) => {
         if (res.status === 200) {
           setEscritoriosFromBd(res.data);
@@ -315,7 +326,8 @@ export default function EscritoriosRegionais({ entity, ...props }) {
       .catch((error) => console.log(error))
       .finally(fetchTableData.onClose);
     axios
-      .get(`/api/${entity}/municipios`)
+      //.get(`/api/${entity}/municipios`)
+      .get(getBackendRoute(entity, "municipios"))
       .then((res) => {
         if (res.status === 200) {
           setMunicipiosFromBd(res.data);
@@ -335,9 +347,15 @@ export default function EscritoriosRegionais({ entity, ...props }) {
     const cep = formAddEscritorio.getValues("cep");
     try {
       buscaCep.onOpen();
+      // const { data } = await axios.get(
+      //   `https://brasilapi.com.br/api/cep/v2/${cep}`
+      // );
       const { data } = await axios.get(
-        `https://brasilapi.com.br/api/cep/v2/${cep}`
-      );
+        getBackendRoute(entity, "ext/cep"), {
+          params: {
+            cep: cep,
+          },
+        })
       setCepData(data);
       toast({
         title: "Endereço localizado",
@@ -386,9 +404,10 @@ export default function EscritoriosRegionais({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(
-        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${entity}/municipios`
-      )
+      // .get(
+      //   `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${entity}/municipios`
+      // )
+      .get(getBackendRoute(entity, "ext/municipios"))
       .then(({ data }) =>
         setIbgeData(
           data.map(({ id, nome, ...opt }) => ({
