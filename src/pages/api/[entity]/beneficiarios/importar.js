@@ -358,11 +358,15 @@ const postBeneficiariosLote = async (req, res) => {
 
     const query = await prisma.$transaction(
       benefsToCreate.map((data) =>
-        prisma.ba_Beneficiarios.create({
-          data,
-          include: {
-            vaga: true,
+        prisma.ba_Beneficiarios.upsert({
+          create: data,
+          update: data,
+          where: {
+            matriculaSec: data.matriculaSec,
           },
+          include:{
+            vaga: true
+          }
         })
       )
     );

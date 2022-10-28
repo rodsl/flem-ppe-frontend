@@ -424,7 +424,7 @@ export default function FilaAcoesCR({ entity, ...props }) {
           }
         }}
         isOpen={addAcao.isOpen}
-        header={selectedRow ? "Editar Ação" : "Adicionar Ação"}
+        header="Detalhes da Ação"
         closeButton
         size="xl"
       >

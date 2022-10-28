@@ -118,14 +118,17 @@ const addEvento = async (req, res) => {
     tipo,
     benefAssoc,
     criarAcaoCR,
-    colabAcaoCR = [],
+    colabAcaoCR,
     emailAlerts,
     emailRemetente,
     conteudoEmail = null,
   } = req.body;
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
-  const colabMatriculas = colabAcaoCR.map((colab) => parseInt(colab.value));
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Eventos`;
@@ -169,9 +172,7 @@ const addEvento = async (req, res) => {
                   connect: benefToConnectAcao.map(({ id }) => ({ id })),
                 },
                 colabCr: {
-                  connect: colabMatriculas.map((value) => ({
-                    matriculaFlem: value,
-                  })),
+                  connect: colabAcaoCR.map(({ value }) => ({ id: value })),
                 },
               },
             }
@@ -225,15 +226,18 @@ const modifyEvento = async (req, res) => {
     benefAssoc,
     acao_CrId,
     criarAcaoCR,
-    colabAcaoCR = [],
+    colabAcaoCR,
     emailAlerts,
     comunicado_Id,
     emailRemetente,
     conteudoEmail = null,
   } = req.body;
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
-  const colabMatriculas = colabAcaoCR.map((colab) => parseInt(colab.value));
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Eventos`;
@@ -273,7 +277,7 @@ const modifyEvento = async (req, res) => {
               set: benefToConnectAcao.map(({ id }) => ({ id })),
             },
             colabCr: {
-              set: colabMatriculas.map((value) => ({ matriculaFlem: value })),
+              set: colabAcaoCR.map(({ value }) => ({ id: value })),
             },
             historico: {
               create: {
@@ -303,9 +307,7 @@ const modifyEvento = async (req, res) => {
               connect: benefToConnectAcao.map(({ id }) => ({ id })),
             },
             colabCr: {
-              connect: colabMatriculas.map((value) => ({
-                matriculaFlem: value,
-              })),
+              connect: colabAcaoCR.map(({ value }) => ({ id: value })),
             },
             historico: {
               create: {
@@ -473,6 +475,9 @@ const deleteEvento = async (req, res) => {
       data: {
         excluido: true,
       },
+      include: {
+        benefAssoc: true,
+      },
       where: {
         id,
       },
@@ -480,7 +485,6 @@ const deleteEvento = async (req, res) => {
 
     await prisma.ba_Historico.create({
       data: {
-        categoria: "Evento",
         descricao: `Exclusão do evento: ${query.nome}`,
         beneficiario: {
           connect: query.benefAssoc.map(({ id }) => ({ id })),
@@ -490,11 +494,19 @@ const deleteEvento = async (req, res) => {
             id: query.id,
           },
         },
+        tipoHistorico_Id: (
+          await prisma.ba_Historico_Tipo.findFirst({
+            where: {
+              nome: "Evento",
+            },
+          })
+        ).id,
       },
     });
 
     return res.status(200).json(query);
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: error });
   }
 };

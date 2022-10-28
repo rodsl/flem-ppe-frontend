@@ -103,10 +103,14 @@ const getAcoesCr = async (req, res) => {
 
 const addAcaoCr = async (req, res) => {
   const { entity } = req.query;
-  const { nome, tipo, descricao, benefAssoc } = req.body;
+  const { nome, tipo, descricao, benefAssoc, colabAcaoCR } = req.body;
 
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Acoes_Cr`;
@@ -136,6 +140,9 @@ const addAcaoCr = async (req, res) => {
         tipoAcaoCr_Id: tipo,
         benefAssoc: {
           connect: benefToConnectAcao.map(({ id }) => ({ id })),
+        },
+        colabCr: {
+          connect: colabAcaoCR.map(({ value }) => ({ id: value })),
         },
       },
     });
@@ -179,9 +186,12 @@ const addAcaoCr = async (req, res) => {
 const modifyAcaoCr = async (req, res) => {
   const { entity } = req.query;
   const { id, nome, tipo, descricao, benefAssoc, colabAcaoCR } = req.body;
-  const benefMatriculas = benefAssoc.map((benef) => parseInt(benef.value));
-  const benefCPFs = benefAssoc.map((benef) => benef.value.toString());
-  const colabMatriculas = colabAcaoCR.map((colab) => parseInt(colab.value));
+  const benefMatriculas = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => parseInt(benef.value));
+  const benefCPFs = benefAssoc
+    .filter(({ value }) => value)
+    .map((benef) => benef.value.toString());
 
   try {
     const table = `${entity}_Acoes_Cr`;
@@ -213,7 +223,7 @@ const modifyAcaoCr = async (req, res) => {
           set: benefToConnectAcao.map(({ id }) => ({ id })),
         },
         colabCr: {
-          set: colabMatriculas.map((value) => ({ matriculaFlem: value })),
+          set: colabAcaoCR.map(({ value }) => ({ id: value })),
         },
       },
       include: {

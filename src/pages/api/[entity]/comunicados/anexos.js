@@ -38,19 +38,19 @@ const putAnexoComunicado = async (req, res) => {
   try {
     const table = `${entity}_Comunicados`;
 
-    await prisma.ba_Uploads.updateMany({
-      data: {
-        excluido: true,
-      },
-      where: {
-        AND: {
-          referencesTo: id,
-          id: {
-            notIn: anexosId.map(({ id }) => id),
-          },
-        },
-      },
-    });
+    // await prisma.ba_Uploads.updateMany({
+    //   data: {
+    //     excluido: true,
+    //   },
+    //   where: {
+    //     AND: {
+    //       referencesTo: id,
+    //       id: {
+    //         notIn: anexosId.map(({ id }) => id),
+    //       },
+    //     },
+    //   },
+    // });
 
     const query = await prisma[table].update({
       data: {

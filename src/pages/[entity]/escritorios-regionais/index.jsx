@@ -461,7 +461,7 @@ export default function EscritoriosRegionais({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Escritórios Regionais</Heading>
+          <Heading fontSize="1.4rem">Escritórios Regionais</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -656,14 +656,15 @@ export default function EscritoriosRegionais({ entity, ...props }) {
                 )
               }
             />
-            <SelectInputBox
+            {/* Campo para seleção de monitores deverá ser reabilitado na implementação do módulo de monitoramento (SMB) */}
+            {/* <SelectInputBox
               id="monitores"
               label="Monitores"
               formControl={formGerenciarEscritorio}
               options={options}
               required={false}
               isMulti
-            />
+            /> */}
           </Stack>
           <HStack py={6} justifyContent="flex-end">
             <Button

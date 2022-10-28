@@ -22,7 +22,7 @@ export default function Cadastro({ entity, ...props }) {
 
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
-      <Heading size="lg">Parâmetros de Ofícios</Heading>
+      <Heading fontSize="1.4rem">Parâmetros de Ofícios</Heading>
     </AnimatePresenceWrapper>
   );
 }

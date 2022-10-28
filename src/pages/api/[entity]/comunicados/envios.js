@@ -1,5 +1,7 @@
 import { prisma } from "services/prisma/prismaClient";
 import { maskCapitalize } from "utils/maskCapitalize";
+import { convertDeltaToHtml } from "node-quill-converter";
+import { mailService } from "services/apiService";
 
 const allowCors = (fn) => async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", true);
@@ -41,15 +43,21 @@ const addEnvios = async (req, res) => {
     const table = `${entity}_Comunicados_Enviados`;
     const tableComunicados = `${entity}_Comunicados`;
 
-    const getComunicado = await prisma[tableComunicados].findFirst({
+    const getComunicado = await prisma.ba_Comunicados.findFirst({
+      // const getComunicado = await prisma[tableComunicados].findFirst({
       where: {
         id,
       },
       include: {
-        benefAssoc: true,
+        benefAssoc: {
+          include: {
+            contatos: true,
+          },
+        },
         remetenteComunicado: true,
       },
     });
+
     const conteudoEmail = JSON.parse(getComunicado.conteudoEmail);
 
     const enviosToCreate = getComunicado.benefAssoc.map((benef) => {
@@ -71,12 +79,23 @@ const addEnvios = async (req, res) => {
         beneficiario_Id: benef.id,
         comunicado_Id: getComunicado.id,
         conteudoEmail: JSON.stringify({ ops: conteudoPopulado }),
+        mailDetails: {
+          remetente: getComunicado.remetenteComunicado,
+          contatos: benef.contatos.filter(
+            ({ tipoContato_Id }) => tipoContato_Id === "email"
+          ),
+          assunto: getComunicado.assunto,
+          html: convertDeltaToHtml({ ops: conteudoPopulado }),
+          anexosId: getComunicado.anexosId,
+        },
       };
     });
 
-    const query = await prisma[table].createMany({
-      data: enviosToCreate,
-    });
+    const query = await prisma.$transaction(
+      enviosToCreate.map(({ mailDetails, ...rest }) =>
+        prisma[table].create({ data: rest })
+      )
+    );
 
     await prisma.ba_Historico.create({
       data: {
@@ -99,6 +118,18 @@ const addEnvios = async (req, res) => {
         ).id,
       },
     });
+
+    const mailsToSend = query.map((env) => ({
+      ...env,
+      ...enviosToCreate.find(
+        ({ beneficiario_Id }) => beneficiario_Id === env.beneficiario_Id
+      ).mailDetails,
+    }));
+
+    mailService
+      .post(`/sendMail`, mailsToSend)
+      .then((res) => console.log(res.data))
+      .catch((res) => console.log(res.data));
 
     return res.status(200).json(query);
   } catch (error) {

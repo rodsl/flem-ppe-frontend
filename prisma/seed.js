@@ -10,6 +10,7 @@ const {
   municSeed,
   situacoesVagaSeed,
   tiposContatoSeed,
+  editorParametrosSeed,
 } = require("./seeds");
 
 const main = async () => {
@@ -22,6 +23,7 @@ const main = async () => {
   const municipios = await municSeed(prisma);
   const situacoesVaga = await situacoesVagaSeed(prisma);
   const tiposContato = await tiposContatoSeed(prisma);
+  const editorParametros = await editorParametrosSeed(prisma);
 
   console.log({
     etnia,
@@ -33,6 +35,7 @@ const main = async () => {
     municipios,
     situacoesVaga,
     tiposContato,
+    editorParametros,
   });
 };
 

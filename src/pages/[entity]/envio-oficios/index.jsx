@@ -59,6 +59,7 @@ export default function EnvioOficios({ entity, ...props }) {
   const [oficiosFromBd, setOficiosFromBd] = useState();
   const [templatesFromBd, setTemplatesFromBd] = useState();
   const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
+  const [parametrosFromBd, setParametrosFromBd] = useState([]);
   const [nomeEvento, setNomeEvento] = useState("");
   const [uploadProgress, setUploadProgress] = useState();
   const [controller, setController] = useState(null);
@@ -219,30 +220,32 @@ export default function EnvioOficios({ entity, ...props }) {
 
     if (selectedRow) {
       return axios
-        .put(`/api/${entity}/oficios/gerenciar`, formData, {
+        .put(getBackendRoute(entity, "oficios/gerenciar"), formData, {
           params: { id: selectedRow.id },
         })
         .then((res) => {
           if (res.status === 200) {
-            fileUpload(anexos, { referenceObjId: res.data.id }).then(
-              async (res) => {
-                await axios.put(
-                  `/api/${entity}/oficios/anexos`,
-                  { anexosId: res.data },
-                  { params: { id: selectedRow.id } }
-                );
-                setSelectedRow(null);
-                formAddOficio.setLoaded();
-                formAddOficio.closeOverlay();
-                toast({
-                  title: "Ofício adicionado com sucesso",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: false,
-                  position,
-                });
-              }
-            );
+            if (formData.anexos.length) {
+              fileUpload(anexos, { referenceObjId: res.data.id }).then(
+                async (res) => {
+                  await axios.put(
+                    getBackendRoute(entity, "oficios/anexos"),
+                    { anexosId: res.data },
+                    { params: { id: selectedRow.id } }
+                  );
+                }
+              );
+            }
+            setSelectedRow(null);
+            formAddOficio.setLoaded();
+            formAddOficio.closeOverlay();
+            toast({
+              title: "Ofício adicionado com sucesso",
+              status: "success",
+              duration: 5000,
+              isClosable: false,
+              position,
+            });
           }
         })
         .catch((error) => {
@@ -392,6 +395,19 @@ export default function EnvioOficios({ entity, ...props }) {
           );
         }
       })
+      .catch((error) => console.log(error));
+    axios
+      .get(`/api/${entity}/editor-parametros`)
+      .then(({ data, status }) => {
+        if (status === 200) {
+          setParametrosFromBd(
+            data.map(({ id, rotulo }) => ({
+              id,
+              value: rotulo,
+            }))
+          );
+        }
+      })
       .catch((error) => console.log(error))
       .finally(fetchTableData.onClose);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -454,7 +470,7 @@ export default function EnvioOficios({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Envio de Ofícios</Heading>
+          <Heading fontSize="1.4rem">Envio de Ofícios</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -490,7 +506,9 @@ export default function EnvioOficios({ entity, ...props }) {
         }}
         size="lg"
         isOpen={formAddOficio.overlayIsOpen}
-        header={selectedRow ? "Editar Ofício" : "Adicionar Ofício"}
+        header={
+          selectedRow ? "Editar Envio de Ofício" : "Adicionar Envio de Ofício"
+        }
         closeButton
       >
         <chakra.form onSubmit={formAddOficio.handleSubmit(onSubmit)} w="100%">
@@ -526,7 +544,7 @@ export default function EnvioOficios({ entity, ...props }) {
             <SelectInputBox
               id="emailRemetente"
               formControl={formAddOficio.control}
-              label="E-mail Rementente"
+              label="Rementente de E-mail"
               colorScheme="brand1"
               options={emailsRemetentesFromBd}
               placeholder="Selecione..."
@@ -553,6 +571,7 @@ export default function EnvioOficios({ entity, ...props }) {
                 title={"Corpo do E-mail "}
                 formControl={formAddOficio.control}
                 loadOnEditor={selectedRow?.conteudoEmail}
+                parametros={parametrosFromBd}
               />
               <Dropzone
                 id="anexos"

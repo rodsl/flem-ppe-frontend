@@ -15,12 +15,7 @@ import {
   ModalOverlay,
   ScaleFade,
   Spinner,
-  Stack,
-  Text,
-  useBreakpointValue,
-  useDisclosure,
-  useToast,
-  VStack,
+  Fade,
 } from "@chakra-ui/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { InputBox } from "components/Inputs/InputBox";
@@ -45,6 +40,8 @@ export default function TemplateOficios({ entity, ...props }) {
   const [selectedRow, setSelectedRow] = useState();
   const [templatesFromBd, setTemplatesFromBd] = useState([]);
   const [tiposFromBd, setTiposFromBd] = useState([]);
+  const [parametrosFromBd, setParametrosFromBd] = useState([]);
+  const [tituloTemplate, setTituloTemplate] = useState("");
   const addTemplateOficio = useDisclosure();
   const formSubmit = useDisclosure();
   const tipoOficioFormSubmit = useDisclosure();
@@ -225,14 +222,9 @@ export default function TemplateOficios({ entity, ...props }) {
       })
       .catch((error) => {
         if (error.response.status === 409) {
-          console.log(error.response.data);
           tipoOficioFormSubmit.onClose();
-          const [constraint] = error.response.data.on;
           toast({
-            title: `${
-              (constraint === "sigla" && "Sigla") ||
-              (constraint === "descricao" && "Descrição")
-            } já existe`,
+            title: `Tipo de ofício já existe`,
             status: "error",
             duration: 5000,
             isClosable: false,
@@ -292,8 +284,23 @@ export default function TemplateOficios({ entity, ...props }) {
           setTemplatesFromBd(res.data);
         }
       })
+      .catch((error) => console.log(error));
+
+    axios
+      .get(`/api/${entity}/editor-parametros`)
+      .then(({ data, status }) => {
+        if (status === 200) {
+          setParametrosFromBd(
+            data.map(({ id, rotulo }) => ({
+              id,
+              value: rotulo,
+            }))
+          );
+        }
+      })
       .catch((error) => console.log(error))
       .finally(fetchTableData.onClose);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     addTemplateOficio.isOpen,
@@ -319,11 +326,14 @@ export default function TemplateOficios({ entity, ...props }) {
       .catch((error) => console.log(error));
   }, [addTemplateOficio.isOpen, addTipoOficio.isOpen]);
 
+  useEffect(() => {
+    setTituloTemplate(formTemplateOficio.watch("titulo"));
+  }, [formTemplateOficio.watch("titulo")]);
   return (
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Templates de Ofícios</Heading>
+          <Heading fontSize="1.4rem">Templates de Ofícios</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -414,12 +424,17 @@ export default function TemplateOficios({ entity, ...props }) {
               defaultValue={selectedRow?.descricao}
               required={false}
             />
-            <TextEditor
-              id="conteudo"
-              label="Template"
-              formControl={formTemplateOficio}
-              loadOnEditor={selectedRow?.conteudo}
-            />
+            <Fade in={tituloTemplate && tituloTemplate.length > 1} unmountOnExit>
+              <Box>
+                <TextEditor
+                  id="conteudo"
+                  label="Template"
+                  formControl={formTemplateOficio}
+                  loadOnEditor={selectedRow && selectedRow.conteudo}
+                  parametros={parametrosFromBd}
+                />
+              </Box>
+            </Fade>
           </Stack>
           <HStack py={6} justifyContent="flex-end">
             <Button

@@ -69,17 +69,46 @@ const postTipoHistorico = async (req, res) => {
   const { nome, tipoHist } = req.body;
   try {
     const table = `${entity}_Historico_Tipo`;
-    const query = await prisma.ba_Historico_Tipo.create({
-      // const query = await prisma[table].findMany({
 
-      data: {
+    if (
+      (await prisma[table].findFirst({
+        where: {
+          nome,
+          excluido: false,
+        },
+      })) !== null
+    ) {
+      const error = new Error();
+      error.message = "Tipo de histórico já existe";
+      error.code = "P2002";
+      throw error;
+    }
+
+    const query = await prisma[table].upsert({
+      create: {
         nome,
         sigiloso: JSON.parse(tipoHist),
+      },
+      update: {
+        nome,
+        sigiloso: JSON.parse(tipoHist),
+        excluido: false,
+      },
+      where: {
+        nome,
       },
     });
     return res.status(200).json(query);
   } catch (error) {
-    return res.status(500).json({ error: error });
+    switch (error.code) {
+      case "P2002":
+        res.status(409).json({ error: "Unique constraint failed" });
+        break;
+
+      default:
+        res.status(500).json({ error: error });
+        break;
+    }
   }
 };
 

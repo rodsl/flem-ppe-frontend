@@ -52,18 +52,20 @@ const getBeneficiarios = async (req, res) => {
           include: {
             demandante: true,
             municipio: {
-              include:{
-                escritorioRegional: true
-              }
+              include: {
+                escritorioRegional: true,
+              },
             },
             situacaoVaga: {
-              include:{
-                tipoSituacao: true
-              }
+              include: {
+                tipoSituacao: true,
+              },
             },
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         },
-        
       },
       orderBy: [
         {

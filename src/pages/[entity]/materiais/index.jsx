@@ -260,7 +260,7 @@ export default function Cadastro({ entity, ...props }) {
   return (
     <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
       <Flex justifyContent="space-between" alignItems="center" pb={5}>
-        <Heading size="md">Materiais</Heading>
+        <Heading fontSize="1.4rem">Materiais</Heading>
         <Button
           colorScheme="brand1"
           shadow="md"

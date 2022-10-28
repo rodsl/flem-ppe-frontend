@@ -56,6 +56,7 @@ export default function Comunicados({ entity, ...props }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [comunicadosFromBd, setComunicadosFromBd] = useState([]);
   const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
+  const [parametrosFromBd, setParametrosFromBd] = useState([]);
   const [nomeEvento, setNomeEvento] = useState("");
   const [uploadProgress, setUploadProgress] = useState();
   const [controller, setController] = useState(null);
@@ -135,7 +136,9 @@ export default function Comunicados({ entity, ...props }) {
         Cell: ({ value, row: { original } }) => (
           <Box minW={200}>
             {value.length === 0 && "Não"}
-            {value.length === original.benefAssoc.length && "Sim"}
+            {value.length !== 0 &&
+              value.length === original?.benefAssoc.length &&
+              "Sim"}
           </Box>
         ),
         Footer: false,
@@ -145,7 +148,8 @@ export default function Comunicados({ entity, ...props }) {
         Cell: ({ row: { original } }) => (
           <MenuIconButton
             isDisabled={
-              original.benefAssoc.length === original.enviosComunicados.length
+              original.benefAssoc.length !== 0 &&
+              original.benefAssoc.length === original?.enviosOficios?.length
             }
             icon={<FiMoreHorizontal />}
             menuItems={[
@@ -167,6 +171,7 @@ export default function Comunicados({ entity, ...props }) {
                       setSelectedRow(original);
                       enviarComunicado.onOpen();
                     },
+                    // disabled: original.benefAssoc.length === 0,
                   },
                   {
                     text: "Excluir",
@@ -283,29 +288,31 @@ export default function Comunicados({ entity, ...props }) {
     }
 
     axios
-      .post(`/api/${entity}/comunicados`, formData)
+      .post(getBackendRoute(entity, "comunicados"), formData)
       .then((res) => {
         if (res.status === 200) {
-          fileUpload(anexos, { referenceObjId: res.data.id }).then(
-            async (res) => {
-              await axios.put(
-                `/api/${entity}/comunicados/anexos`,
-                { anexosId: res.data },
-                { params: { id: res.data[0].referenceObjId } }
-              );
-              comunicadoFormSubmit.onClose();
-              addComunicado.onClose();
-              setSelectedRow(null);
-              formComunicado.reset({});
-              toast({
-                title: "Comunicado adicionado com sucesso",
-                status: "success",
-                duration: 5000,
-                isClosable: false,
-                position,
-              });
-            }
-          );
+          if (formData.anexos.length) {
+            fileUpload(anexos, { referenceObjId: res.data.id }).then(
+              async (res) => {
+                await axios.put(
+                  getBackendRoute(entity, "comunicados/anexos"),
+                  { anexosId: res.data },
+                  { params: { id: res.data[0].referenceObjId } }
+                );
+              }
+            );
+          }
+          comunicadoFormSubmit.onClose();
+          addComunicado.onClose();
+          setSelectedRow(null);
+          formComunicado.reset({});
+          toast({
+            title: "Comunicado adicionado com sucesso",
+            status: "success",
+            duration: 5000,
+            isClosable: false,
+            position,
+          });
         }
       })
       .catch((error) => {
@@ -441,6 +448,19 @@ export default function Comunicados({ entity, ...props }) {
           );
         }
       })
+      .catch((error) => console.log(error));
+    axios
+      .get(`/api/${entity}/editor-parametros`)
+      .then(({ data, status }) => {
+        if (status === 200) {
+          setParametrosFromBd(
+            data.map(({ id, rotulo }) => ({
+              id,
+              value: rotulo,
+            }))
+          );
+        }
+      })
       .catch((error) => console.log(error))
       .finally(fetchTableData.onClose);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -479,7 +499,7 @@ export default function Comunicados({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Comunicados</Heading>
+          <Heading fontSize="1.4rem">Comunicados</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -569,6 +589,7 @@ export default function Comunicados({ entity, ...props }) {
                 title={"Corpo do E-mail "}
                 formControl={formComunicado}
                 loadOnEditor={selectedRow?.conteudoEmail}
+                parametros={parametrosFromBd}
               />
               <Dropzone
                 id="anexos"

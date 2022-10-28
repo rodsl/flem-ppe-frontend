@@ -75,6 +75,7 @@ export default function Eventos({ entity, ...props }) {
   const [demandantesFromBd, setDemandantesFromBd] = useState([]);
   const [colaboradoresFromRh, setColaboradoresFromRh] = useState([]);
   const [beneficiariosFromRh, setBeneficiariosFromRh] = useState([]);
+  const [parametrosFromBd, setParametrosFromBd] = useState([]);
   const [emailsRemetentesFromBd, setEmailsRemetentesFromBd] = useState([]);
   const [emailAlerts, emailAlertsState] = useState(false);
   const [criarAcaoCR, setCriarAcaoCR] = useState(false);
@@ -88,7 +89,7 @@ export default function Eventos({ entity, ...props }) {
   const localEventoFormSubmit = useDisclosure();
   const addLocalFormSubmit = useDisclosure();
   const addLoca = useDisclosure();
-  const excluirTemplateOficio = useDisclosure();
+  const excluirEventoModal = useDisclosure();
   const addTipoEvento = useDisclosure();
   const addLocalEvento = useDisclosure();
   const buscaCep = useDisclosure();
@@ -193,7 +194,7 @@ export default function Eventos({ entity, ...props }) {
                     icon: <FiTrash2 />,
                     onClick: () => {
                       setSelectedRow(props.row.original);
-                      excluir.onOpen();
+                      excluirEventoModal.onOpen();
                     },
                   },
                 ],
@@ -401,7 +402,7 @@ export default function Eventos({ entity, ...props }) {
       .finally(informarPresenca.setLoaded);
   };
 
-  const deleteTemplateOficio = (formData) => {
+  const excluirEvento = (formData) => {
     formSubmit.onOpen();
     axios
       // .delete(`/api/${entity}/oficios`, {
@@ -416,11 +417,11 @@ export default function Eventos({ entity, ...props }) {
       })
       .then((res) => {
         if (res.status === 200) {
-          excluirTemplateOficio.onClose();
+          excluirEventoModal.onClose();
           formSubmit.onClose();
           setSelectedRow(null);
           toast({
-            title: "Ofício excluído com sucesso",
+            title: "Evento excluído com sucesso",
             status: "success",
             duration: 5000,
             isClosable: false,
@@ -522,10 +523,25 @@ export default function Eventos({ entity, ...props }) {
           setEventosFromBd(res.data);
         }
       })
+      .catch((error) => console.log(error));
+    axios
+    //TODO VERIFICAR ORIGEM DESTA ROTA
+      //.get(`/api/${entity}/editor-parametros`)
+      .get(getBackendRoute(entity, "editor-parametros"))
+      .then(({ data, status }) => {
+        if (status === 200) {
+          setParametrosFromBd(
+            data.map(({ id, rotulo }) => ({
+              id,
+              value: rotulo,
+            }))
+          );
+        }
+      })
       .catch((error) => console.log(error))
       .finally(fetchTableData.onClose);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addEvento.isOpen, excluirTemplateOficio.isOpen]);
+  }, [addEvento.isOpen, excluirEventoModal.isOpen]);
 
   useEffect(() => {
     axios
@@ -616,7 +632,7 @@ export default function Eventos({ entity, ...props }) {
       })
       .catch((error) => console.log(error));
   }, []);
-
+  console.log(selectedRow);
   const cepInput = formLocalEvento.watch("cep");
   const filtroParticipantes = formAddEvento.watch("filtro");
   const nomeEventoForm = formAddEvento.watch("nome");
@@ -724,7 +740,7 @@ export default function Eventos({ entity, ...props }) {
     <>
       <AnimatePresenceWrapper router={router} isLoaded={isLoaded}>
         <Flex justifyContent="space-between" alignItems="center" pb={5}>
-          <Heading size="md">Eventos</Heading>
+          <Heading fontSize="1.4rem">Eventos</Heading>
           <Button
             colorScheme="brand1"
             shadow="md"
@@ -986,10 +1002,10 @@ export default function Eventos({ entity, ...props }) {
                     formControl={formAddEvento}
                     defaultValue={
                       selectedRow &&
-                      selectedRow?.acao_Cr[0]?.excluido === false &&
-                      colaboradoresFromRh.filter((benef) =>
+                      selectedRow?.acao_Cr.reverse()[0]?.excluido === false &&
+                      colaboradoresFromRh.filter(({ value }) =>
                         selectedRow.acao_Cr[0]?.colabCr.find(
-                          (selec) => selec.cpf === benef.cpf
+                          ({ id }) => id === value
                         )
                       )
                     }
@@ -1033,13 +1049,14 @@ export default function Eventos({ entity, ...props }) {
                           )
                         : null
                     }
-                  />{" "}
+                  />
                 </Box>
                 <EmailEditor
                   id="conteudoEmail"
                   title={nomeEvento ? nomeEvento : "Nome do Evento"}
                   formControl={formAddEvento}
                   loadOnEditor={selectedRow?.comunicado[0]?.conteudoEmail}
+                  parametros={parametrosFromBd}
                 />
               </Fade>
             </Box>
@@ -1191,15 +1208,15 @@ export default function Eventos({ entity, ...props }) {
         </chakra.form>
       </Overlay>
 
-      {/* Excluir template de oficio Modal  */}
+      {/* Excluir evento Modal  */}
       <Modal
         closeOnOverlayClick={false}
         closeOnEsc={false}
-        isOpen={excluirTemplateOficio.isOpen}
+        isOpen={excluirEventoModal.isOpen}
         isCentered
         size="lg"
         trapFocus={false}
-        onClose={excluirTemplateOficio.onClose}
+        onClose={excluirEventoModal.onClose}
         onCloseComplete={() => setSelectedRow(null)}
       >
         <ModalOverlay />
@@ -1209,7 +1226,7 @@ export default function Eventos({ entity, ...props }) {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Box>Excluir Material</Box>
+            <Box>Excluir Evento</Box>
             <Icon
               as={FiTrash2}
               color="white"
@@ -1223,17 +1240,20 @@ export default function Eventos({ entity, ...props }) {
           <Divider />
           <ModalBody pb={6}>
             <VStack my={3} spacing={6}>
-              <Heading size="md">Deseja excluir o seguinte template?</Heading>
+              <Heading size="md">Deseja excluir o seguinte evento?</Heading>
               <Text fontSize="xl" align="center">
-                {selectedRow?.titulo}
+                {selectedRow?.nome} -{" "}
+                {DateTime.fromISO(selectedRow?.data).toLocaleString(
+                  DateTime.DATETIME_SHORT
+                )}
+                h
               </Text>
               <HStack>
                 <Button
                   colorScheme="red"
                   variant="outline"
                   onClick={() => {
-                    deleteTemplateOficio(selectedRow);
-                    setSelectedRow(null);
+                    excluirEvento(selectedRow);
                   }}
                   isLoading={formSubmit.isOpen}
                   loadingText="Aguarde"
@@ -1244,7 +1264,7 @@ export default function Eventos({ entity, ...props }) {
                   colorScheme="brand1"
                   variant="outline"
                   onClick={() => {
-                    excluirTemplateOficio.onClose();
+                    excluirEventoModal.onClose();
                     setSelectedRow(null);
                   }}
                 >
