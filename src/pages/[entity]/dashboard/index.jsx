@@ -24,7 +24,7 @@ import { LineChart } from "components/Charts/LineChart";
 import { IoWallet } from "react-icons/io5";
 import { FiCalendar, FiUsers } from "react-icons/fi";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { axios } from "services/apiService";
+import { axios, getBackendRoute } from "services/apiService";
 
 /**
  * Renderiza a Página de Dashboard.
@@ -50,10 +50,11 @@ export default function Dashboard({ entity, ...props }) {
           id: true,
         },
       };
-      const { data: ativos } = await axios.patch(
-        `/api/${entity}/beneficiarios`,
-        queryConfig
-      );
+      // const { data: ativos } = await axios.patch(
+      //   `/api/${entity}/beneficiarios`,
+      //   queryConfig
+      // );
+      const { data: ativos } = await axios.patch(getBackendRoute(entity, "beneficiarios"), queryConfig)
       setBenefAtivos(ativos);
     } catch (error) {
       console.log(error);

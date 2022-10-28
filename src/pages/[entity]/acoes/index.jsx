@@ -36,7 +36,7 @@ import { InputBox } from "components/Inputs/InputBox";
 import { SelectInputBox } from "components/Inputs/SelectInputBox";
 import { useForm, useFormState } from "react-hook-form";
 import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { axios } from "services/apiService";
+import { axios, getBackendRoute } from "services/apiService";
 import { InputTextBox } from "components/Inputs/InputTextBox";
 import { maskCapitalize } from "utils/maskCapitalize";
 import { SwitchButton } from "components/Buttons/SwitchButton";
@@ -232,7 +232,8 @@ export default function AcoesCR({ entity, ...props }) {
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
-        .put(`/api/${entity}/acoes-cr`, formData)
+        //.put(`/api/${entity}/acoes-cr`, formData)
+        .put(getBackendRoute(entity, "acoes-cr"), formData)
         .then((res) => {
           if (res.status === 200) {
             acaoFormSubmit.onClose();
@@ -264,7 +265,8 @@ export default function AcoesCR({ entity, ...props }) {
         });
     }
     axios
-      .post(`/api/${entity}/acoes-cr`, formData)
+      //.post(`/api/${entity}/acoes-cr`, formData)
+      .post(getBackendRoute(entity, "acoes-cr"), formData)
       .then((res) => {
         if (res.status === 200) {
           acaoFormSubmit.onClose();
@@ -301,7 +303,8 @@ export default function AcoesCR({ entity, ...props }) {
     e.preventDefault();
     tipoAcaoFormSubmit.onOpen();
     axios
-      .post(`/api/${entity}/acoes-cr/tipos`, formData)
+      //.post(`/api/${entity}/acoes-cr/tipos`, formData)
+      .post(getBackendRoute(entity, "acoes-cr/tipos"), formData)
       .then((res) => {
         if (res.status === 200) {
           tipoAcaoFormSubmit.onClose();
@@ -336,11 +339,16 @@ export default function AcoesCR({ entity, ...props }) {
   const deleteAcao = (formData) => {
     acaoFormSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/acoes-cr`, {
-        params: {
-          id: formData.id,
-        },
-      })
+    .delete(getBackendRoute(entity,"acoes-cr" ),{
+      params: {
+        id: formData.id,
+      },
+    })
+      // .delete(`/api/${entity}/acoes-cr`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
       .then((res) => {
         if (res.status === 200) {
           excluir.onClose();
@@ -370,7 +378,8 @@ export default function AcoesCR({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/acoes-cr`)
+      //.get(`/api/${entity}/acoes-cr`)
+      .get(getBackendRoute(entity, "acoes-cr"))
       .then((res) => {
         if (res.status === 200) {
           setAcoesCRFromBd(res.data);
@@ -383,7 +392,8 @@ export default function AcoesCR({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/acoes-cr/tipos`)
+      //.get(`/api/${entity}/acoes-cr/tipos`)
+      .get(getBackendRoute(entity, "acoes-cr/tipos"))
       .then((res) => {
         if (res.status === 200) {
           setTipoAcoesFromBd(
@@ -401,7 +411,8 @@ export default function AcoesCR({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/colaboradores-cr`)
+      //.get(`/api/${entity}/colaboradores-cr`)
+      .get(getBackendRoute(entity, "colaboradores-cr"))
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromBd(
@@ -418,7 +429,8 @@ export default function AcoesCR({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/beneficiarios`)
+      //.get(`/api/${entity}/beneficiarios`)
+      .get(getBackendRoute(entity, "beneficiarios"))
       .then((res) => {
         if (res.status === 200) {
           setBeneficiariosFromBd(

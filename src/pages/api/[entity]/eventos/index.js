@@ -35,7 +35,6 @@ const handler = async (req, res) => {
     case "DELETE":
       await deleteEvento(req, res);
       break;
-
     default:
       res
         .status(405)

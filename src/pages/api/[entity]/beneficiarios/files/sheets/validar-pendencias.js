@@ -53,8 +53,9 @@ const patchValidarPendencias = async (req, res) => {
   
 
   try {
-    const output1 = await benefLookupTeste(entity, {Plan1: req.body});
-    const output2 = await benefValidateTeste(entity, output1);
+    //const output1 = await benefLookupTeste(entity, {Plan1: req.body});
+    const lookup = await axios.post(`${process.env.NEXT_PUBLIC_URL_PORTAL_PPE_BACKEND}/${entity}/beneficiarios/upload`, {Plan1: req.body})
+    const output2 = await benefValidateTeste(entity, lookup);
     res.status(200).json(output2);
   } catch (error) {
     console.log(error);

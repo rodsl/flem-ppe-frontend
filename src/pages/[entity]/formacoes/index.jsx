@@ -127,7 +127,11 @@ export default function Formacoes({ entity, ...props }) {
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
-        .put(`/api/${entity}/formacoes`, formData)
+        //.put(`/api/${entity}/formacoes`, formData)
+        .put(
+          getBackendRoute(entity, "formacoes"),
+          formData
+        )
         .then((res) => {
           if (res.status === 200) {
             formSubmit.onClose();
@@ -159,7 +163,11 @@ export default function Formacoes({ entity, ...props }) {
         });
     }
     axios
-      .post(`/api/${entity}/formacoes`, formData)
+      //.post(`/api/${entity}/formacoes`, formData)
+      .post(
+        getBackendRoute(entity, "formacoes"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           formSubmit.onClose();
@@ -195,7 +203,11 @@ export default function Formacoes({ entity, ...props }) {
     e.preventDefault();
     eixoFormacaoFormSubmit.onOpen();
     axios
-      .post(`/api/${entity}/formacoes/eixos`, formData)
+      //.post(`/api/${entity}/formacoes/eixos`, formData)
+      .post(
+        getBackendRoute(entity, "formacoes/eixos"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           eixoFormacaoFormSubmit.onClose();
@@ -230,7 +242,12 @@ export default function Formacoes({ entity, ...props }) {
   const deleteFormacao = (formData) => {
     formSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/formacoes`, {
+      // .delete(`/api/${entity}/formacoes`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "formacoes"), {
         params: {
           id: formData.id,
         },
@@ -239,7 +256,7 @@ export default function Formacoes({ entity, ...props }) {
         if (res.status === 200) {
           excluirFormacao.onClose();
           formSubmit.onClose();
-          setSelectedRow(null);
+          setSelectedRow(null); 
           toast({
             title: "Formação excluída com sucesso",
             status: "success",
@@ -264,7 +281,8 @@ export default function Formacoes({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/formacoes`)
+      //.get(`/api/${entity}/formacoes`)
+      .get(getBackendRoute(entity, "formacoes"))
       .then((res) => {
         if (res.status === 200) {
           setFormacoesFromBd(res.data);
@@ -277,7 +295,8 @@ export default function Formacoes({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/formacoes/eixos`)
+      //.get(`/api/${entity}/formacoes/eixos`)
+      .get(getBackendRoute(entity, "formacoes/eixos"))
       .then((res) => {
         if (res.status === 200) {
           setEixosFromBd(

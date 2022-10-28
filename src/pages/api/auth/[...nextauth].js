@@ -6,7 +6,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 // import { authUser, getUserGroups, getUserInfo } from "services/ldapService";
-import { authUserQa } from "controllers";
+import { authUserQa } from "services/auth";
 /**
  * Classe de Autenticação.
  */

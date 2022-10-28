@@ -1,38 +1,38 @@
 import {
   Box,
   Button,
+  Center,
   chakra,
+  Divider,
   Flex,
   Heading,
   HStack,
   Icon,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-  Divider,
+  Modal,
   ModalBody,
-  ModalOverlay,
   ModalContent,
   ModalHeader,
-  Modal,
-  useBreakpointValue,
-  useToast,
+  ModalOverlay,
   ScaleFade,
-  Center,
   Spinner,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
 import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
-import { FiEdit, FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
-import { Table } from "components/Table";
-import { Overlay } from "components/Overlay";
 import { InputBox } from "components/Inputs/InputBox";
 import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { useForm, useFormState } from "react-hook-form";
 import { MenuIconButton } from "components/Menus/MenuIconButton";
+import { Overlay } from "components/Overlay";
+import { Table } from "components/Table";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useFormState } from "react-hook-form";
+import { FiEdit, FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
 import { axios } from "services/apiService";
 
 export default function SituacoesDeVaga({ entity, ...props }) {
@@ -134,40 +134,50 @@ export default function SituacoesDeVaga({ entity, ...props }) {
     e.preventDefault();
     if (selectedRow) {
       formData.id = selectedRow.id;
-      return axios
-        .put(`/api/${entity}/situacoes-vaga`, formData)
-        .then((res) => {
-          if (res.status === 200) {
-            situacaoFormSubmit.onClose();
-            addSituacao.onClose();
-            setSelectedRow(null);
-            formSituacaoVaga.reset({});
-            toast({
-              title: "Situação de vaga atualizada com sucesso",
-              status: "success",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 409) {
-            situacaoFormSubmit.onClose();
-            toast({
-              title: "Situação de vaga já existe",
-              status: "error",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          } else {
-            throw new Error(error);
-          }
-        });
+      return (
+        axios
+          //.put(`/api/${entity}/situacoes-vaga`, formData)
+          .put(
+            getBackendRoute(entity, "situacoes-vaga"),
+            formData
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              situacaoFormSubmit.onClose();
+              addSituacao.onClose();
+              setSelectedRow(null);
+              formSituacaoVaga.reset({});
+              toast({
+                title: "Situação de vaga atualizada com sucesso",
+                status: "success",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            }
+          })
+          .catch((error) => {
+            if (error.response.status === 409) {
+              situacaoFormSubmit.onClose();
+              toast({
+                title: "Situação de vaga já existe",
+                status: "error",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            } else {
+              throw new Error(error);
+            }
+          })
+      );
     }
     axios
-      .post(`/api/${entity}/situacoes-vaga`, formData)
+      //.post(`/api/${entity}/situacoes-vaga`, formData)
+      .post(
+        getBackendRoute(entity, "situacoes-vaga"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           situacaoFormSubmit.onClose();
@@ -203,7 +213,11 @@ export default function SituacoesDeVaga({ entity, ...props }) {
     e.preventDefault();
     tipoSituacaoFormSubmit.onOpen();
     axios
-      .post(`/api/${entity}/situacoes-vaga/tipos`, formData)
+      //.post(`/api/${entity}/situacoes-vaga/tipos`, formData)
+      .post(
+        getBackendRoute(entity, "situacoes-vaga/tipos"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           tipoSituacaoFormSubmit.onClose();
@@ -238,11 +252,19 @@ export default function SituacoesDeVaga({ entity, ...props }) {
   const deleteSituacaoVaga = (formData) => {
     situacaoFormSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/situacoes-vaga`, {
-        params: {
-          id: formData.id,
-        },
-      })
+      // .delete(`/api/${entity}/situacoes-vaga`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(
+        getBackendRoute(entity, "situacoes-vaga"),
+        {
+          params: {
+            id: formData.id,
+          },
+        }
+      )
       .then((res) => {
         if (res.status === 200) {
           excluir.onClose();
@@ -272,7 +294,8 @@ export default function SituacoesDeVaga({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/situacoes-vaga`)
+      //.get(`/api/${entity}/situacoes-vaga`)
+      .get(getBackendRoute(entity, "situacoes-vaga"))
       .then((res) => {
         if (res.status === 200) {
           setSituacoesFromBd(res.data);
@@ -285,7 +308,8 @@ export default function SituacoesDeVaga({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/situacoes-vaga/tipos`)
+      //.get(`/api/${entity}/situacoes-vaga/tipos`)
+      .get(getBackendRoute(entity, "situacoes-vaga/tipos"))
       .then((res) => {
         if (res.status === 200) {
           setTiposSituacoesFromBd(

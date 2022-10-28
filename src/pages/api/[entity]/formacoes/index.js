@@ -99,7 +99,7 @@ const addFormacao = async (req, res) => {
         res.status(500).json({ error: error });
         break;
     }
-  }
+  } 
 };
 
 const modifyFormacao = async (req, res) => {

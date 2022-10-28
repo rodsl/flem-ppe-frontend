@@ -33,7 +33,9 @@ const handler = async (req, res) => {
       break;
 
     default:
-      res.status(405).send({ message: "Only GET, POST or DELETE requests allowed" });
+      res
+        .status(405)
+        .send({ message: "Only GET, POST or DELETE requests allowed" });
       break;
   }
 };

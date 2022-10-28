@@ -1,4 +1,5 @@
-import { axios } from "services/apiService";
+//import { axios } from "services/apiService";
+import  axios  from "axios";
 import { prisma } from "services/prisma/prismaClient";
 import { maskCapitalize } from "utils/maskCapitalize";
 import { maskCPF } from "utils/masks";
@@ -41,6 +42,8 @@ export async function benefLookupTeste(entity, sheet) {
   )}"]&cpf=["${cpfs.join('","')}"]`;
 
   const respQuery = await axios.get(urlAPIQuery);
+
+
   return await Promise.all(
     sheets.map(async (item) => {
       respQuery.data.query.forEach((resp) => {
@@ -49,7 +52,6 @@ export async function benefLookupTeste(entity, sheet) {
           if (entity === "ba") {
             // VERIFICA SE A MATRÍCULA JÁ EXISTE NO BD
             if (resp.matriculaSAEB.localeCompare(item.matricula) === 0) {
-
               /**
                * VERIFICA SE O NOME DO BENEFICIÁRIO É IGUAL AO QUE CONSTA NO BD.
                * EM CASOS ONDE HOUVE UMA MUDANÇA DE NOME (EX. CASAMENTOS E DIVÓRCIOS),
@@ -221,10 +223,11 @@ export async function benefValidateTeste(entity, sheet) {
       },
     });
 
-    return await Promise.all(
-      sheet.map(async (item) => {
-        if (!item.found || item.update) {
+    console.log(sheet);
 
+    return await Promise.all(
+      sheet.data.map(async (item) => {
+        if (!item.found || item.update) {
           //VERIFICA DEMANDANTE PELA SIGLA OU PELO SEU NOME. DEMANDANTES SEM SIGLA NÃO SÃO ACEITOS.
           for (let i = 0; i < listaDemand.length; i++) {
             const itemSiglaListaDemand = listaDemand[i].sigla;

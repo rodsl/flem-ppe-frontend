@@ -24,17 +24,17 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { FormMaker } from "components/Form";
+import { MenuIconButton } from "components/Menus/MenuIconButton";
+import { Overlay } from "components/Overlay";
+import { Table } from "components/Table";
+import { useCustomForm } from "hooks";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
-import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
 import { FiMoreHorizontal, FiPlus, FiTrash2 } from "react-icons/fi";
-import { Table } from "components/Table";
-import { Overlay } from "components/Overlay";
-import { MenuIconButton } from "components/Menus/MenuIconButton";
 import { axios } from "services/apiService";
-import { useCustomForm } from "hooks";
-import { FormMaker } from "components/Form";
 
 /**
  * Renderiza o cadastro de tipos de histórico
@@ -123,40 +123,50 @@ export default function TipoHistorico({ entity, ...props }) {
     e.preventDefault();
     if (selectedRow) {
       formData.id = selectedRow.id;
-      return axios
-        .put(`/api/${entity}/tipo-historico`, formData)
-        .then((res) => {
-          if (res.status === 200) {
-            formTipoHistorico.closeOverlay();
-            setSelectedRow(null);
-            toast({
-              title: "Tipo atualizado com sucesso",
-              status: "success",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          if (error.response.status === 409) {
-            formSubmit.onClose();
-            toast({
-              title: "Tipo já existe",
-              status: "error",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          } else {
-            formTipoHistorico.setLoaded();
-            throw new Error(error);
-          }
-        });
+      return (
+        axios
+          //.put(`/api/${entity}/tipo-historico`, formData)
+          .put(
+            getBackendRoute(entity, "tipo-historico"),
+            formData
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              formTipoHistorico.closeOverlay();
+              setSelectedRow(null);
+              toast({
+                title: "Tipo atualizado com sucesso",
+                status: "success",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            if (error.response.status === 409) {
+              formSubmit.onClose();
+              toast({
+                title: "Tipo já existe",
+                status: "error",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            } else {
+              formTipoHistorico.setLoaded();
+              throw new Error(error);
+            }
+          })
+      );
     }
     axios
-      .post(`/api/${entity}/tipo-historico`, formData)
+      //.post(`/api/${entity}/tipo-historico`, formData)
+      .post(
+        getBackendRoute(entity, "tipos-historico"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           formTipoHistorico.closeOverlay();
@@ -190,7 +200,12 @@ export default function TipoHistorico({ entity, ...props }) {
   const deleteTipoHistorico = (formData) => {
     formDeleteTipoHistorico.setLoading();
     axios
-      .delete(`/api/${entity}/tipo-historico`, {
+      // .delete(`/api/${entity}/tipo-historico`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "tipos-historico"), {
         params: {
           id: formData.id,
         },
@@ -222,7 +237,8 @@ export default function TipoHistorico({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/tipo-historico`)
+      //.get(`/api/${entity}/tipo-historico`)
+      .get(getBackendRoute(entity, "tipos-historico"))
       .then((res) => {
         if (res.status === 200) {
           setTiposHistoricoFromBd(res.data);

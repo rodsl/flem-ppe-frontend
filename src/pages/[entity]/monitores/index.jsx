@@ -144,7 +144,8 @@ export default function Monitores({ entity, ...props }) {
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
-        .put(`/api/${entity}/monitores`, formData)
+        //.put(`/api/${entity}/monitores`, formData)
+        .put(getBackendRoute(entity, "monitores"), formData)
         .then((res) => {
           if (res.status === 200) {
             monitorFormSubmit.onClose();
@@ -176,7 +177,8 @@ export default function Monitores({ entity, ...props }) {
         });
     }
     axios
-      .post(`/api/${entity}/monitores`, formData)
+      //.post(`/api/${entity}/monitores`, formData)
+      .post(getBackendRoute(entity, "monitores"), formData)
       .then((res) => {
         if (res.status === 200) {
           monitorFormSubmit.onClose();
@@ -211,7 +213,12 @@ export default function Monitores({ entity, ...props }) {
   const deleteMonitor = (formData) => {
     monitorFormSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/monitores`, {
+      // .delete(`/api/${entity}/monitores`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "monitores"), {
         params: {
           id: formData.id,
         },
@@ -245,7 +252,8 @@ export default function Monitores({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/monitores`)
+      //.get(`/api/${entity}/monitores`)
+      .get(getBackendRoute(entity, "monitores"))
       .then((res) => {
         if (res.status === 200) {
           setMonitoresFromBd(res.data);
@@ -289,7 +297,8 @@ export default function Monitores({ entity, ...props }) {
       })
       .catch((error) => console.log(error));
     axios
-      .get(`/api/${entity}/escritorios-regionais`)
+      //.get(`/api/${entity}/escritorios-regionais`)
+      .get(getBackendRoute(entity, "escritorios-regionais"))
       .then((res) => {
         if (res.status === 200) {
           setEscritoriosFromBd(

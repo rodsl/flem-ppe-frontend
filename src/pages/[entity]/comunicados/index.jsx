@@ -1,32 +1,43 @@
 import {
   Box,
   Button,
+  Center,
   chakra,
+  Divider,
+  Fade,
   Flex,
   Heading,
   HStack,
   Icon,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-  Divider,
+  Modal,
   ModalBody,
-  ModalOverlay,
   ModalContent,
   ModalHeader,
-  Modal,
-  useBreakpointValue,
-  useToast,
+  ModalOverlay,
   ScaleFade,
-  Center,
   Spinner,
-  Fade,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { Dropzone } from "components/Dropzone";
+import { EmailEditor } from "components/EmailEditor";
+import { InputBox } from "components/Inputs/InputBox";
+import { SelectInputBox } from "components/Inputs/SelectInputBox";
+import ChakraTagInput from "components/Inputs/TagInput";
+import { MenuIconButton } from "components/Menus/MenuIconButton";
+import { Overlay } from "components/Overlay";
+import { Table } from "components/Table";
+import { DateTime } from "luxon";
+import { cpfMask } from "masks-br";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
-import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { useForm, useFormState } from "react-hook-form";
 import {
   FiEdit,
   FiMoreHorizontal,
@@ -34,19 +45,8 @@ import {
   FiSend,
   FiTrash2,
 } from "react-icons/fi";
-import { Table } from "components/Table";
-import { Overlay } from "components/Overlay";
-import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { useForm, useFormState } from "react-hook-form";
-import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { axios, filesAPIUpload } from "services/apiService";
+import { axios, filesAPIUpload, getBackendRoute } from "services/apiService";
 import { maskCapitalize } from "utils/maskCapitalize";
-import { InputBox } from "components/Inputs/InputBox";
-import { EmailEditor } from "components/EmailEditor";
-import ChakraTagInput from "components/Inputs/TagInput";
-import { cpfMask } from "masks-br";
-import { DateTime } from "luxon";
-import { Dropzone } from "components/Dropzone";
 
 export default function Comunicados({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
@@ -228,46 +228,58 @@ export default function Comunicados({ entity, ...props }) {
 
     if (selectedRow) {
       formData.id = selectedRow.id;
-      return axios
-        .put(`/api/${entity}/comunicados`, formData)
-        .then((res) => {
-          if (res.status === 200) {
-            fileUpload(anexos, { referenceObjId: res.data.id }).then(
-              async (res) => {
-                await axios.put(
-                  `/api/${entity}/comunicados/anexos`,
-                  { anexosId: res.data },
-                  { params: { id: selectedRow.id } }
-                );
-                comunicadoFormSubmit.onClose();
-                addComunicado.onClose();
-                setSelectedRow(null);
-                formComunicado.reset({});
-                toast({
-                  title: "Comunicado atualizado com sucesso",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: false,
-                  position,
-                });
-              }
-            );
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 409) {
-            comunicadoFormSubmit.onClose();
-            toast({
-              title: "Comunicado já existe",
-              status: "error",
-              duration: 5000,
-              isClosable: false,
-              position,
-            });
-          } else {
-            throw new Error(error.response.data);
-          }
-        });
+      return (
+        axios
+          //.put(`/api/${entity}/comunicados`, formData)
+          .put(getBackendRoute(entity, "comunicados"), formData)
+          .then((res) => {
+            if (res.status === 200) {
+              fileUpload(anexos, { referenceObjId: res.data.id }).then(
+                async (res) => {
+                  // await axios.put(
+                  //   `/api/${entity}/comunicados/anexos`,
+                  //   { anexosId: res.data },
+                  //   { params: { id: selectedRow.id } }
+                  // );
+                  await axios.put(
+                    getBackendRoute(entity, "comunicados/anexos"),
+                    {
+                      params: {
+                        id: selectedRow.id,
+                      },
+                    },
+                    { anexosId: res.data }
+                  );
+                  comunicadoFormSubmit.onClose();
+                  addComunicado.onClose();
+                  setSelectedRow(null);
+                  formComunicado.reset({});
+                  toast({
+                    title: "Comunicado atualizado com sucesso",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: false,
+                    position,
+                  });
+                }
+              );
+            }
+          })
+          .catch((error) => {
+            if (error.response.status === 409) {
+              comunicadoFormSubmit.onClose();
+              toast({
+                title: "Comunicado já existe",
+                status: "error",
+                duration: 5000,
+                isClosable: false,
+                position,
+              });
+            } else {
+              throw new Error(error.response.data);
+            }
+          })
+      );
     }
 
     axios
@@ -317,7 +329,8 @@ export default function Comunicados({ entity, ...props }) {
     e.preventDefault();
 
     axios
-      .post(`/api/${entity}/comunicados/remetentes`, formData)
+      //.post(`/api/${entity}/comunicados/remetentes`, formData)
+      .post(getBackendRoute(entity, "comunicados/remetentes"), formData)
       .then((res) => {
         if (res.status === 200) {
           emailRemetenteFormSubmit.onClose();
@@ -351,7 +364,12 @@ export default function Comunicados({ entity, ...props }) {
   const deleteComunicado = (formData) => {
     comunicadoFormSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/comunicados`, {
+      // .delete(`/api/${entity}/comunicados`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "comunicados"), {
         params: {
           id: formData.id,
         },
@@ -376,7 +394,8 @@ export default function Comunicados({ entity, ...props }) {
   const onSubmitEnviarComunicado = (formData) => {
     enviarComunicadoFormSubmit.onOpen();
     axios
-      .post(`/api/${entity}/comunicados/envios`, formData)
+      //.post(`/api/${entity}/comunicados/envios`, formData)
+      .post(getBackendRoute(entity, "comunicados/envios"), formData)
       .then((res) => {
         if (res.status === 200) {
           enviarComunicado.onClose();
@@ -408,7 +427,10 @@ export default function Comunicados({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/comunicados`)
+      //.get(`/api/${entity}/comunicados`)
+      .get(
+        getBackendRoute(entity, "comunicados")
+      )
       .then((res) => {
         if (res.status === 200) {
           setComunicadosFromBd(
@@ -426,7 +448,10 @@ export default function Comunicados({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/comunicados/remetentes`)
+      //.get(`/api/${entity}/comunicados/remetentes`)
+      .get(
+        getBackendRoute(entity, "comunicados/remetentes")
+      )
       .then((res) => {
         if (res.status === 200) {
           setEmailsRemetentesFromBd(

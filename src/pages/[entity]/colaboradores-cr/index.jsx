@@ -109,13 +109,18 @@ export default function ColaboradoresCR({ entity }) {
     formAddColabCr.setLoading();
     try {
       const { status } = _.isEmpty(selectedRow)
-        ? await axios.post(`/api/${entity}/colaboradores-cr`, formData)
-        : await axios.put(`/api/${entity}/colaboradores-cr`, formData, {
+        // ? await axios.post(`/api/${entity}/colaboradores-cr`, formData)
+        // : await axios.put(`/api/${entity}/colaboradores-cr`, formData, {
+        //     params: {
+        //       id: selectedRow.id,
+        //     },
+        //   });
+          ? await axios.post(getBackendRoute(entity, "colaboradores-cr"), formData)
+          : await axios.put(getBackendRoute(entity, "colaboradores-cr"), formData ,{
             params: {
               id: selectedRow.id,
             },
-          });
-
+          }, formData)
       if (status === 200) {
         toast({
           title: _.isEmpty(selectedRow)
@@ -143,12 +148,16 @@ export default function ColaboradoresCR({ entity }) {
     e.preventDefault();
     formDeleteColabCr.setLoading();
     try {
-      const { status } = await axios.delete(`/api/${entity}/colaboradores-cr`, {
+      // const { status } = await axios.delete(`/api/${entity}/colaboradores-cr`, {
+      //   params: {
+      //     id: selectedRow.id,
+      //   },
+      // });
+      const { status } = await axios.delete(getBackendRoute(entity, "colaboradores-cr"),{
         params: {
           id: selectedRow.id,
         },
       });
-
       if (status === 200) {
         toast({
           title: "Colaborador excluído com sucesso",
@@ -181,7 +190,8 @@ export default function ColaboradoresCR({ entity }) {
   useEffect(() => {
     setLoadingPageData.on();
     axios
-      .get(`/api/${entity}/colaboradores-cr`)
+      //.get(`/api/${entity}/colaboradores-cr`)
+      .get(getBackendRoute(entity, "colaboradores-cr"))
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromBd(res.data);

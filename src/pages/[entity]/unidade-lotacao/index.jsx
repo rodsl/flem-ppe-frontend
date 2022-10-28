@@ -254,7 +254,8 @@ export default function UnidadeLotacao({ entity, ...props }) {
     if (selectedRow) {
       formData.id = selectedRow.id;
       return axios
-        .put(`/api/${entity}/unidades-lotacao`, formData)
+        //.put(`/api/${entity}/unidades-lotacao`, formData)
+        .put(getBackendRoute(entity, "unidades-lotacao"), formData)
         .then((res) => {
           if (res.status === 200) {
             formAddUnidade.closeOverlay();
@@ -286,7 +287,8 @@ export default function UnidadeLotacao({ entity, ...props }) {
         });
     }
     axios
-      .post(`/api/${entity}/unidades-lotacao`, formData)
+      //.post(`/api/${entity}/unidades-lotacao`, formData)
+      .post(getBackendRoute(entity, "unidades-lotacao"), formData)
       .then((res) => {
         if (res.status === 200) {
           formAddUnidade.closeOverlay();
@@ -323,11 +325,16 @@ export default function UnidadeLotacao({ entity, ...props }) {
     formData.idUnidadeLotacao = selectedRow.id;
     if (selectedPontoFocal) {
       axios
-        .put(`/api/${entity}/unidades-lotacao/ponto-focal`, formData, {
-          params: {
-            idPontoFocal: selectedPontoFocal.id,
-          },
-        })
+        // .put(`/api/${entity}/unidades-lotacao/ponto-focal`, formData, {
+        //   params: {
+        //     idPontoFocal: selectedPontoFocal.id,
+        //   },
+        // })
+        .put(getBackendRoute(entity, "unidades-lotacao/ponto-focal"), formData, {
+             params: {
+               idPontoFocal: selectedPontoFocal.id,
+             },
+           })
         .then((res) => {
           if (res.status === 200) {
             formGerenciarUnidade.closeOverlay();
@@ -356,7 +363,8 @@ export default function UnidadeLotacao({ entity, ...props }) {
         .finally(formGerenciarUnidade.setLoaded);
     } else {
       axios
-        .post(`/api/${entity}/unidades-lotacao/ponto-focal`, formData)
+        //.post(`/api/${entity}/unidades-lotacao/ponto-focal`, formData)
+        .post(getBackendRoute(entity, "unidades-lotacao/ponto-focal"), formData)
         .then((res) => {
           if (res.status === 200) {
             formGerenciarUnidade.closeOverlay();
@@ -389,11 +397,16 @@ export default function UnidadeLotacao({ entity, ...props }) {
   const deleteMaterial = (formData) => {
     formDeleteUnidadeLotacao.setLoading();
     axios
-      .delete(`/api/${entity}/unidades-lotacao`, {
-        params: {
-          id: formData.id,
-        },
-      })
+      // .delete(`/api/${entity}/unidades-lotacao`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "unidades-lotacao"), {
+          params: {
+             id: formData.id,
+           },
+         })
       .then((res) => {
         if (res.status === 200) {
           formDeleteUnidadeLotacao.closeOverlay();
@@ -414,11 +427,16 @@ export default function UnidadeLotacao({ entity, ...props }) {
   const deletePontoFocal = (formData) => {
     formDeletePontoFocal.setLoading();
     axios
-      .delete(`/api/${entity}/unidades-lotacao/ponto-focal`, {
+      // .delete(`/api/${entity}/unidades-lotacao/ponto-focal`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "unidades-lotacao/ponto-focal"), {
         params: {
-          id: formData.id,
-        },
-      })
+           id: formData.id,
+         },
+       })
       .then((res) => {
         if (res.status === 200) {
           formDeletePontoFocal.closeOverlay();
@@ -440,9 +458,15 @@ export default function UnidadeLotacao({ entity, ...props }) {
     const cep = formAddUnidade.control.getValues("cep");
     try {
       setBuscaCep.on();
+      // const { data } = await axios.get(
+      //   `https://brasilapi.com.br/api/cep/v2/${cep}`
+      // );
       const { data } = await axios.get(
-        `https://brasilapi.com.br/api/cep/v2/${cep}`
-      );
+        getBackendRoute(entity, "ext/cep"), {
+          params: {
+            cep: cep,
+          },
+        });
       setCepData(data);
       toast({
         title: "Endereço localizado",
@@ -484,7 +508,8 @@ export default function UnidadeLotacao({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/unidades-lotacao`)
+      //.get(`/api/${entity}/unidades-lotacao`)
+      .get(getBackendRoute(entity, "unidades-lotacao"))
       .then((res) => {
         if (res.status === 200) {
           setUnidadesLotacaoFromBd(res.data);
@@ -498,7 +523,8 @@ export default function UnidadeLotacao({ entity, ...props }) {
   useEffect(() => {
     setFetchPontosFocaisFromBd.on();
     axios
-      .get(`/api/${entity}/unidades-lotacao/ponto-focal`)
+      //.get(`/api/${entity}/unidades-lotacao/ponto-focal`)
+      .get(getBackendRoute(entity, "unidades-lotacao/ponto-focal"))
       .then((res) => {
         if (res.status === 200) {
           setPontosFocaisFromBd(res.data);

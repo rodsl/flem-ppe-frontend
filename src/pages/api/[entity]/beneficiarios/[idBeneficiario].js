@@ -92,6 +92,8 @@ const getBeneficiario = async (req, res) => {
   }
 };
 
+
+
 const putBeneficiarios = async (req, res) => {
   const { entity, idBeneficiario } = req.query;
 

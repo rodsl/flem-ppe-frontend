@@ -270,7 +270,11 @@ export default function FilaAcoesCR({ entity, ...props }) {
     if (contatoAcao) {
       formData.contatoAcao = contatoAcao;
       return axios
-        .put(`/api/${entity}/fila-acoes`, formData)
+        //.put(`/api/${entity}/fila-acoes`, formData)
+        .put(
+          getBackendRoute(entity, "fila-acoes"),
+          formData
+        )
         .then((res) => {
           if (res.status === 200) {
             contatoAcaoFormSubmit.onClose();
@@ -301,7 +305,11 @@ export default function FilaAcoesCR({ entity, ...props }) {
         });
     }
     axios
-      .post(`/api/${entity}/fila-acoes`, formData)
+      //.post(`/api/${entity}/fila-acoes`, formData)
+      .post(
+        getBackendRoute(entity, "fila-acoes"),
+        formData
+      )
       .then((res) => {
         if (res.status === 200) {
           contatoAcaoFormSubmit.onClose();
@@ -345,7 +353,8 @@ export default function FilaAcoesCR({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/acoes-cr`)
+      //.get(`/api/${entity}/acoes-cr`)
+      .get(getBackendRoute(entity, "acoes-cr"))
       .then((res) => {
         if (res.status === 200) {
           setAcoesCRFromBd(res.data);
@@ -360,7 +369,12 @@ export default function FilaAcoesCR({ entity, ...props }) {
     if (selectedRow) {
       getAcaoDetails.onOpen();
       axios
-        .get(`/api/${entity}/acoes-cr`, { params: { id: selectedRow.id } })
+        //.get(`/api/${entity}/acoes-cr`, { params: { id: selectedRow.id } })
+        .get(getBackendRoute(entity, "acoes-cr"), {
+          params: {
+            id: selectedRow.id,
+          },
+        })
         .then((res) => {
           if (res.status === 200) {
             setSelectedAcaoFromBd(res.data.benefAssoc);

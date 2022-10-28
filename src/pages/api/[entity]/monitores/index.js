@@ -70,6 +70,8 @@ const getMonitores = async (req, res) => {
   }
 };
 
+
+
 const addMonitor = async (req, res) => {
   const { entity } = req.query;
   const { monitor, erAssoc } = req.body;

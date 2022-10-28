@@ -1,40 +1,56 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
   Button,
+  Center,
   chakra,
   Collapse,
+  Divider,
   Fade,
   Flex,
+  FormLabel,
   Heading,
   HStack,
   Icon,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-  Divider,
+  InputRightElement,
+  Modal,
   ModalBody,
-  ModalOverlay,
   ModalContent,
   ModalHeader,
-  Modal,
-  useBreakpointValue,
-  useToast,
-  InputRightElement,
-  FormLabel,
+  ModalOverlay,
   ScaleFade,
-  Center,
   Spinner,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { SwitchButton } from "components/Buttons/SwitchButton";
+import { EmailEditor } from "components/EmailEditor";
+import { CheckboxInput } from "components/Inputs/CheckboxInput";
+import { InputBox } from "components/Inputs/InputBox";
+import { MaskedInputBox } from "components/Inputs/MaskedInputBox";
+import { SelectInputBox } from "components/Inputs/SelectInputBox";
+import ChakraTagInput from "components/Inputs/TagInput";
+import { MenuIconButton } from "components/Menus/MenuIconButton";
+import { Overlay } from "components/Overlay";
+import { Table } from "components/Table";
+import download from "downloadjs";
+import { useCustomForm } from "hooks";
+import { DateTime } from "luxon";
+import { cepMask, cpfMask } from "masks-br";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
-import { AnimatePresenceWrapper } from "components/AnimatePresenceWrapper";
+import { useForm, useFormState } from "react-hook-form";
+import { BsClipboardCheck } from "react-icons/bs";
 import {
   FiEdit,
   FiMoreHorizontal,
@@ -42,24 +58,8 @@ import {
   FiTrash2,
   FiUserCheck,
 } from "react-icons/fi";
-import { BsClipboardCheck } from "react-icons/bs";
-import { DateTime } from "luxon";
-import { Table } from "components/Table";
-import { Overlay } from "components/Overlay";
-import { InputBox } from "components/Inputs/InputBox";
-import { SelectInputBox } from "components/Inputs/SelectInputBox";
-import { useForm, useFormState } from "react-hook-form";
-import { EmailEditor } from "components/EmailEditor";
 import { axios } from "services/apiService";
-import { MenuIconButton } from "components/Menus/MenuIconButton";
-import { CheckboxInput } from "components/Inputs/CheckboxInput";
-import ChakraTagInput from "components/Inputs/TagInput";
-import { SwitchButton } from "components/Buttons/SwitchButton";
-import { MaskedInputBox } from "components/Inputs/MaskedInputBox";
-import { cepMask, cpfMask } from "masks-br";
 import { maskCapitalize } from "utils/maskCapitalize";
-import download from "downloadjs";
-import { useCustomForm } from "hooks";
 
 export default function Eventos({ entity, ...props }) {
   const { isOpen: isLoaded, onOpen: onLoad, onClose } = useDisclosure();
@@ -242,38 +242,42 @@ export default function Eventos({ entity, ...props }) {
       formData.acao_CrId = selectedRow.acao_Cr[0]?.id;
       formData.comunicado_Id = selectedRow.comunicado[0]?.id;
 
-      return axios
-        .put(`/api/${entity}/eventos`, formData)
-        .then((res) => {
-          if (res.status === 200) {
-            formSubmit.onClose();
-            addEvento.onClose();
-            setSelectedRow(null);
-            formAddEvento.reset({});
-            toast({
-              title: "Evento atualizado com sucesso",
-              status: "success",
-              duration: 5000,
-              isClosable: false,
-            });
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 409) {
-            formSubmit.onClose();
-            toast({
-              title: "Evento já existe",
-              status: "error",
-              duration: 5000,
-              isClosable: false,
-            });
-          } else {
-            throw new Error(error);
-          }
-        });
+      return (
+        axios
+          //.put(`/api/${entity}/eventos`, formData)
+          .put(getBackendRoute(entity, "eventos"), formData)
+          .then((res) => {
+            if (res.status === 200) {
+              formSubmit.onClose();
+              addEvento.onClose();
+              setSelectedRow(null);
+              formAddEvento.reset({});
+              toast({
+                title: "Evento atualizado com sucesso",
+                status: "success",
+                duration: 5000,
+                isClosable: false,
+              });
+            }
+          })
+          .catch((error) => {
+            if (error.response.status === 409) {
+              formSubmit.onClose();
+              toast({
+                title: "Evento já existe",
+                status: "error",
+                duration: 5000,
+                isClosable: false,
+              });
+            } else {
+              throw new Error(error);
+            }
+          })
+      );
     }
     axios
-      .post(`/api/${entity}/eventos`, formData)
+      //.post(`/api/${entity}/eventos`, formData)
+      .post(getBackendRoute(entity, "eventos"), formData)
       .then((res) => {
         if (res.status === 200) {
           formSubmit.onClose();
@@ -307,7 +311,8 @@ export default function Eventos({ entity, ...props }) {
     e.preventDefault();
     localEventoFormSubmit.onOpen();
     axios
-      .post(`/api/${entity}/eventos/locais`, formData)
+      //.post(`/api/${entity}/eventos/locais`, formData)
+      .post(getBackendRoute(entity, "eventos/locais"), formData)
       .then((res) => {
         if (res.status === 200) {
           localEventoFormSubmit.onClose();
@@ -340,7 +345,8 @@ export default function Eventos({ entity, ...props }) {
     e.preventDefault();
     tipoEventoFormSubmit.onOpen();
     axios
-      .post(`/api/${entity}/eventos/tipos`, formData)
+      //.post(`/api/${entity}/eventos/tipos`, formData)
+      .post(getBackendRoute(entity, "eventos/tipos"), formData)
       .then((res) => {
         if (res.status === 200) {
           tipoEventoFormSubmit.onClose();
@@ -375,7 +381,8 @@ export default function Eventos({ entity, ...props }) {
     informarPresenca.setLoading();
     formData.eventoId = selectedRow.id;
     axios
-      .post(`/api/${entity}/eventos/presenca`, formData)
+      //.post(`/api/${entity}/eventos/presenca`, formData)
+      .post(getBackendRoute(entity, "eventos/presenca"), formData)
       .then((res) => {
         if (res.status === 200) {
           informarPresenca.closeOverlay();
@@ -397,7 +404,12 @@ export default function Eventos({ entity, ...props }) {
   const deleteTemplateOficio = (formData) => {
     formSubmit.onOpen();
     axios
-      .delete(`/api/${entity}/oficios`, {
+      // .delete(`/api/${entity}/oficios`, {
+      //   params: {
+      //     id: formData.id,
+      //   },
+      // })
+      .delete(getBackendRoute(entity, "oficios"), {
         params: {
           id: formData.id,
         },
@@ -421,17 +433,26 @@ export default function Eventos({ entity, ...props }) {
   const downloadListaPresenca = ({ id, nome }) => {
     downloadingFile.onOpen();
     axios
-      .get(`/api/${entity}/reports`, {
-        params: {
-          id,
-          reportUrl: "/eventos/lista-presenca",
+      // .get(`/api/${entity}/reports`, {
+      //   params: {
+      //     id,
+      //     reportUrl: "/eventos/lista-presenca",
+      //   },
+      //   responseType: "blob",
+      // })
+      .get(
+        getBackendRoute(entity, "reports"),
+        {
+          params: {
+            id: formData.id,
+            reportUrl: "eventos/lista-presenca",
+          },
         },
-        responseType: "blob",
-      })
+        { responseType: "blob" }
+      )
       .then((res) => {
         if (res.status === 200) {
           const content = res.headers["content-type"];
-
           toast({
             title: "Lista gerada com sucesso",
             status: "success",
@@ -456,7 +477,8 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/colaboradores-cr`)
+      //.get(`/api/${entity}/colaboradores-cr`)
+      .get(getBackendRoute(entity, "colaboradores-cr"))
       .then((res) => {
         if (res.status === 200) {
           setColaboradoresFromRh(
@@ -473,7 +495,8 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/beneficiarios`)
+      //.get(`/api/${entity}/beneficiarios`)
+      .get(getBackendRoute(entity, "beneficiarios"))
       .then((res) => {
         if (res.status === 200) {
           setBeneficiariosFromRh(
@@ -492,7 +515,8 @@ export default function Eventos({ entity, ...props }) {
   useEffect(() => {
     fetchTableData.onOpen();
     axios
-      .get(`/api/${entity}/eventos`)
+      //.get(`/api/${entity}/eventos`)
+      .get(getBackendRoute(entity, "eventos"))
       .then((res) => {
         if (res.status === 200) {
           setEventosFromBd(res.data);
@@ -505,7 +529,8 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/municipios`)
+      //.get(`/api/${entity}/municipios`)
+      .get(getBackendRoute(entity, "municipios"))
       .then((res) => {
         if (res.status === 200) {
           setMunicipiosFromBd(
@@ -523,7 +548,8 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/eventos/tipos`)
+      //.get(`/api/${entity}/eventos/tipos`)
+      .get(getBackendRoute(entity, "eventos/tipos"))
       .then((res) => {
         if (res.status === 200) {
           setTiposEventoFromBd(
@@ -541,7 +567,8 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/eventos/locais`)
+      //.get(`/api/${entity}/eventos/locais`)
+      .get(getBackendRoute(entity, "eventos/locais"))
       .then((res) => {
         if (res.status === 200) {
           setLocaisEventosFromBd(
@@ -559,7 +586,8 @@ export default function Eventos({ entity, ...props }) {
 
   useEffect(() => {
     axios
-      .get(`/api/${entity}/comunicados/remetentes`)
+      //.get(`/api/${entity}/comunicados/remetentes`)
+      .get(getBackendRoute(entity, "comunicados/remetentes"))
       .then((res) => {
         if (res.status === 200) {
           setEmailsRemetentesFromBd(
@@ -573,7 +601,8 @@ export default function Eventos({ entity, ...props }) {
       })
       .catch((error) => console.log(error));
     axios
-      .get(`/api/${entity}/demandantes`)
+      //.get(`/api/${entity}/demandantes`)
+      .get(getBackendRoute(entity, "demandantes"))
       .then((res) => {
         if (res.status === 200) {
           setDemandantesFromBd(
@@ -600,8 +629,16 @@ export default function Eventos({ entity, ...props }) {
     const cep = formLocalEvento.getValues("cep");
     try {
       buscaCep.onOpen();
+      // const { data } = await axios.get(
+      //   `https://brasilapi.com.br/api/cep/v2/${cep}`
+      // );
       const { data } = await axios.get(
-        `https://brasilapi.com.br/api/cep/v2/${cep}`
+        getBackendRoute(entity, "ext/cep"),
+        {
+          params: {
+            cep: cep,
+          },
+        }
       );
       setCepData(data);
       toast({
