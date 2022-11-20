@@ -38,11 +38,6 @@ import { useForm } from "react-hook-form";
 import { InputTextBox } from "components/Inputs/InputTextBox";
 import dynamic from "next/dynamic";
 
-import { useReactToPrint } from "react-to-print";
-
-// import htmlToDraft from 'html-to-draftjs';
-
-import ReactHtmlParser from "react-html-parser";
 
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
@@ -154,12 +149,6 @@ export default function Oficios({ entity, ...props }) {
       setTimeout(onLoad, 1000);
     }
   }, [asPath]);
-
-  const componentRef = useRef();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
 
   async function suggestPeople(searchTerm) {
     return atValues.filter((person) =>

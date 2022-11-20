@@ -50,10 +50,9 @@ const patchValidarPendencias = async (req, res) => {
       return raw;
     }),
   };
-  
 
   try {
-    const output1 = await benefLookupTeste(entity, {Plan1: req.body});
+    const output1 = await benefLookupTeste(entity, { Plan1: req.body });
     const output2 = await benefValidateTeste(entity, output1);
     res.status(200).json(output2);
   } catch (error) {

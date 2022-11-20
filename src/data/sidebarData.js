@@ -1,5 +1,6 @@
 import {
   FiArchive,
+  FiBarChart2,
   FiCalendar,
   FiFileText,
   FiHome,
@@ -17,10 +18,8 @@ import {
 import {
   TbBrandTelegram,
   TbBuildingCommunity,
-  TbPerspective,
 } from "react-icons/tb";
 import { MdWorkOutline } from "react-icons/md";
-import { BiBuildings } from "react-icons/bi";
 
 export const sidebarData = [
   {
@@ -45,18 +44,6 @@ export const sidebarData = [
         icon: TbBuildingCommunity,
         href: "/demandantes",
       },
-      // {
-      //   title: "Cadastros",
-      //   icon: FiArchive,
-      //   href: "/cadastros",
-      //   subItems: [
-      //     {
-      //       title: "Beneficiários",
-      //       icon: FiUserPlus,
-      //       href: "/beneficiarios"
-      //     },
-      //   ]
-      // },
       {
         title: "Unidades de Lotação",
         icon: FiMapPin,
@@ -117,18 +104,6 @@ export const sidebarData = [
   {
     label: "gerenciamento",
     items: [
-      // {
-      //   title: "Cadastros",
-      //   icon: FiArchive,
-      //   href: "/cadastros",
-      //   subItems: [
-      //     {
-      //       title: "Beneficiários",
-      //       icon: FiUserPlus,
-      //       href: "/beneficiarios"
-      //     },
-      //   ]
-      // },
       {
         title: "Comunicados",
         icon: TbBrandTelegram,
@@ -148,6 +123,16 @@ export const sidebarData = [
         title: "Monitoramento",
         icon: FiSliders,
         href: "/monitoramento",
+      },
+    ],
+  },
+  {
+    label: "relatorios",
+    items: [
+      {
+        title: "Relatório Monitoramentos",
+        icon: FiSliders,
+        href: "/relatorios-monitoramentos",
       },
     ],
   },

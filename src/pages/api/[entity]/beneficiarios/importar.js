@@ -364,9 +364,9 @@ const postBeneficiariosLote = async (req, res) => {
           where: {
             matriculaSec: data.matriculaSec,
           },
-          include:{
-            vaga: true
-          }
+          include: {
+            vaga: true,
+          },
         })
       )
     );

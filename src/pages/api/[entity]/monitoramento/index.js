@@ -28,7 +28,7 @@ const handler = async (req, res) => {
 };
 
 const getInfoMonitoramentos = async (req, res) => {
-  const { entity, te } = req.query;
+  const { entity } = req.query;
   try {
     const table = `${entity}_Beneficiarios`;
     const query = await prisma.ba_Beneficiarios.findMany({
@@ -230,7 +230,6 @@ const putMonitoramento = async (req, res) => {
     autoAvaliacao,
     benefPontoFocal,
     ambienteTrabalho,
-    
   } = req.body;
 
   // Object.keys(req.body).forEach((key) => {

@@ -424,7 +424,7 @@ export default function Eventos({ entity, ...props }) {
     axios
       .get(`/api/${entity}/reports`, {
         params: {
-          id,
+          idEvento: id,
           reportUrl: "/eventos/lista-presenca",
         },
         responseType: "blob",
@@ -432,7 +432,6 @@ export default function Eventos({ entity, ...props }) {
       .then((res) => {
         if (res.status === 200) {
           const content = res.headers["content-type"];
-
           toast({
             title: "Lista gerada com sucesso",
             status: "success",

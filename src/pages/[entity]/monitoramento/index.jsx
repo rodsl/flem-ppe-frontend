@@ -598,7 +598,6 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
         ),
         Footer: false,
       },
-
       {
         Header: "cpf",
         accessor: "cpf",

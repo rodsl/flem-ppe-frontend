@@ -11,9 +11,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { signIn, signOut, getSession, useSession } from "next-auth/react";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { useForm } from "react-hook-form";
-import { useReactToPrint } from "react-to-print";
 
-import ReactHtmlParser from "react-html-parser";
 
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
@@ -36,11 +34,6 @@ export default function Oficios({ entity, ...props }) {
     }
   }, [asPath]);
 
-  const componentRef = useRef();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
 
   const { quill, quillRef, Quill } = useQuill({
     formats: [

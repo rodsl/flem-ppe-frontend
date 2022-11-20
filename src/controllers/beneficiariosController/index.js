@@ -36,7 +36,9 @@ export async function benefLookupTeste(entity, sheet) {
   });
   const urlAPIQuery = `${
     process.env.NEXT_PUBLIC_API_PPE_BD_LEGADO
-  }/${entity}/beneficiarios?condition=OR${matriculas.length ? `&matriculaSAEB=["${matriculas.join('","')}"]` : ""}${cpfs.length ? `&cpf=["${cpfs.join('","')}"]` : ""}`;
+  }/${entity}/beneficiarios?condition=OR${
+    matriculas.length ? `&matriculaSAEB=["${matriculas.join('","')}"]` : ""
+  }${cpfs.length ? `&cpf=["${cpfs.join('","')}"]` : ""}`;
 
   const respQuery = await axios.get(urlAPIQuery);
   return await Promise.all(

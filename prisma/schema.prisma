@@ -486,6 +486,8 @@ model Ba_Monitoramentos {
   beneficiario                      Ba_Beneficiarios                @relation(fields: [beneficiario_Id], references: [id])
   monitoramentoComprovacao          Ba_Monitoramentos_Comprovacoes? @relation(fields: [monitoramentoComprovacao_Id], references: [id])
   monitoramentoComprovacao_Id       String?
+  monitor                           Ba_Monitores?                   @relation(fields: [monitor_Id], references: [id])
+  monitor_Id                        String?
 }
 
 model Ba_Monitoramentos_Comprovacoes {
@@ -510,6 +512,7 @@ model Ba_Monitores {
   updatedAt            DateTime                 @updatedAt
   escritoriosRegionais Ba_Escritorio_Regional[]
   demandantes          Ba_Demandantes[]
+  monitoramentos       Ba_Monitoramentos[]
 }
 
 model Ba_Municipios {
