@@ -509,14 +509,6 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
       options.push(option);
     }
 
-    if (DateTime.fromISO(timeFromNetwork).month === 12) {
-      const option = {
-        value: (anoAtual + 1).toString(),
-        label: (anoAtual + 1).toString(),
-      };
-      options.unshift(option);
-    }
-
     setAnoPeriodoSelecionado(options[0]);
 
     return options;
@@ -738,8 +730,6 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
               ? obterPeriodoSelecionado()
               : periodoSelecionado
           );
-          console.log(ultimoMonitoramento);
-
           if (
             _.isEmpty(ultimoMonitoramento) ||
             (_.isEmpty(ultimoMonitoramento.monitoramentoComprovacao_Id) &&
@@ -1319,7 +1309,7 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
       timeFromNetwork,
       anoSelecionado
     );
-
+    console.log(periodosPorAnoSelecionado);
     const trimestre = periodosPorAnoSelecionado.find(
       ({ id, startDate, endDate, metaType }) => {
         if (!_.isEmpty(idPeriodo)) {

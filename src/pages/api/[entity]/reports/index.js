@@ -125,7 +125,6 @@ const getSituacoesVaga = async (req, res) => {
         format: "A4",
         displayHeaderFooter: false,
         landscape: JSON.parse(landscape),
-
         margin: {
           top: "20px",
           bottom: "40px",

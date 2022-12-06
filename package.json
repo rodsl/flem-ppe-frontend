@@ -1,7 +1,7 @@
 {
   "name": "portal_ppe_flem",
   "private": true,
-  "version": "v1.0.2-221120",
+  "version": "v1.0.3-221206",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
@@ -42,6 +42,7 @@
     "ntp-client": "^0.5.3",
     "pdf-merger-js": "^4.1.2",
     "puppeteer": "^16.1.1",
+    "qs": "^6.11.0",
     "quill": "^1.3.7",
     "react": "18.1.0",
     "react-apexcharts": "^1.3.9",

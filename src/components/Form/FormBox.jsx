@@ -132,6 +132,7 @@ export const FormBox = ({
             isDisabled={disabled ? true : !unlockEdit}
             // icon={<ChevronDownIcon me={errors[id]?.message && 32} />}
             defaultValue={defaultValue}
+            {...rest}
           >
             {options &&
               options.map(({ value, label, disabled }, idx) => (
@@ -146,7 +147,9 @@ export const FormBox = ({
           </Select>
         )}
         {type === "select" && !options && (
-          <Select variant={inlineForm && "flushed"} placeholder={placeholder}>
+          <Select variant={inlineForm && "flushed"} placeholder={placeholder}
+          {...rest}
+          >
             <option value="carregando">Carregando...</option>
           </Select>
         )}

@@ -25,14 +25,9 @@ import download from "downloadjs";
 import { SelectInputBox } from "components/Inputs/SelectInputBox";
 import { DateTime } from "luxon";
 import { Table } from "components/Table";
-import { MenuIconButton } from "components/Menus/MenuIconButton";
 import { InputBox } from "components/Inputs/InputBox";
 
-export default function MonitoramentoPorBeneficiario({
-  entity,
-  timeFromNetwork,
-  ...props
-}) {
+export default function MonitoramentoPorBeneficiario({ entity, ...props }) {
   const router = useRouter();
   const { asPath } = router;
   const [fetchTableMonitPorBenefData, setFetchTableMonitPorBenefData] =
@@ -62,55 +57,6 @@ export default function MonitoramentoPorBeneficiario({
 
   const tableMonitBenefColumns = useMemo(
     () => [
-      // {
-      //   id: "selection",
-      //   // The header can use the table's getToggleAllRowsSelectedProps method
-      //   // to render a checkbox
-      //   Header: ({ toggleRowSelected, isAllPageRowsSelected, rows }) => {
-      //     const modifiedOnChange = (event) => {
-      //       rows.forEach((row) => {
-      //         //check each row if it is not disabled
-      //         row.original.statusMonitoramento.anexarComprovacao &&
-      //           toggleRowSelected(row.id, event.target.checked);
-      //       });
-      //     };
-      //     let selectableRowsInCurrentPage = 0;
-      //     let selectedRowsInCurrentPage = 0;
-      //     rows.forEach((row) => {
-      //       row.isSelected && selectedRowsInCurrentPage++;
-      //       row.original.statusMonitoramento.anexarComprovacao &&
-      //         selectableRowsInCurrentPage++;
-      //     });
-      //     const disabled = selectableRowsInCurrentPage === 0;
-      //     const checked =
-      //       (isAllPageRowsSelected ||
-      //         selectableRowsInCurrentPage === selectedRowsInCurrentPage) &&
-      //       !disabled;
-
-      //     return (
-      //       <IndeterminateCheckbox
-      //         onChange={modifiedOnChange}
-      //         checked={checked}
-      //         isDisabled={disabled}
-      //         indeterminate={
-      //           selectedRowsInCurrentPage >= 1 &&
-      //           selectableRowsInCurrentPage !== selectedRowsInCurrentPage
-      //         }
-      //       />
-      //     );
-      //   },
-      //   // The cell can use the individual row's getToggleRowSelectedProps method
-      //   // to the render a checkbox
-      //   Cell: ({ row }) => (
-      //     <div>
-      //       <IndeterminateCheckbox
-      //         {...row.getToggleRowSelectedProps()}
-      //         isDisabled={!row.original.statusMonitoramento.anexarComprovacao}
-      //       />
-      //     </div>
-      //   ),
-      //   Footer: false,
-      // },
       {
         Header: "beneficiário",
         accessor: "beneficiario.nome",
@@ -155,12 +101,6 @@ export default function MonitoramentoPorBeneficiario({
         Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
         Footer: false,
       },
-      // {
-      //   Header: "unidade de lotação",
-      //   accessor: "vaga.unidadeLotacao.nome",
-      //   Cell: ({ value }) => <Text noOfLines={2}>{value}</Text>,
-      //   Footer: false,
-      // },
       {
         Header: "Ações",
         Cell: ({
@@ -177,32 +117,6 @@ export default function MonitoramentoPorBeneficiario({
             },
           },
         }) => (
-          // <MenuIconButton
-          //   icon={<FiMoreHorizontal />}
-          //   menuItems={[
-          //     {
-          //       menuGroupLabel: null,
-          //       menuGroupButtons: [
-          //         {
-          //           text: "Registrar Visita",
-          //           icon: <FiMapPin />,
-          //           onClick: () => {
-          //             setSelectedRow(props.row.original);
-          //           },
-          //         },
-          //         {
-          //           text: "Monitorar",
-          //           icon: <FiActivity />,
-          //           onClick: () => {
-          //             setSelectedRow(props.row.original);
-          //             monitorarBeneficiarioForm.openOverlay();
-          //           },
-          //         },
-          //       ],
-          //     },
-          //   ]}
-          //   colorScheme="brand1"
-          // />
           <Tooltip label="Baixar Relatório">
             <IconButton
               variant="outline"
@@ -237,55 +151,6 @@ export default function MonitoramentoPorBeneficiario({
 
   const tableMonitDemandColumns = useMemo(
     () => [
-      // {
-      //   id: "selection",
-      //   // The header can use the table's getToggleAllRowsSelectedProps method
-      //   // to render a checkbox
-      //   Header: ({ toggleRowSelected, isAllPageRowsSelected, rows }) => {
-      //     const modifiedOnChange = (event) => {
-      //       rows.forEach((row) => {
-      //         //check each row if it is not disabled
-      //         row.original.statusMonitoramento.anexarComprovacao &&
-      //           toggleRowSelected(row.id, event.target.checked);
-      //       });
-      //     };
-      //     let selectableRowsInCurrentPage = 0;
-      //     let selectedRowsInCurrentPage = 0;
-      //     rows.forEach((row) => {
-      //       row.isSelected && selectedRowsInCurrentPage++;
-      //       row.original.statusMonitoramento.anexarComprovacao &&
-      //         selectableRowsInCurrentPage++;
-      //     });
-      //     const disabled = selectableRowsInCurrentPage === 0;
-      //     const checked =
-      //       (isAllPageRowsSelected ||
-      //         selectableRowsInCurrentPage === selectedRowsInCurrentPage) &&
-      //       !disabled;
-
-      //     return (
-      //       <IndeterminateCheckbox
-      //         onChange={modifiedOnChange}
-      //         checked={checked}
-      //         isDisabled={disabled}
-      //         indeterminate={
-      //           selectedRowsInCurrentPage >= 1 &&
-      //           selectableRowsInCurrentPage !== selectedRowsInCurrentPage
-      //         }
-      //       />
-      //     );
-      //   },
-      //   // The cell can use the individual row's getToggleRowSelectedProps method
-      //   // to the render a checkbox
-      //   Cell: ({ row }) => (
-      //     <div>
-      //       <IndeterminateCheckbox
-      //         {...row.getToggleRowSelectedProps()}
-      //         isDisabled={!row.original.statusMonitoramento.anexarComprovacao}
-      //       />
-      //     </div>
-      //   ),
-      //   Footer: false,
-      // },
       {
         Header: "Demandante",
         accessor: ({ sigla, nome }) => `${sigla} - ${nome}`,
@@ -324,32 +189,6 @@ export default function MonitoramentoPorBeneficiario({
             original: { id, metaType4_1, metaType4_2 },
           },
         }) => (
-          // <MenuIconButton
-          //   icon={<FiMoreHorizontal />}
-          //   menuItems={[
-          //     {
-          //       menuGroupLabel: null,
-          //       menuGroupButtons: [
-          //         {
-          //           text: "Registrar Visita",
-          //           icon: <FiMapPin />,
-          //           onClick: () => {
-          //             setSelectedRow(props.row.original);
-          //           },
-          //         },
-          //         {
-          //           text: "Monitorar",
-          //           icon: <FiActivity />,
-          //           onClick: () => {
-          //             setSelectedRow(props.row.original);
-          //             monitorarBeneficiarioForm.openOverlay();
-          //           },
-          //         },
-          //       ],
-          //     },
-          //   ]}
-          //   colorScheme="brand1"
-          // />
           <HStack>
             <Tooltip label="Baixar Relatório de Síntese">
               <IconButton
@@ -1040,14 +879,14 @@ export async function getServerSideProps(context) {
   // });
 
   const entityCheck = entities.find((ent) => ent === entity || undefined);
-  const { data: timeFromNetwork } = await axios.get(
-    `/api/${entity}/network-time`
-  );
+  // const { data: timeFromNetwork } = await axios.get(
+  //   `/api/${entity}/network-time`
+  // );
 
   return {
     props: {
       entity: entityCheck || null,
-      timeFromNetwork,
+      // timeFromNetwork,
     },
   };
 }

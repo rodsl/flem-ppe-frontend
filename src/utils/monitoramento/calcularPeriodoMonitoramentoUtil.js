@@ -96,38 +96,48 @@ export const calcularPeriodoMonitoramentoRealizado = (
   networkTime,
   anoSelecionado = DateTime.fromISO(networkTime).year
 ) => {
+  const todayDate = DateTime.fromISO(networkTime).setLocale("pt-BR");
   return [
     {
       id: "1",
       startDate: DateTime.fromFormat("01/12", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
-        .plus({ year: -1 }),
+        .startOf("day")
+        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
       cutDate: DateTime.fromFormat("10/12", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
-        .plus({ year: -1 }),
+        .endOf("day")
+        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
       endDate: DateTime.fromFormat("28/02", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
-      label: `01/12/${anoSelecionado - 1} a ${
+        .set({ year: anoSelecionado })
+        .plus({ year: todayDate.month === 12 ? 1 : 0 })
+        .endOf("day"),
+      label: `01/12/${
+        todayDate.month === 12 ? anoSelecionado : anoSelecionado - 1
+      } a ${
         DateTime.fromISO(networkTime).setLocale("pt-BR").isInLeapYear
           ? "29/02"
           : "28/02"
-      }/${anoSelecionado}`,
+      }/${todayDate.month === 12 ? anoSelecionado + 1 : anoSelecionado}`,
       metaType: "4.1",
     },
     {
       id: "2",
       startDate: DateTime.fromFormat("01/03", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .startOf("day"),
       cutDate: DateTime.fromFormat("10/03", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       endDate: DateTime.fromFormat("31/05", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       label: `01/03/${anoSelecionado} a 31/05/${anoSelecionado}`,
       metaType: "4.1",
     },
@@ -135,13 +145,16 @@ export const calcularPeriodoMonitoramentoRealizado = (
       id: "3",
       startDate: DateTime.fromFormat("01/06", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .startOf("day"),
       cutDate: DateTime.fromFormat("10/06", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       endDate: DateTime.fromFormat("31/08", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       label: `01/06/${anoSelecionado} a 31/08/${anoSelecionado}`,
       metaType: "4.1",
     },
@@ -149,13 +162,16 @@ export const calcularPeriodoMonitoramentoRealizado = (
       id: "4",
       startDate: DateTime.fromFormat("01/09", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .startOf("day"),
       cutDate: DateTime.fromFormat("10/09", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       endDate: DateTime.fromFormat("30/11", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       label: `01/09/${anoSelecionado} a 30/11/${anoSelecionado}`,
       metaType: "4.1",
     },
@@ -164,28 +180,39 @@ export const calcularPeriodoMonitoramentoRealizado = (
       startDate: DateTime.fromFormat("01/12", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
-        .plus({ year: -1 }),
+        .startOf("day")
+        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
       cutDate: DateTime.fromFormat("10/12", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
-        .plus({ year: -1 }),
+        .endOf("day")
+        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
       endDate: DateTime.fromFormat("31/05", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
-      label: `01/12/${anoSelecionado - 1} a 31/05/${anoSelecionado}`,
+        .set({ year: anoSelecionado })
+        .plus({ year: todayDate.month === 12 ? 1 : 0 })
+        .endOf("day"),
+      label: `01/12/${
+        todayDate.month === 12 ? anoSelecionado : anoSelecionado - 1
+      } a 31/05/${
+        todayDate.month === 12 ? anoSelecionado + 1 : anoSelecionado
+      }`,
       metaType: "4.2",
     },
     {
       id: "6",
       startDate: DateTime.fromFormat("01/06", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .startOf("day"),
       cutDate: DateTime.fromFormat("10/06", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       endDate: DateTime.fromFormat("30/11", "dd/MM")
         .setLocale("pt-BR")
-        .set({ year: anoSelecionado }),
+        .set({ year: anoSelecionado })
+        .endOf("day"),
       label: `01/06/${anoSelecionado} a 30/11/${anoSelecionado}`,
       metaType: "4.2",
     },

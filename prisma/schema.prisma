@@ -386,6 +386,7 @@ model Ba_Historico {
   contatosBeneficiarios Ba_Contatos_Beneficiarios[]
   documentos            Ba_Documentos[]
   vaga                  Ba_Vaga[]
+  situacaoVaga          Ba_Situacoes_Vaga[]
   remessaSec            Ba_RemessaSec[]
   materialEntregue      Ba_Materiais_Entregues[]
 }
@@ -647,6 +648,7 @@ model Ba_Situacoes_Vaga {
   tipoSituacao    Ba_Tipos_Situacoes_Vaga? @relation(fields: [tipoSituacao_Id], references: [id])
   tipoSituacao_Id String?
   vagas           Ba_Vaga[]
+  historicos      Ba_Historico[]
 }
 
 model Ba_TamanhoUniforme {

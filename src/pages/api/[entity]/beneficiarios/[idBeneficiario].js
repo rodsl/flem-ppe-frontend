@@ -89,7 +89,7 @@ const getBeneficiario = async (req, res) => {
         },
       },
     });
-
+    
     return res.status(200).json(query);
   } catch (error) {
     console.log(error);
@@ -119,8 +119,8 @@ const putBeneficiarios = async (req, res) => {
     superiorAnoConclusao,
     email,
     obsEmail = [],
-    celular,
-    obsCelular = [],
+    telefone,
+    obsTelefone = [],
     dataEntregaMaterial,
     idMaterial,
     idTamanho,
@@ -132,6 +132,7 @@ const putBeneficiarios = async (req, res) => {
     // Vaga
     demandante_Id,
     situacaoVaga_Id,
+    situacaoVagaHasChanged,
     publicadoDiarioOficial,
     vaga_municipio_Id,
     unidadeLotacao_Id,
@@ -158,14 +159,14 @@ const putBeneficiarios = async (req, res) => {
             }))
         );
       }
-      if (Array.isArray(celular)) {
+      if (Array.isArray(telefone)) {
         arr.push(
-          ...celular
+          ...telefone
             .filter((con) => con)
-            .map((celular, idx) => ({
-              contato: celular,
-              observacao: _.isEmpty(obsCelular[idx]) ? null : obsCelular[idx],
-              tipoContato_Id: "celular",
+            .map((telefone, idx) => ({
+              contato: telefone,
+              observacao: _.isEmpty(obsTelefone[idx]) ? null : obsTelefone[idx],
+              tipoContato_Id: "telefone",
             }))
         );
       }
@@ -300,7 +301,7 @@ const putBeneficiarios = async (req, res) => {
       }
     );
 
-    const [queryDocumento, queryMaterial, queryHistorico] =
+    const [queryDocumento, queryMaterial, queryHistorico, ...restQuery] =
       await prisma.$transaction([
         ...addDocumento(),
         ...addMaterial(),
@@ -405,8 +406,22 @@ const putBeneficiarios = async (req, res) => {
           where: {
             id: idBeneficiario,
           },
+          include: {
+            vaga: {
+              select: {
+                id: true,
+                createdAt: true,
+              },
+              take: 1,
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
+          },
         }),
       ]);
+
+    const vagaId = restQuery.reverse()[0].vaga.pop().id;
 
     if (queryMaterial.id) {
       await prisma.ba_Historico.create({
@@ -463,6 +478,44 @@ const putBeneficiarios = async (req, res) => {
                 nome: queryDocumento.sigiloso
                   ? "Documento Sigiloso"
                   : "Documento",
+              },
+            })
+          ).id,
+        },
+      });
+    }
+
+    if (JSON.parse(situacaoVagaHasChanged)) {
+      await prisma.ba_Historico.create({
+        data: {
+          descricao: `Alterado situação da vaga do beneficiário. Nova situação: ${
+            (
+              await prisma.ba_Situacoes_Vaga.findFirst({
+                where: {
+                  id: situacaoVaga_Id,
+                },
+              })
+            ).nome
+          }`,
+          beneficiario: {
+            connect: {
+              id: idBeneficiario,
+            },
+          },
+          vaga: {
+            connect: {
+              id: vagaId,
+            },
+          },
+          situacaoVaga: {
+            connect: {
+              id: situacaoVaga_Id,
+            },
+          },
+          tipoHistorico_Id: (
+            await prisma.ba_Historico_Tipo.findFirst({
+              where: {
+                nome: "Vaga",
               },
             })
           ).id,

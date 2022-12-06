@@ -73,7 +73,7 @@ export default function Beneficiarios({ entity, idBeneficiario }) {
     formDadosBeneficiario.setLoading();
     e.preventDefault();
     const anexos = new FormData();
-    
+
     formData.dataNasc = DateTime.fromSQL(formData.dataNasc)
       .setLocale("pt-BR")
       .toISO();
@@ -711,14 +711,14 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
   const formTelefone = new Array().concat(
     ...telefoneQtd.map((obj, idx, arr) => [
       {
-        id: `celular.${idx}`,
+        id: `telefone.${idx}`,
         formControl,
         placeholder: "(11) 98765-4321",
         mask: celularMask,
         defaultValue: obj.contato,
       },
       {
-        id: `obsCelular.${idx}`,
+        id: `obsTelefone.${idx}`,
         formControl,
         placeholder: "Observação",
         defaultValue: obj.observacao,
@@ -735,8 +735,8 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
                 setTelefoneQtd((prev) =>
                   prev.filter((obj, idx2) => idx2 !== idx)
                 );
-                formControl.unregister(`celular`);
-                formControl.unregister(`obsCelular`);
+                formControl.unregister(`telefone`);
+                formControl.unregister(`obsTelefone`);
               }
             }}
             isLoading={buscaCep}
@@ -766,7 +766,7 @@ const Dados = ({ data, entity, formControl, unlockEdit }) => {
   useEffect(() => {
     if (data && data.contatos.length >= 1) {
       const telefones = data.contatos.filter(
-        ({ tipoContato_Id }) => tipoContato_Id === "celular"
+        ({ tipoContato_Id }) => tipoContato_Id === "telefone"
       );
       const emails = data.contatos.filter(
         ({ tipoContato_Id }) => tipoContato_Id === "email"
@@ -2214,7 +2214,7 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       value: id,
       label:
         tipoSituacao.nome === nome ? nome : `${tipoSituacao.nome} - ${nome}`,
-      disabled: ["Contratado", "Desligado"].includes(tipoSituacao.nome),
+      // disabled: ["Contratado", "Desligado"].includes(tipoSituacao.nome),
     }));
     setSituacoesVagaFromBd(unidadesOptions);
   });
@@ -2224,16 +2224,16 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       const origem = `${data.municipio} - ${entity}`;
       const destino = `${vagaInfo?.municipio?.nome} - ${entity}`;
 
-      const { data: response } = await axios.get(
-        `/api/${entity}/calcular-distancia`,
-        {
-          params: {
-            origem,
-            destino,
-          },
-        }
-      );
-      setDistanciaVaga(response);
+      // const { data: response } = await axios.get(
+      //   `/api/${entity}/calcular-distancia`,
+      //   {
+      //     params: {
+      //       origem,
+      //       destino,
+      //     },
+      //   }
+      // );
+      // setDistanciaVaga(response);
     }
   });
 
@@ -2270,11 +2270,18 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
       defaultValue: situacoesVagaFromBd.find(
         ({ value }) => vagaInfo?.situacaoVaga_Id === value
       )?.value,
-      disabled: ["Contratado - Ativo", "Desligado - Desligado"].includes(
-        situacoesVagaFromBd.find(
-          ({ value }) => vagaInfo?.situacaoVaga_Id === value
-        )?.label
-      ),
+      onChange: () => formControl.setValue("situacaoVagaHasChanged", "true"),
+      // disabled: ["Contratado - Ativo", "Desligado"].includes(
+      //   situacoesVagaFromBd.find(
+      //     ({ value }) => vagaInfo?.situacaoVaga_Id === value
+      //   )?.label
+      // ),
+    },
+    {
+      id: "situacaoVagaHasChanged",
+      formControl,
+      type: "hidden",
+      defaultValue: "false",
     },
     {
       id: "escritorioRegional",
@@ -2363,18 +2370,18 @@ const Vaga = ({ data, entity, formControl, unlockEdit }) => {
         : null,
       readOnly: true,
     },
-    {
-      id: "mes_remessa",
-      label: "Mês Remessa/Lote",
-      placeholder: "Mês Remessa/Lote",
-      formControl,
-      defaultValue: vagaInfo?.remessaSec?.data_remessa
-        ? DateTime.fromISO(vagaInfo?.remessaSec?.data_remessa)
-            .setLocale("pt-BR")
-            .toFormat("MMMM 'de' yyyy")
-        : null,
-      readOnly: true,
-    },
+    // {
+    //   id: "mes_remessa",
+    //   label: "Mês Remessa/Lote",
+    //   placeholder: "Mês Remessa/Lote",
+    //   formControl,
+    //   defaultValue: vagaInfo?.remessaSec?.data_remessa
+    //     ? DateTime.fromISO(vagaInfo?.remessaSec?.data_remessa)
+    //         .setLocale("pt-BR")
+    //         .toFormat("MMMM 'de' yyyy")
+    //     : null,
+    //   readOnly: true,
+    // },
     // {
     //   id: "1",
     //   label: "Data Envio da Situação",
