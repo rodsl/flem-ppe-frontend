@@ -509,6 +509,14 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
       options.push(option);
     }
 
+    if (DateTime.fromISO(timeFromNetwork).month === 12) {
+      const option = {
+        value: (anoAtual + 1).toString(),
+        label: (anoAtual + 1).toString(),
+      };
+      options.unshift(option);
+    }
+
     setAnoPeriodoSelecionado(options[0]);
 
     return options;
@@ -581,12 +589,21 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
         // The cell can use the individual row's getToggleRowSelectedProps method
         // to the render a checkbox
         Cell: ({ row }) => (
-          <div>
-            <IndeterminateCheckbox
-              {...row.getToggleRowSelectedProps()}
-              isDisabled={!row.original.statusMonitoramento.anexarComprovacao}
-            />
-          </div>
+          <Tooltip
+            placement="right"
+            label={
+              row.original.statusMonitoramento.anexarComprovacao
+                ? "Selecionar para anexar comprovação"
+                : "Não é possível selecionar sem haver monitoramentos"
+            }
+          >
+            <div>
+              <IndeterminateCheckbox
+                {...row.getToggleRowSelectedProps()}
+                isDisabled={!row.original.statusMonitoramento.anexarComprovacao}
+              />
+            </div>
+          </Tooltip>
         ),
         Footer: false,
       },
@@ -1309,17 +1326,21 @@ export default function Monitoramento({ entity, timeFromNetwork, ...props }) {
       timeFromNetwork,
       anoSelecionado
     );
-    console.log(periodosPorAnoSelecionado);
+
+    const todayDate = DateTime.fromISO(timeFromNetwork).setLocale("pt-BR");
+
     const trimestre = periodosPorAnoSelecionado.find(
       ({ id, startDate, endDate, metaType }) => {
         if (!_.isEmpty(idPeriodo)) {
           return id === idPeriodo;
         }
         return (
-          DateTime.fromISO(timeFromNetwork).set({ year: anoSelecionado }) >=
-            startDate &&
-          DateTime.fromISO(timeFromNetwork).set({ year: anoSelecionado }) <=
-            endDate &&
+          todayDate.set({
+            year: todayDate.month === 12 ? anoSelecionado - 1 : anoSelecionado,
+          }) >= startDate &&
+          todayDate.set({
+            year: todayDate.month === 12 ? anoSelecionado - 1 : anoSelecionado,
+          }) <= endDate &&
           metaType === "4.1"
         );
       }

@@ -1136,21 +1136,26 @@ export default function Dashboard({ entity, ...props }) {
     }
   }, [inputDateSelectContrDeslChart]);
 
-  const listaTrimestres = useCallback(
-    () => calcularPeriodoMonitoramentoRealizado(DateTime.now().toISO()),
-    []
-  )();
-
-  useEffect(() => {
-    setTrimestreSelecionado(
-      listaTrimestres.find(
-        ({ startDate, endDate, metaType }) =>
-          startDate <= DateTime.now() &&
-          endDate >= DateTime.now() &&
-          metaType === "4.1"
-      )
+  const listaTrimestres = useCallback(() => {
+    const todayDate = DateTime.now();
+    return calcularPeriodoMonitoramentoRealizado(
+      todayDate.toISO(),
+      todayDate.month === 12 ? todayDate.year + 1 : todayDate.year
     );
-  }, []);
+  }, [])();
+
+  useEffect(
+    () =>
+      setTrimestreSelecionado(
+        listaTrimestres.find(
+          ({ startDate, endDate, metaType }) =>
+            DateTime.now() >= startDate &&
+            DateTime.now() <= endDate &&
+            metaType === "4.1"
+        )
+      ),
+    []
+  );
 
   const chartData = [
     {

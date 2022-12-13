@@ -104,24 +104,24 @@ export const calcularPeriodoMonitoramentoRealizado = (
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
         .startOf("day")
-        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
+        .plus({ year: todayDate.month === 12 ? -1 : 0 }),
       cutDate: DateTime.fromFormat("10/12", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
         .endOf("day")
-        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
+        .plus({ year: todayDate.month === 12 ? -1 : 0 }),
       endDate: DateTime.fromFormat("28/02", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
-        .plus({ year: todayDate.month === 12 ? 1 : 0 })
-        .endOf("day"),
+        .endOf("day")
+        .plus({ year: todayDate.month === 12 ? 0 : 1 }),
       label: `01/12/${
-        todayDate.month === 12 ? anoSelecionado : anoSelecionado - 1
+        todayDate.month === 12 ? anoSelecionado - 1 : anoSelecionado
       } a ${
         DateTime.fromISO(networkTime).setLocale("pt-BR").isInLeapYear
           ? "29/02"
           : "28/02"
-      }/${todayDate.month === 12 ? anoSelecionado + 1 : anoSelecionado}`,
+      }/${todayDate.month === 12 ? anoSelecionado : anoSelecionado + 1}`,
       metaType: "4.1",
     },
     {
@@ -181,21 +181,21 @@ export const calcularPeriodoMonitoramentoRealizado = (
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
         .startOf("day")
-        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
+        .plus({ year: todayDate.month === 12 ? -1 : 0 }),
       cutDate: DateTime.fromFormat("10/12", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
         .endOf("day")
-        .plus({ year: todayDate.month === 12 ? 0 : -1 }),
+        .plus({ year: todayDate.month === 12 ? -1 : 0 }),
       endDate: DateTime.fromFormat("31/05", "dd/MM")
         .setLocale("pt-BR")
         .set({ year: anoSelecionado })
-        .plus({ year: todayDate.month === 12 ? 1 : 0 })
+        .plus({ year: todayDate.month === 12 ? 0 : 1 })
         .endOf("day"),
       label: `01/12/${
-        todayDate.month === 12 ? anoSelecionado : anoSelecionado - 1
+        todayDate.month === 12 ? anoSelecionado - 1 : anoSelecionado
       } a 31/05/${
-        todayDate.month === 12 ? anoSelecionado + 1 : anoSelecionado
+        todayDate.month === 12 ? anoSelecionado : anoSelecionado + 1
       }`,
       metaType: "4.2",
     },
